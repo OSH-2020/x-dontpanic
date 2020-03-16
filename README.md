@@ -10,14 +10,10 @@
 ## 仓库结构
 
 ```code
-.
-+-- report
-|   +-- research
-|   |   +-- reaserch.md
-|   |   +-- images
-|   +-- feasibility
-|       +-- feasibility.md
-|       +-- images
 +-- docs
+|   +-- research.md
+|   +-- feasibility.md
+|   +-- files
 +-- src
++-- README.md
 ```
