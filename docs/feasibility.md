@@ -32,19 +32,19 @@
       - [通讯格式](#%e9%80%9a%e8%ae%af%e6%a0%bc%e5%bc%8f)
       - [Apache+Tomcat+Servlet+Java Web 应用](#apachetomcatservletjava-web-%e5%ba%94%e7%94%a8)
       - [动态网页设计](#%e5%8a%a8%e6%80%81%e7%bd%91%e9%a1%b5%e8%ae%be%e8%ae%a1)
-    - [纠删码](#%e7%ba%a0%e5%88%a0%e7%a0%81)
-      - [介绍](#%e4%bb%8b%e7%bb%8d-2)
-      - [GitHub 上现有的项目](#github-%e4%b8%8a%e7%8e%b0%e6%9c%89%e7%9a%84%e9%a1%b9%e7%9b%ae)
-    - [WebAssembly](#webassembly)
-    - [容器化](#%e5%ae%b9%e5%99%a8%e5%8c%96)
-    - [虚拟局域网](#%e8%99%9a%e6%8b%9f%e5%b1%80%e5%9f%9f%e7%bd%91)
+      - [纠删码](#%e7%ba%a0%e5%88%a0%e7%a0%81)
+        - [介绍](#%e4%bb%8b%e7%bb%8d-2)
+        - [GitHub 上现有的项目](#github-%e4%b8%8a%e7%8e%b0%e6%9c%89%e7%9a%84%e9%a1%b9%e7%9b%ae)
+      - [WebAssembly](#webassembly)
+      - [容器化](#%e5%ae%b9%e5%99%a8%e5%8c%96)
+      - [虚拟局域网](#%e8%99%9a%e6%8b%9f%e5%b1%80%e5%9f%9f%e7%bd%91)
   - [理论依据与技术依据](#%e7%90%86%e8%ae%ba%e4%be%9d%e6%8d%ae%e4%b8%8e%e6%8a%80%e6%9c%af%e4%be%9d%e6%8d%ae)
-      - [用 Vandermonde Code 编码及解码文件](#%e7%94%a8-vandermonde-code-%e7%bc%96%e7%a0%81%e5%8f%8a%e8%a7%a3%e7%a0%81%e6%96%87%e4%bb%b6)
-        - [RS code编码原理](#rs-code%e7%bc%96%e7%a0%81%e5%8e%9f%e7%90%86)
-        - [RS code 编码数据恢复原理](#rs-code-%e7%bc%96%e7%a0%81%e6%95%b0%e6%8d%ae%e6%81%a2%e5%a4%8d%e5%8e%9f%e7%90%86)
-        - [RS code 编码的限制](#rs-code-%e7%bc%96%e7%a0%81%e7%9a%84%e9%99%90%e5%88%b6)
-        - [编码矩阵基于范德蒙德（Vandermonde）矩阵](#%e7%bc%96%e7%a0%81%e7%9f%a9%e9%98%b5%e5%9f%ba%e4%ba%8e%e8%8c%83%e5%be%b7%e8%92%99%e5%be%b7vandermonde%e7%9f%a9%e9%98%b5)
-        - [编码矩阵基于柯西（Cauchy）矩阵](#%e7%bc%96%e7%a0%81%e7%9f%a9%e9%98%b5%e5%9f%ba%e4%ba%8e%e6%9f%af%e8%a5%bfcauchy%e7%9f%a9%e9%98%b5)
+    - [用 Vandermonde Code 编码及解码文件](#%e7%94%a8-vandermonde-code-%e7%bc%96%e7%a0%81%e5%8f%8a%e8%a7%a3%e7%a0%81%e6%96%87%e4%bb%b6)
+      - [RS code编码原理](#rs-code%e7%bc%96%e7%a0%81%e5%8e%9f%e7%90%86)
+      - [RS code 编码数据恢复原理](#rs-code-%e7%bc%96%e7%a0%81%e6%95%b0%e6%8d%ae%e6%81%a2%e5%a4%8d%e5%8e%9f%e7%90%86)
+      - [RS code 编码的限制](#rs-code-%e7%bc%96%e7%a0%81%e7%9a%84%e9%99%90%e5%88%b6)
+      - [编码矩阵基于范德蒙德（Vandermonde）矩阵](#%e7%bc%96%e7%a0%81%e7%9f%a9%e9%98%b5%e5%9f%ba%e4%ba%8e%e8%8c%83%e5%be%b7%e8%92%99%e5%be%b7vandermonde%e7%9f%a9%e9%98%b5)
+      - [编码矩阵基于柯西（Cauchy）矩阵](#%e7%bc%96%e7%a0%81%e7%9f%a9%e9%98%b5%e5%9f%ba%e4%ba%8e%e6%9f%af%e8%a5%bfcauchy%e7%9f%a9%e9%98%b5)
     - [JVM](#jvm)
   - [创新点](#%e5%88%9b%e6%96%b0%e7%82%b9)
     - [备份机制：Erasure Code](#%e5%a4%87%e4%bb%bd%e6%9c%ba%e5%88%b6erasure-code)
@@ -138,23 +138,23 @@ TODO-yzy：在线情况、剩余空间、控制TCP链接的线程的编号、（
 
 #### 动态网页设计
 
-### 纠删码
+#### 纠删码
 
-#### 介绍
+##### 介绍
 
-#### GitHub 上现有的项目
-
-//TODO
-
-### WebAssembly
+##### GitHub 上现有的项目
 
 //TODO
 
-### 容器化
+#### WebAssembly
 
 //TODO
 
-### 虚拟局域网
+#### 容器化
+
+//TODO
+
+#### 虚拟局域网
 
 //TODO
 
@@ -162,7 +162,7 @@ TODO-yzy：在线情况、剩余空间、控制TCP链接的线程的编号、（
 
 TODO-yzy：在开头简单罗列一下实现的技术
 
-#### 用 Vandermonde Code 编码及解码文件
+### 用 Vandermonde Code 编码及解码文件
 
 TODO-yzy：太长酌情删
 
@@ -186,7 +186,7 @@ GF(2^w）域有2^w个值， 每个值都对应一个低于 w 次的多项式， 
 
 乘法公式：`a * b = gfilog(gflog(a) + fglog(b)) % (2^w -1)`
 
-##### RS code编码原理
+#### RS code编码原理
 
 RS 编码以 word 为编码和解码单位，大的数据块拆分到字长为 w（取值一般为 8 或者 16 位）的 word，然后对 word 进行编解码。 数据块的编码原理与 word 编码原理相同，后文中一 word 为例说明，变量 Di, Ci 将代表一个 word。
 
@@ -198,7 +198,7 @@ RS 编码以 word 为编码和解码单位，大的数据块拆分到字长为 w
 
 为方便数据存储，编码矩阵上部是单位阵（n*n），下部是 m 行 n 列矩阵。下部矩阵可以选择范德蒙德矩阵或柯西矩阵。
 
-##### RS code 编码数据恢复原理
+#### RS code 编码数据恢复原理
 
 RS 最多能容忍 m 个数据块被删除。 数据恢复的过程如下：
 
@@ -224,12 +224,12 @@ RS 最多能容忍 m 个数据块被删除。 数据恢复的过程如下：
 
 （4）对 D 重新编码，可得到丢失的编码码
 
-##### RS code 编码的限制
+#### RS code 编码的限制
 
 - 数据恢复代价高和数据更新代价高，因此常常针对只读数据，或者冷数据。
 - RS编码依赖于两张 2^w-1 大小的 log 表， 通常只能采用 16 位或者 8 位字长，不能充分利用 64 位服务器的计算能力， 具体实现上可能要做一些优化。
 
-##### 编码矩阵基于范德蒙德（Vandermonde）矩阵
+#### 编码矩阵基于范德蒙德（Vandermonde）矩阵
 
 在线性代数中有一种矩阵称为范德蒙德矩阵，它的任意的子方阵均为可逆方阵。一个m行n列的范德蒙德矩阵定义如下，其中Ai 均不相同，且不为0。
 
@@ -245,7 +245,7 @@ RS 最多能容忍 m 个数据块被删除。 数据恢复的过程如下：
 
 采用这种方法的算法复杂度还是比较高的，编码复杂度为 O（mn），其中 m 为校验数据个数，n 为输入数据个数。解码复杂度为 O（n^3）。
 
-##### 编码矩阵基于柯西（Cauchy）矩阵
+#### 编码矩阵基于柯西（Cauchy）矩阵
 
 柯西矩阵的任意一个子方阵都是奇异矩阵，存在逆矩阵。而且柯西矩阵在迦罗华域上的求逆运算，可以在 O（n^2）的运算复杂度内完成。
 
