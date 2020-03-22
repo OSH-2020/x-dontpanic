@@ -4,24 +4,23 @@
   - [摘要](#%e6%91%98%e8%a6%81)
   - [实现方案与可行性分析](#%e5%ae%9e%e7%8e%b0%e6%96%b9%e6%a1%88%e4%b8%8e%e5%8f%af%e8%a1%8c%e6%80%a7%e5%88%86%e6%9e%90)
   - [理论依据](#%e7%90%86%e8%ae%ba%e4%be%9d%e6%8d%ae)
-    - [Apache+Tomcat+Servlet+Java Web 应用](#apachetomcatservletjava-web-%e5%ba%94%e7%94%a8)
     - [WebAssembly](#webassembly)
     - [JVM](#jvm)
-  - [技术依据](#%e6%8a%80%e6%9c%af%e4%be%9d%e6%8d%ae)
-    - [容器化](#%e5%ae%b9%e5%99%a8%e5%8c%96)
     - [纠删码](#%e7%ba%a0%e5%88%a0%e7%a0%81)
       - [Reed-Solomon Code](#reed-solomon-code)
       - [RS code编码原理](#rs-code%e7%bc%96%e7%a0%81%e5%8e%9f%e7%90%86)
       - [RS code 编码数据恢复原理](#rs-code-%e7%bc%96%e7%a0%81%e6%95%b0%e6%8d%ae%e6%81%a2%e5%a4%8d%e5%8e%9f%e7%90%86)
-      - [RS code 编码的限制](#rs-code-%e7%bc%96%e7%a0%81%e7%9a%84%e9%99%90%e5%88%b6)
+      - [RS Code 编码的限制](#rs-code-%e7%bc%96%e7%a0%81%e7%9a%84%e9%99%90%e5%88%b6)
       - [编码矩阵基于范德蒙德（Vandermonde）矩阵](#%e7%bc%96%e7%a0%81%e7%9f%a9%e9%98%b5%e5%9f%ba%e4%ba%8e%e8%8c%83%e5%be%b7%e8%92%99%e5%be%b7vandermonde%e7%9f%a9%e9%98%b5)
       - [编码矩阵基于柯西（Cauchy）矩阵](#%e7%bc%96%e7%a0%81%e7%9f%a9%e9%98%b5%e5%9f%ba%e4%ba%8e%e6%9f%af%e8%a5%bfcauchy%e7%9f%a9%e9%98%b5)
+  - [技术依据](#%e6%8a%80%e6%9c%af%e4%be%9d%e6%8d%ae)
+    - [容器化](#%e5%ae%b9%e5%99%a8%e5%8c%96)
+    - [Apache+Tomcat+Servlet+Java Web 应用](#apachetomcatservletjava-web-%e5%ba%94%e7%94%a8)
   - [创新点](#%e5%88%9b%e6%96%b0%e7%82%b9)
-    - [备份机制：Erasure Code](#%e5%a4%87%e4%bb%bd%e6%9c%ba%e5%88%b6erasure-code)
+    - [Erasure Code 冗余备份](#erasure-code-%e5%86%97%e4%bd%99%e5%a4%87%e4%bb%bd)
     - [用户访问](#%e7%94%a8%e6%88%b7%e8%ae%bf%e9%97%ae)
     - [客户端部署](#%e5%ae%a2%e6%88%b7%e7%ab%af%e9%83%a8%e7%bd%b2)
     - [容器化部署服务端](#%e5%ae%b9%e5%99%a8%e5%8c%96%e9%83%a8%e7%bd%b2%e6%9c%8d%e5%8a%a1%e7%ab%af)
-    - [erasure code 冗余备份](#erasure-code-%e5%86%97%e4%bd%99%e5%a4%87%e4%bb%bd)
     - [加入多用户权限支持](#%e5%8a%a0%e5%85%a5%e5%a4%9a%e7%94%a8%e6%88%b7%e6%9d%83%e9%99%90%e6%94%af%e6%8c%81)
     - [更高效的文件处理和传输](#%e6%9b%b4%e9%ab%98%e6%95%88%e7%9a%84%e6%96%87%e4%bb%b6%e5%a4%84%e7%90%86%e5%92%8c%e4%bc%a0%e8%be%93)
     - [提高文件安全性](#%e6%8f%90%e9%ab%98%e6%96%87%e4%bb%b6%e5%ae%89%e5%85%a8%e6%80%a7)
@@ -36,17 +35,13 @@
 
 ## 理论依据
 
-### Apache+Tomcat+Servlet+Java Web 应用
-
 ### WebAssembly
+
+WebAssembly 是一种可以使用非 JavaScript 编程语言编写代码并且能在浏览器上运行的技术方案。
 
 ### JVM
 
 Java Virtual Machine 是一个虚构出来的计算机，是 Java 程序跨平台的关键。一般语言如果要在不同的平台上运行需编译成对应的目标机器码，而 jre 给 Java 编译出来的字节码以系统相关接口，使得 Java 字节码程序可以在多种平台上不加修改地运行。
-
-## 技术依据
-
-### 容器化
 
 ### 纠删码
 
@@ -106,7 +101,7 @@ RS 最多能容忍 m 个数据块被删除。 数据恢复的过程如下：
 
 ![img](files/research-RS-6)
 
-#### RS code 编码的限制
+#### RS Code 编码的限制
 
 - 数据恢复代价高和数据更新代价高，因此常常针对只读数据，或者冷数据。
 - RS编码依赖于两张 2^w-1 大小的 log 表， 通常只能采用 16 位或者 8 位字长，不能充分利用 64 位服务器的计算能力， 具体实现上可能要做一些优化。
@@ -178,6 +173,14 @@ Xi 和 Yi 都是迦罗华域 GF（2^w）中的元素。
 
 选择 GF(2^w)中的 w 参数是，需要满足 k+n <= 2^w。
 
+## 技术依据
+
+### 容器化
+
+Docker 是一个开源的应用容器引擎，完全使用沙箱机制，相互之间不会有任何接口，更重要的是容器性能开销极低。
+
+### Apache+Tomcat+Servlet+Java Web 应用
+
 ## 创新点
 
 TODO-yzy：我们调研报告的“创新点”内容与前人组的这一块有重合，在可行性报告里可以做一些修改让它精简或者更专业。
@@ -188,7 +191,9 @@ TODO-yzy：我们调研报告的“创新点”内容与前人组的这一块有
 
 此外，本项目想要实现的分布式文件系统还将做到多用户权限支持、更高效的文件碎片传输、减轻中央服务器负担、提高文件安全性和可用性等优化。
 
-### 备份机制：Erasure Code
+### Erasure Code 冗余备份
+
+纠删码（Erasure Code）相比直接副本备份节约存储空间，同样也起到了保护数据不易丢失的作用。
 
 ### 用户访问
 
@@ -203,10 +208,6 @@ TODO-yzy：我们调研报告的“创新点”内容与前人组的这一块有
 软件开发最大的麻烦事之一就是环境配置，而一个可用软件的交付过程通常包含两个部分：开发、维护。而我们很难保证软件开发测试和运行维护阶段的软件能运行在一模一样的环境下，很多时候我们都要花大量的时间去配置环境。例如参考项目中，中央服务器需要配置 apache+tomcat+mysql+java 环境，这要求使用者有一定配置 linux 服务器的知识。
 
 本项目将采用 docker 容器化技术，方便服务器端的部署，从而降低网盘使用门槛，增强用户体验，实现私人网盘的易用性。
-
-### erasure code 冗余备份
-
-纠删码（erasure code）相比直接副本备份节约存储空间，同样也起到了保护数据不易丢失的作用。
 
 ### 加入多用户权限支持
 
