@@ -10,13 +10,13 @@
     - [容器化技术](#%e5%ae%b9%e5%99%a8%e5%8c%96%e6%8a%80%e6%9c%af)
       - [容器化技术解决的问题](#%e5%ae%b9%e5%99%a8%e5%8c%96%e6%8a%80%e6%9c%af%e8%a7%a3%e5%86%b3%e7%9a%84%e9%97%ae%e9%a2%98)
       - [容器化技术的优势](#%e5%ae%b9%e5%99%a8%e5%8c%96%e6%8a%80%e6%9c%af%e7%9a%84%e4%bc%98%e5%8a%bf)
-      - [容器化技术的代表：docker](#%e5%ae%b9%e5%99%a8%e5%8c%96%e6%8a%80%e6%9c%af%e7%9a%84%e4%bb%a3%e8%a1%a8docker)
+      - [容器化技术的代表：Docker](#%e5%ae%b9%e5%99%a8%e5%8c%96%e6%8a%80%e6%9c%af%e7%9a%84%e4%bb%a3%e8%a1%a8docker)
         - [诞生背景](#%e8%af%9e%e7%94%9f%e8%83%8c%e6%99%af)
         - [Docker 简介](#docker-%e7%ae%80%e4%bb%8b)
         - [Docker 使用方法](#docker-%e4%bd%bf%e7%94%a8%e6%96%b9%e6%b3%95)
     - [基于 OpenVPN 的局域网](#%e5%9f%ba%e4%ba%8e-openvpn-%e7%9a%84%e5%b1%80%e5%9f%9f%e7%bd%91)
       - [工作原理](#%e5%b7%a5%e4%bd%9c%e5%8e%9f%e7%90%86)
-    - [Erasure code](#erasure-code)
+    - [Erasure Code](#erasure-code)
       - [什么是 Erasure Code](#%e4%bb%80%e4%b9%88%e6%98%af-erasure-code)
       - [RS Code编码原理](#rs-code%e7%bc%96%e7%a0%81%e5%8e%9f%e7%90%86)
       - [RS Code 编码数据恢复原理](#rs-code-%e7%bc%96%e7%a0%81%e6%95%b0%e6%8d%ae%e6%81%a2%e5%a4%8d%e5%8e%9f%e7%90%86)
@@ -125,11 +125,11 @@
 
 ##### Docker 简介
 
-Docker的主要目标是“Build，Ship and Run Any App,Anywhere”，
+Docker的主要目标是“Build, Ship and Run Any App, Anywhere”，
 也就是通过对应用组件的封装、分发、部署、运行等生命周期的管理，
 使用户的 APP（可以是一个 WEB 应用或数据库应用等等）及其运行环境能够做到“一次封装，到处运行”。
 
-Docker 作为一个开源的应用容器的引擎的出现，让开发者可以打包他们的应用及依赖环境到一个可移植的容器中，然后发布到任何运行有 Docker 引擎的机器上。 Docker 集版本控制、克隆继承、环境隔离等特性于一身，提出一整套软件构件、部署和维护的解决方案。使用 Docker 时，软件部署的应用具备类似于 Github 的版本控制功能，对应用做出一些修改，提交新版本，运行环境可以在多个版本间快速切换，自由选择使用哪个版本对外提供服务，都可以方便地帮助开发人员，让大家可以随心所欲地使用软件而又不会深陷到环境配置中。
+Docker 作为一个开源的应用容器的引擎的出现，让开发者可以打包他们的应用及依赖环境到一个可移植的容器中，然后发布到任何运行有 Docker 引擎的机器上。Docker 集版本控制、克隆继承、环境隔离等特性于一身，提出一整套软件构件、部署和维护的解决方案。使用 Docker 时，软件部署的应用具备类似于 GitHub 的版本控制功能，对应用做出一些修改，提交新版本，运行环境可以在多个版本间快速切换，自由选择使用哪个版本对外提供服务，都可以方便地帮助开发人员，让大家可以随心所欲地使用软件而又不会深陷到环境配置中。
 
 ![docker2](files/research-docher-2.png)
 
@@ -180,17 +180,17 @@ OpenVPN 服务器一般需要配置一个虚拟 IP 地址池和一个自用的�
 
 OpenVPN 的服务器和客户端支持 TCP 和 UDP 两种连接方式，只需在服务端和客户端预先定义好使用的连接方式（TCP 或 UDP）和端口号，客户端和服务端在这个连接的基础上进行SSL握手。连接过程包括 SSL 的握手以及虚拟网络上的管理信息，OpenVPN 将虚拟网上的网段、地址、路由发送给客户端。连接成功后，客户端和服务端建立起 SSL 安全连接，客户端和服务端的数据都流入虚拟网卡做 SSL 的处理，再在 TCP 或 UDP 的连接上从物理网卡发送出去。
 
-### Erasure code
+### Erasure Code
 
 #### 什么是 Erasure Code
 
 EC 的定义：Erasure Code 是一种编码技术，它可以将 n 份原始数据，增加 m 份数据，并能通过 n+m 份中的任意 n 份数据，还原为原始数据。即如果有任意小于等于 m 份的数据失效，仍然能通过剩下的数据还原出来。
 
-目前，纠删码技术在分布式存储系统中的应用主要有三类，阵列纠删码 (Array Code: RAID5、RAID6 等)、RS(Reed-Solomon) 里德-所罗门类纠删码和 LDPC(LowDensity Parity Check Code)低密度奇偶校验纠删码。
+目前，纠删码技术在分布式存储系统中的应用主要有三类，阵列纠删码 （Array Code）、里德-所罗门类纠删码 RS（Reed-Solomon）和低密度奇偶校验纠删码 LDPC（LowDensity Parity Check Code）。
 
 以下介绍 **Reed-Solomon Code**
 
-RS Code 是基于有限域的一种编码算法，有限域又称为 Galois Field，是以法国著名数学家伽罗华（Galois）命名的，在 RS Code 中使用 GF(2^w)，其中2^w >= n + m。
+RS Code 是基于有限域的一种编码算法，有限域又称为 Galois Field，是以法国著名数学家伽罗华（Galois）命名的，在 RS Code 中使用 GF(2^w)，其中 2^w >= n + m。
 
 RS Code 的编解码定义如下：  
 
