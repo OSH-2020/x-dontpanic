@@ -44,7 +44,7 @@
 
 #### 前置项目关于用户权限的设计
 
-- 数据库配置
+##### 数据库配置
 
 服务器数据库模块负责分布式文件系统的数据库访问，包括封装了数据库访问方法的Query 类与用于定义数据结构的 FileItem、DeviceItem、RequestItem 类。 
 
@@ -112,7 +112,7 @@ Query 类定义了对上述五个表查询、修改、删除、新增条目的�
 
 （六）在 closeConnection 函数中，调用 Connection 类实例 close 函数关闭连接。 
 
-- 注册/登录相关代码
+##### 注册/登录相关代码
 
 UserReg.java
 
@@ -254,7 +254,13 @@ public class UserLogin extends ActionSupport{
 
 #### 达到改进目标用到的技术
 
+##### 架构选择
 
+服务器端采用三层架构的方式，分成了表现层、业务层和持久层。表现层使用JSP和Servlet程序，与浏览器客户端进行数据的交互。业务层使用Service程序，进行业务逻辑处理和事务处理。持久层使用Dao程序，进行数据库的持久化操作。
+
+##### Spring Security
+
+Spring Security 是一个Spring生态中安全方面的框架，能够为基于 Spring 的企业应用系统提供声明式的安全访问控制解决方案。
 
 
 
