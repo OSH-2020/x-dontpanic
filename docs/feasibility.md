@@ -44,7 +44,213 @@
 
 #### 前置项目关于用户权限的设计
 
+- 数据库配置
 
+服务器数据库模块负责分布式文件系统的数据库访问，包括封装了数据库访问方法的Query 类与用于定义数据结构的 FileItem、DeviceItem、RequestItem 类。 
+
+本分布式文件系统使用数据库维护所有的元数据，数据库中具体包括表 FILE 用于存储文件的逻辑位置与属性、表 FRAGMENT 用于存储碎片的物理位置、表 REQUEST 用于存储服务器对客户端的碎片请求、表 DEVICE 用于存储系统中客户端的信息、表 USER 用于存储网页的注册用户。
+
+```mysql
+CREATE TABLE `DEVICE` ( 
+`ID` int NOT NULL AUTO_INCREMENT, 
+`IP` char(20) NOT NULL DEFAULT '', 
+`PORT` int NOT NULL DEFAULT 0, 
+`ISONLINE` boolean NOT NULL, 
+`RS` int NULL DEFAULT 0 , 
+PRIMARY KEY (`ID`) 
+) ENGINE=InnoDB DEFAULT CHARSET=utf8;
+
+CREATE TABLE `FRAGMENT` ( 
+`ID` int NOT NULL, 
+`PATH` char(20) NOT NULL DEFAULT '', 
+PRIMARY KEY (`ID`) 
+) ENGINE=InnoDB DEFAULT CHARSET=utf8; 
+
+CREATE TABLE `FILE` ( 
+`ID` int NOT NULL AUTO_INCREMENT, 
+`NAME` char(20) NOT NULL DEFAULT '', 
+`PATH` char(60) NOT NULL DEFAULT '', 
+`ATTRIBUTE` char(10) NOT NULL DEFAULT '', 
+`TIME` char(10) NOT NULL DEFAULT '', 
+`NOA` int NOT NULL DEFAULT 1, 
+`ISFOLDER` boolean NOT NULL DEFAULT false, 
+PRIMARY KEY (`id`) 
+) ENGINE=InnoDB DEFAULT CHARSET=utf8; 
+
+CREATE TABLE `REQUEST` (
+`ID` int NOT NULL AUTO_INCREMENT, 
+`TYPE` int NOT NULL DEFAULT 0, 
+`FRAGMENTID` int NOT NULL DEFAULT 0, 
+`DEVICEID` int NOT NULL DEFAULT 0, 
+PRIMARY KEY (`ID`) 
+) ENGINE=InnoDB DEFAULT CHARSET=utf8; 
+
+CREATE TABLE `USER` ( 
+`ID` int NOT NULL AUTO_INCREMENT, 
+`NAME` char(20) NOT NULL UNIQUE DEFAULT '', 
+`PASSWD` char(20) NOT NULL DEFAULT '', 
+PRIMARY KEY (`ID`) 
+) ENGINE=InnoDB DEFAULT CHARSET=utf8; 
+
+CREATE UNIQUE INDEX `idx_FILE_PATH_NAME` ON `DFS`.`FILE` (PATH, NAME) 
+COMMENT '' ALGORITHM DEFAULT LOCK DEFAULT; 
+CREATE UNIQUE INDEX `idx_USER_NAME` ON `DFS`.`USER` (NAME) COMMENT ''
+ALGORITHM DEFAULT LOCK DEFAULT;
+```
+
+Query 类定义了对上述五个表查询、修改、删除、新增条目的函数，其通过 JDBC 接口实现了对数据的访问，访问的流程为： 
+
+（一）在构造函数中使用 DriverManager.getConnection 函数创建到数据库的连接（一个Connection 类实例）； 
+
+（二）通过 Connection 类实例的 createStatement 函数创建一个 Statement 类实例； 
+
+（三）通过 Statement 类实例的 executeQuery 函数执行 SQL，SQL 的内容可以使用格式化字符串根据函数的参数填入不同的内容，该函数将返回一个 ResultSet 类实例； 
+
+（四）对 ResultSet 类实例，使用 next 函数与 getInt、getBoolean、getString 等函数遍历查询的每个结果； 
+
+（五）对 ResultSet 类实例与 Statement 类实例，执行 close 函数关闭连接； 
+
+（六）在 closeConnection 函数中，调用 Connection 类实例 close 函数关闭连接。 
+
+- 注册/登录相关代码
+
+UserReg.java
+
+```java
+package userManagement;
+
+import com.opensymphony.xwork2.ActionSupport;
+
+import database.*;
+
+public class UserReg extends ActionSupport{
+
+	private	static final long serialVersionUID = 1L;
+	private String userName;
+	private String userPasswd;
+	//用来返回结果给前端
+    private	String	result;
+    
+    public	void	setResult(String result)
+    {
+    	this.result = result;
+    }
+    
+    public	String	getResult()
+    {
+    	return this.result;
+    }
+    
+	public void setUserName(String name)
+	{
+		this.userName = name;
+	}
+	
+	public void setUserPasswd(String Passwd)
+	{
+		this.userPasswd = Passwd;
+	}
+	
+	public String getUserName()
+	{
+		return this.userName;
+	}
+	
+	public String getUserPasswd()
+	{
+		return this.userPasswd;
+	}
+	
+	@Override  
+	public String execute() throws Exception
+	{
+		
+		Query query = new Query();
+		int ID = query.addUser(userName, userPasswd);
+		query.closeConnection();
+		if(ID==-1)
+			result = "注册失败!";
+		else
+			result = "恭喜你，注册成功!";
+		return "success";
+	}
+}
+```
+
+UserLogin.java
+
+```java
+package userManagement;
+
+import com.opensymphony.xwork2.ActionSupport;
+
+import database.*;
+
+public class UserLogin extends ActionSupport{
+
+	private	static final long serialVersionUID = 1L;
+	private String userName;
+	private String userPasswd;
+	//用来返回结果给前端
+    private	String	result;
+    
+    public	void	setResult(String result)
+    {
+    	this.result = result;
+    }
+    
+    public	String	getResult()
+    {
+    	return this.result;
+    }
+    
+	public void setUserName(String name)
+	{
+		this.userName = name;
+	}
+	
+	public void setUserPasswd(String Passwd)
+	{
+		this.userPasswd = Passwd;
+	}
+	
+	public String getUserName()
+	{
+		return this.userName;
+	}
+	
+	public String getUserPasswd()
+	{
+		return this.userPasswd;
+	}
+	
+	@Override  
+	public String execute() throws Exception
+	{
+		
+		Query query = new Query();
+		String passwdStandard = query.queryUserPasswd(userName);
+		query.closeConnection();
+		
+		if(passwdStandard==null)
+		{
+			result = "登录失败：该用户不存在！";
+			return "success";
+		}
+		if(passwdStandard.compareTo(userPasswd)==0)
+		{
+			result = "login sucessfully!";
+			//System.out.println("登录密码吻合");
+			return "success";	
+		}
+		else
+		{
+			result = "登录失败：密码错误！";
+			return	"success";
+		}
+	}
+}
+```
 
 #### 达到改进目标用到的技术
 
