@@ -8,9 +8,19 @@
 
 ### 容器化技术
 
-#### 容器化技术的优势
+由于需要在不增加成本的情况下设置隔离的应用程序和服务器环境，虚拟化变得非常流行。使用虚拟机，我们可以在一台称为主机的计算机内安装一台完整的计算机（称为虚拟机），而不是在每个其他硬件单元上购买和安装服务器。这样的软件有很多：VMware Workstation、Hyper-V、VirtualBox、KVM、XEN 等等。
+
+但是这样的完全虚拟化技术资源利用效率低下，需要模拟全部硬件，且不便于扩展，对于很多轻量型应用是小题大做。而容器只虚拟化了部分操作子系统，如文件系统、网络、运行环境等；容器共享主机内核，没有虚拟化开销，因此性能远远优于虚拟机。容器软件有 LXC/LXD、Docker、Solaris Zones、Kubernetes 等等。
+
+![feasibility-vm_and_container-1](files/feasibility-vm_and_container-1.png)
 
 #### 容器化技术的代表：Docker
+
+![feasibility-docker](files/research-docker.png)
+
+LXC/LXD（Linux Container）来自进程控制群组 cgroup 和命名空间 namespaces，使得进程之间相互隔离，但是 LXC/LXD 包含了完整的操作系统；而 Docker 容器将应用和其依赖环境全部打包到一个单一对象中，在不包含完整的操作系统时就能运行普通应用，更加轻量级，可移植性更好。Docker 的可移植性和轻量级的特性，可以使我们轻松地完成动态管理的工作负担，并根据需求指示，实时扩展或拆除应用程序和服务。
+
+![feasibility-lxc_and_docker-1](files/feasibility-lxc_and_docker-1.png)
 
 ### 多用户权限支持——RBAC介绍
 
