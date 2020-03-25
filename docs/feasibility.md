@@ -2,35 +2,39 @@
 
 - [项目介绍](#%e9%a1%b9%e7%9b%ae%e4%bb%8b%e7%bb%8d)
 - [理论依据](#%e7%90%86%e8%ae%ba%e4%be%9d%e6%8d%ae)
-	- [容器化技术](#%e5%ae%b9%e5%99%a8%e5%8c%96%e6%8a%80%e6%9c%af)
-		- [容器化技术的代表：Docker](#%e5%ae%b9%e5%99%a8%e5%8c%96%e6%8a%80%e6%9c%af%e7%9a%84%e4%bb%a3%e8%a1%a8docker)
-	- [多用户权限支持——RBAC介绍](#%e5%a4%9a%e7%94%a8%e6%88%b7%e6%9d%83%e9%99%90%e6%94%af%e6%8c%81rbac%e4%bb%8b%e7%bb%8d)
-	- [纠删码](#%e7%ba%a0%e5%88%a0%e7%a0%81)
-		- [编解码原理](#%e7%bc%96%e8%a7%a3%e7%a0%81%e5%8e%9f%e7%90%86)
-		- [Reed–Solomon 码](#reed%e2%80%93solomon-%e7%a0%81)
-	- [分离数据与控制链接](#%e5%88%86%e7%a6%bb%e6%95%b0%e6%8d%ae%e4%b8%8e%e6%8e%a7%e5%88%b6%e9%93%be%e6%8e%a5)
-		- [上传/下载速度的提升](#%e4%b8%8a%e4%bc%a0%e4%b8%8b%e8%bd%bd%e9%80%9f%e5%ba%a6%e7%9a%84%e6%8f%90%e5%8d%87)
-			- [传统 C/S 模式](#%e4%bc%a0%e7%bb%9f-cs-%e6%a8%a1%e5%bc%8f)
-			- [集中式对等网络](#%e9%9b%86%e4%b8%ad%e5%bc%8f%e5%af%b9%e7%ad%89%e7%bd%91%e7%bb%9c)
-	- [其他](#%e5%85%b6%e4%bb%96)
+  - [容器化技术](#%e5%ae%b9%e5%99%a8%e5%8c%96%e6%8a%80%e6%9c%af)
+    - [容器化技术的代表：Docker](#%e5%ae%b9%e5%99%a8%e5%8c%96%e6%8a%80%e6%9c%af%e7%9a%84%e4%bb%a3%e8%a1%a8docker)
+  - [多用户权限支持——RBAC介绍](#%e5%a4%9a%e7%94%a8%e6%88%b7%e6%9d%83%e9%99%90%e6%94%af%e6%8c%81rbac%e4%bb%8b%e7%bb%8d)
+  - [纠删码](#%e7%ba%a0%e5%88%a0%e7%a0%81)
+    - [编解码原理](#%e7%bc%96%e8%a7%a3%e7%a0%81%e5%8e%9f%e7%90%86)
+    - [Reed–Solomon 码](#reed%e2%80%93solomon-%e7%a0%81)
+  - [分离数据与控制链接](#%e5%88%86%e7%a6%bb%e6%95%b0%e6%8d%ae%e4%b8%8e%e6%8e%a7%e5%88%b6%e9%93%be%e6%8e%a5)
+    - [上传/下载速度的提升](#%e4%b8%8a%e4%bc%a0%e4%b8%8b%e8%bd%bd%e9%80%9f%e5%ba%a6%e7%9a%84%e6%8f%90%e5%8d%87)
+      - [传统 C/S 模式](#%e4%bc%a0%e7%bb%9f-cs-%e6%a8%a1%e5%bc%8f)
+      - [集中式对等网络](#%e9%9b%86%e4%b8%ad%e5%bc%8f%e5%af%b9%e7%ad%89%e7%bd%91%e7%bb%9c)
+  - [其他](#%e5%85%b6%e4%bb%96)
 - [技术依据](#%e6%8a%80%e6%9c%af%e4%be%9d%e6%8d%ae)
-	- [Docker](#docker)
-	- [实现多用户权限支持的技术](#%e5%ae%9e%e7%8e%b0%e5%a4%9a%e7%94%a8%e6%88%b7%e6%9d%83%e9%99%90%e6%94%af%e6%8c%81%e7%9a%84%e6%8a%80%e6%9c%af)
-		- [前置项目关于用户权限的设计](#%e5%89%8d%e7%bd%ae%e9%a1%b9%e7%9b%ae%e5%85%b3%e4%ba%8e%e7%94%a8%e6%88%b7%e6%9d%83%e9%99%90%e7%9a%84%e8%ae%be%e8%ae%a1)
-			- [数据库配置](#%e6%95%b0%e6%8d%ae%e5%ba%93%e9%85%8d%e7%bd%ae)
-			- [注册/登录相关代码](#%e6%b3%a8%e5%86%8c%e7%99%bb%e5%bd%95%e7%9b%b8%e5%85%b3%e4%bb%a3%e7%a0%81)
-		- [达到改进目标用到的技术](#%e8%be%be%e5%88%b0%e6%94%b9%e8%bf%9b%e7%9b%ae%e6%a0%87%e7%94%a8%e5%88%b0%e7%9a%84%e6%8a%80%e6%9c%af)
-			- [架构选择](#%e6%9e%b6%e6%9e%84%e9%80%89%e6%8b%a9)
-			- [Spring Security](#spring-security)
-	- [Reed-Solomon](#reed-solomon)
-	- [WebAssembly](#webassembly)
-	- [TODO 实现分离数据与控制链接的技术](#todo-%e5%ae%9e%e7%8e%b0%e5%88%86%e7%a6%bb%e6%95%b0%e6%8d%ae%e4%b8%8e%e6%8e%a7%e5%88%b6%e9%93%be%e6%8e%a5%e7%9a%84%e6%8a%80%e6%9c%af)
-		- [其他](#%e5%85%b6%e4%bb%96-1)
+  - [Docker](#docker)
+  - [实现多用户权限支持的技术](#%e5%ae%9e%e7%8e%b0%e5%a4%9a%e7%94%a8%e6%88%b7%e6%9d%83%e9%99%90%e6%94%af%e6%8c%81%e7%9a%84%e6%8a%80%e6%9c%af)
+    - [前置项目关于用户权限的设计](#%e5%89%8d%e7%bd%ae%e9%a1%b9%e7%9b%ae%e5%85%b3%e4%ba%8e%e7%94%a8%e6%88%b7%e6%9d%83%e9%99%90%e7%9a%84%e8%ae%be%e8%ae%a1)
+      - [数据库配置](#%e6%95%b0%e6%8d%ae%e5%ba%93%e9%85%8d%e7%bd%ae)
+      - [注册/登录相关代码](#%e6%b3%a8%e5%86%8c%e7%99%bb%e5%bd%95%e7%9b%b8%e5%85%b3%e4%bb%a3%e7%a0%81)
+    - [达到改进目标用到的技术](#%e8%be%be%e5%88%b0%e6%94%b9%e8%bf%9b%e7%9b%ae%e6%a0%87%e7%94%a8%e5%88%b0%e7%9a%84%e6%8a%80%e6%9c%af)
+      - [架构选择](#%e6%9e%b6%e6%9e%84%e9%80%89%e6%8b%a9)
+      - [Spring Security](#spring-security)
+  - [Reed-Solomon](#reed-solomon)
+  - [WebAssembly](#webassembly)
+  - [Token 实现身份验证](#token-%e5%ae%9e%e7%8e%b0%e8%ba%ab%e4%bb%bd%e9%aa%8c%e8%af%81)
+    - [Token 概述](#token-%e6%a6%82%e8%bf%b0)
+    - [JWT 标准](#jwt-%e6%a0%87%e5%87%86)
+    - [非对称加密](#%e9%9d%9e%e5%af%b9%e7%a7%b0%e5%8a%a0%e5%af%86)
+    - [潜在风险](#%e6%bd%9c%e5%9c%a8%e9%a3%8e%e9%99%a9)
+    - [其他](#%e5%85%b6%e4%bb%96-1)
 - [技术路线](#%e6%8a%80%e6%9c%af%e8%b7%af%e7%ba%bf)
-	- [前端](#%e5%89%8d%e7%ab%af)
-	- [客户端](#%e5%ae%a2%e6%88%b7%e7%ab%af)
-	- [服务器](#%e6%9c%8d%e5%8a%a1%e5%99%a8)
-	- [其他](#%e5%85%b6%e4%bb%96-2)
+  - [前端](#%e5%89%8d%e7%ab%af)
+  - [客户端](#%e5%ae%a2%e6%88%b7%e7%ab%af)
+  - [服务器](#%e6%9c%8d%e5%8a%a1%e5%99%a8)
+  - [其他](#%e5%85%b6%e4%bb%96-2)
 - [参考文献](#%e5%8f%82%e8%80%83%e6%96%87%e7%8c%ae)
 
 ## 项目介绍
@@ -358,7 +362,79 @@ Spring Security 是一个Spring生态中安全方面的框架，能够为基于 
 
 ### WebAssembly
 
-### TODO 实现分离数据与控制链接的技术
+### Token 实现身份验证
+
+在数据连接和控制连接分离之后，用户直接与存储节点建立数据连接，此时需要在存储节点实现对用户身份的验证，来保证安全性。
+
+#### Token 概述
+
+使用基于 Token 的身份验证方法，在服务端不需要存储用户的登录记录。大概的流程是这样的：
+
+1. 客户端使用用户名跟密码请求登录
+1. 服务端收到请求，去验证用户名与密码
+1. 验证成功后，服务端会签发一个 Token，再把这个 Token 发送给客户端
+1. 客户端收到 Token 以后可以把它存储起来，比如放在 Cookie 里或者 Local Storage 里
+1. 客户端每次向服务端请求资源的时候需要带着服务端签发的 Token
+1. 服务端收到请求，然后去验证客户端请求里面带着的 Token，如果验证成功，就向客户端返回请求的数据
+
+#### JWT 标准
+
+Token 的实现方式可以有很多，下面以 JSON Web Tokens 为例。
+
+JWT 标准的 Token 有三个部分：
+
+- header（头部）
+- payload（数据）
+- signature（签名）
+
+Header 用于说明如何处理这个 Token，包含的属性 alg 用于指明加密算法
+
+```json
+{
+    "alg": "HS256"
+}
+```
+
+Payload 里面是 Token 的具体内容，这些内容里面有一些是标准字段，也可以添加其它需要的内容。
+
+例如：
+
+```json
+{
+    "user": "ruby",
+    "admin": true,
+    "exp": "xxx",
+    "fileID": "3"
+}
+```
+
+Signature 里有三个部分，先是用 Base64 编码的 header和payload ，再用加密算法加密。加密的时候放入一个 Secret ，这是一个秘密地存储在服务端的密码。
+
+加密过程类似这样：
+
+```js
+const encodedString = base64UrlEncode(header) + "." + base64UrlEncode(payload);
+HMACSHA256(encodedString, 'secret');
+```
+
+#### 非对称加密
+
+非对称加密算法生成一对公钥和私钥，公钥加密的内容只能用私钥解密，反之同理。并且得到其中一个密钥之后，在数学计算复杂度的意义上很难通过现有手段暴力破解出另一个密钥。因此，在非对称加密的使用中，可以较为放心地发送公钥，而不用担心私钥被破解。
+
+在 Token 的使用过程中采用非对称加密的方式：服务器生成一对密钥，用私钥签发 Token 给用户；公钥分发给各存储设备，用于验证用户 Token 的合法性。这样就可以在存储设备验证用户身份的合法性。
+
+#### 潜在风险
+
+Token 一旦泄露，将会授予拿到 Token 的非法用户合法的权限，这不利于在分布式文件系统中保障数据的安全性。
+
+可以通过两个途径解决：
+
+1. 加密传输 Token，例如使用 sslsocket 替代普通 socket
+2. 对文件进行加密，保证收集到足够碎片也无法复原文件。
+
+TODO link：
+[基于 Token 的身份验证：JSON Web Token](https://ninghao.net/blog/2834)
+
 
 #### 其他
 
