@@ -328,9 +328,18 @@ Spring Security主要是从两个方面解决安全性问题：
 - web请求级别：使用servlet过滤器保护web请求并限制URL级别的访问；
 - 方法调用级别：使用Spring AOP保护方法调用，确保具有适当权限的用户采用访问安全保护的方。
 
-### Reed-Solomon
+### Reed-Solomon 码
 
-### WebAssembly
+纠删码本身目前已经是一种比较成熟的算法，且其中的 Reed-Solomon 算法是比较早并且已
+经有开源实现的一种算法，相对引入系统的难度较低。  
+
+#### 现有的开源项目
+
+Backblaze 是一家数据储存服务供应商，开源提供了一个使用 Java 编写的 Reed-Solomon 库。以此为基础实现了许多其他语言如 Go，Python 编写的 RS 码项目，在 GitHub 上可以找到。为了在浏览器端实现文件编解码以减少服务器的工作量，我们需要应用 WebAssembly 以编译现有的开源算法。
+
+#### 应用WebAssembly
+
+WebAssembly（wasm）是一个实验性的低级编程语言，应用于浏览器内的客户端。WebAssembly 是便携式的抽象语法树，被设计来提供比 JavaScript 更快速的编译及运行。 WebAssembly 将让开发者能运用自己熟悉的编程语言（最初以 C/C++ 作为实现目标）编译，再藉虚拟机引擎在浏览器内运行。WebAssembly的开发团队分别来自 Mozilla、Google、Microsoft、Apple，代表着四大网络浏览器 Firefox、Chrome、Microsoft Edge、Safari。2017年11月，以上四个浏览器都开始实验性的支持 WebAssembly。WebAssembly 于 2019 年 12 月 5 日成为万维网联盟（W3C）的推荐，与 HTML，CSS 和 JavaScript 一起，成为 Web 的第四种语言。
 
 ### Token 实现身份验证
 
