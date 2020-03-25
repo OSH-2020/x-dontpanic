@@ -83,7 +83,7 @@ RS 编码以 word 为编码和解码单位，大的数据块拆分到字长为 w
 
 把输入数据视为向量 $D=(D_1,D_2,\dots,D_n)$, 编码后数据视为向量$(D_1, D_2,\dots, D_n, C_1, C_2,.., C_m)$，RS 编码可视为如下图所示矩阵运算。
 
-![img](C:\Users\Xavier\Documents\GitHub\x-dontpanic\docs\research-RS-1)
+![img](files/research-RS-1)
 
 上图最左边是编码矩阵（或称为生成矩阵、分布矩阵，Distribution Matrix），编码矩阵需要满足任意 n * n 子矩阵可逆。
 
@@ -95,23 +95,23 @@ RS 最多能容忍 m 个数据块被删除。 数据恢复的过程如下：
 
 （1）假设 $D_1$、$D_4$、$C_2$ 丢失，从编码矩阵中删掉丢失的数据块/编码块对应的行。
 
-![img](C:\Users\Xavier\Documents\GitHub\x-dontpanic\docs\research-RS-2)
+![img](files\research-RS-2)
 
 根据图 1 所示 RS 编码运算等式，可以得到如下 $B'$ 以及等式。
 
-![img](C:\Users\Xavier\Documents\GitHub\x-dontpanic\docs\research-RS-3)
+![img](files\research-RS-3)
 
 （2）由于 $B'$ 是可逆的，记 $B'$ 的逆矩阵为 $B'^{-1}$，则 $B' * B'^{-1} = I$ 单位矩阵。两边左乘 $B'$ 逆矩阵。
 
-![img](C:\Users\Xavier\Documents\GitHub\x-dontpanic\docs\research-RS-4)
+![img](files\research-RS-4)
 
 （3）得到如下原始数据 $D$ 的计算公式
 
-![img](C:\Users\Xavier\Documents\GitHub\x-dontpanic\docs\research-RS-5)
+![img](files\research-RS-5)
 
 即恢复原始数据 $D$ ：
 
-![img](C:\Users\Xavier\Documents\GitHub\x-dontpanic\docs\research-RS-6)
+![img](files\research-RS-6)
 
 #### 编码矩阵
 
@@ -119,11 +119,11 @@ RS 最多能容忍 m 个数据块被删除。 数据恢复的过程如下：
 
 在线性代数中有一种矩阵称为范德蒙德矩阵，它的任意的子方阵均为可逆方阵。一个m行n列的范德蒙德矩阵定义如下，其中A_i 均不相同，且不为0。
 
-![Vandermonde1](C:\Users\Xavier\Documents\GitHub\x-dontpanic\docs\Vandermonde1.jpg)
+![img](files\feasibility-RS-Vandermonde-1)
 
 令$A_1, A_2 \dots A_n$ 分别为 $1,2,3,\dots,n$，则得到范德蒙德矩阵为：
 
-![Vandermonde2](C:\Users\Xavier\Documents\GitHub\x-dontpanic\docs\Vandermonde2.jpg)
+![img](files\feasibility-RS-Vandermonde-2)
 
 编码矩阵就是单位矩阵和范德蒙德矩阵的组合。输入数据 $D$ 和编码矩阵的乘积就是编码后的数据。 
 采用这种方法的算法复杂度还是比较高的，编码复杂度为 $O(mn)$，其中 m 为校验数据个数，n 为输入数据个数。解码复杂度为 $O(n^3)$。
@@ -139,13 +139,13 @@ RS 最多能容忍 m 个数据块被删除。 数据恢复的过程如下：
 
 柯西矩阵的描述如下： 
 
-![Cauchy1](C:\Users\Xavier\Documents\GitHub\x-dontpanic\docs\Cauchy1.jpg)
+![img](files/feasibility-RS-Cauchy-1)
 
 $Xi$ 和 $Yi$ 都是迦罗华域 $GF(2^w)$ 中的元素。
 
 基于柯西矩阵的编码矩阵：
 
-![Cauchy2](C:\Users\Xavier\Documents\GitHub\x-dontpanic\docs\Cauchy2.jpg)
+![img](files\feasibility-RS-Cauchy-2)
 
 ##### 柯西编解码过程优化 
 
@@ -157,12 +157,12 @@ $Xi$ 和 $Yi$ 都是迦罗华域 $GF(2^w)$ 中的元素。
 
 例如，$GF(2^3)$ 域中的元素可以表示成 $GF(2)$ 域中的二进制矩阵： 
 
-![GF1](C:\Users\Xavier\Documents\GitHub\x-dontpanic\docs\GF1.jpg)
+![img](files\feasibility-RS-GF-1)
 
 
 上图中，黑色方块表示逻辑1，白色方块表示逻辑0。通过这种转换， $GF(2^w)$ 域中的阵列就可以转换成 $GF(2)$ 域中的二进制阵列。生成矩阵的阵列转换表示如下：
 
- ![GF2](C:\Users\Xavier\Documents\GitHub\x-dontpanic\docs\GF2.jpg)
+ ![img](files\feasibility-RS-GF-2)
 
 
 在 $GF(2^w)$ 域中的编码矩阵为 $K*(K+m)$，转换到 $GF(2)$ 域中，使用二进制矩阵表示，编码矩阵变成了 $wk* w(k+m)$ 二进制矩阵。
@@ -171,7 +171,7 @@ $Xi$ 和 $Yi$ 都是迦罗华域 $GF(2^w)$ 中的元素。
 
 和范德蒙编解码中可能使用的对数/反对数方法相比，这种方法不需要构建对数或反对数表，可以支持w为很大的GF域空间。采用这种有限域转换的方法之后，柯西编码运算可以表示如下：
 
-![GF3](C:\Users\Xavier\Documents\GitHub\x-dontpanic\docs\GF3.jpg)
+![img](files/feasibility-RS-GF-3)
 
 使用柯西矩阵要优于范德蒙德矩阵的方法，柯西矩阵的运算复杂度为 $O(n *(n - m))$，解码复杂度为 $O(n^2)$。
 
