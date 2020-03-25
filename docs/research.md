@@ -430,7 +430,7 @@ NFS 最主要的一个特点是无记忆性（第四代除外），其不会保�
 
 ## 参考文献
 
-[docker 技术](https://blog.csdn.net/qq_43371556/article/details/102631158)
-[容器化技术与 docker](https://www.jianshu.com/p/34efcaa92ae4)
-[OpenVPN 的工作原理](http://blog.sina.com.cn/s/blog_6d51d1b70101cs5m.html)
-[纠删码原理](https://blog.csdn.net/shelldon/article/details/54144730)
+- [docker 技术](https://blog.csdn.net/qq_43371556/article/details/102631158)
+- [容器化技术与 docker](https://www.jianshu.com/p/34efcaa92ae4)
+- [OpenVPN 的工作原理](http://blog.sina.com.cn/s/blog_6d51d1b70101cs5m.html)
+- [纠删码原理](https://blog.csdn.net/shelldon/article/details/54144730)
