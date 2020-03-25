@@ -409,7 +409,7 @@ Token 一旦泄露，将会授予拿到 Token 的非法用户合法的权限，�
 TODO link：
 [基于 Token 的身份验证：JSON Web Token](https://ninghao.net/blog/2834)
 
-#### OpenVPN 建立虚拟局域网
+### OpenVPN 建立虚拟局域网
 
 数据连接直接建立在用户和存储设备之间还会产生一个问题：寻址。中央服务器通常有公网IP，但是寻常的存储设备在NAT之后。两个在 NAT 背后的设备没有办法直接通信。
 
@@ -428,7 +428,7 @@ OpenVPN 服务器一般需要配置一个虚拟 IP 地址池和一个自用的�
 TODO link：
 [OpenVPN 的工作原理](http://blog.sina.com.cn/s/blog_6d51d1b70101cs5m.html)
 
-#### 其他
+### 其他
 
 ## 技术路线
 
