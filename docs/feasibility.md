@@ -34,8 +34,8 @@
 		- [JWT 标准](#jwt-%e6%a0%87%e5%87%86)
 		- [非对称加密](#%e9%9d%9e%e5%af%b9%e7%a7%b0%e5%8a%a0%e5%af%86)
 		- [潜在风险](#%e6%bd%9c%e5%9c%a8%e9%a3%8e%e9%99%a9)
-		- [OpenVPN 建立虚拟局域网](#openvpn-%e5%bb%ba%e7%ab%8b%e8%99%9a%e6%8b%9f%e5%b1%80%e5%9f%9f%e7%bd%91)
-		- [其他](#%e5%85%b6%e4%bb%96-1)
+	- [OpenVPN 建立虚拟局域网](#openvpn-%e5%bb%ba%e7%ab%8b%e8%99%9a%e6%8b%9f%e5%b1%80%e5%9f%9f%e7%bd%91)
+	- [其他](#%e5%85%b6%e4%bb%96-1)
 - [技术路线](#%e6%8a%80%e6%9c%af%e8%b7%af%e7%ba%bf)
 	- [前端](#%e5%89%8d%e7%ab%af)
 	- [客户端](#%e5%ae%a2%e6%88%b7%e7%ab%af)
@@ -51,15 +51,29 @@
 
 ### 容器化技术
 
-容器化技术可以让我们在一个资源隔离的进程中运行应用及其依赖项、运行应用程序所必需的组件都将打包成一个可以复用的镜像。在运行环境改变时，或者网络拓扑、安全策略和存储方案变化时，软件可能会显现一些出乎意料的问题；而容器化技术使开发环境和运行环境统一。同时容器并不像虚拟机那样效率低下、模拟全部硬件、对于很多轻量型应用小题大做，它只虚拟化了文件系统、网络、运行环境等，减少很多虚拟化开销。容器软件有 LXC/LXD、Docker、Solaris Zones、Kubernetes 等等。
+容器化技术可以让我们在一个资源隔离的进程中运行应用及其依赖项、运行应用程序所必需的组件都将打包成一个可以复用的镜像。在运行环境改变时，或者网络拓扑、安全策略和存储方案变化时，软件可能会显现一些出乎意料的问题；而容器化技术使开发环境和运行环境统一。同时容器并不像虚拟机那样模拟全部硬件（这对于很多轻量型应用是小题大做），它只虚拟化了文件系统、网络、运行环境等，在核心本地运行指令，不需要任何专门的接口翻译和系统调用替换机制，减少了很多虚拟化开销。
+
+容器软件有 LXC/LXD、Docker、Solaris Zones、Kubernetes 等等：
+
+![feasibility-container_history](files/feasibility-container_history.webp)
+
+CGroup（Control Groups）是 Linux 内核提供的一种可以限制、记录、隔离进程组使用的资源的系统。CGroup 将任意进程进行分组化管理，有内存控制器、进程调度控制器、虚拟文件系统等。运行中的内核可以用 CGroup 的子系统 /proc/cgroup 来确认。
+
+Namespace，包括 CLONE_NEWCGROUP、CLONE_NEWIPC、CLONE_NEWNET、CLONE_NEWNS、CLONE_NEWPID、CLONE_NEWUSER、CLONE_NEWUTS 这七个选项，是对全局系统资源的一种封装隔离。处于不同 Namespace 的进程拥有独立的全局系统资源，改变一个 Namespace 中的系统资源只会影响当前 Namespace 里的进程，对其他 Namespace 中的进程没有影响。内核将这些命名空间保存在 /proc/[pid]/ns/ 目录下。
+
+![feasibility-lxc_and_docker-1](files/feasibility-lxc_and_docker-1.png)
+
+LXC/LXD（Linux Container）容器来自进程控制群组 cgroup 和命名空间 namespaces，使得容器内的进程相互隔离，但是 LXC/LXD 包含了完整的操作系统，对于本项目的小型分布式系统并不友好。
 
 #### 容器化技术的代表：Docker
 
 ![feasibility-docker](files/research-docker.png)
 
-LXC/LXD（Linux Container）来自进程控制群组 cgroup 和命名空间 namespaces，使得进程之间相互隔离，但是 LXC/LXD 包含了完整的操作系统；而 Docker 容器将应用和其依赖环境全部打包到一个单一对象中，在不包含完整的操作系统时就能运行普通应用，更加轻量级，可移植性更好。Docker 的可移植性和轻量级的特性，可以使我们轻松地完成动态管理的工作负担，并根据需求指示，实时扩展或拆除应用程序和服务。
+Docker 容器将应用和其依赖环境打包在一起，在不包含完整的操作系统时就能运行普通应用，更加轻量级，可移植性更好。Docker 的可移植性和轻量级的特性，可以使我们轻松地完成动态管理的工作负担，并根据需求指示，实时扩展或拆除应用程序和服务。
 
-![feasibility-lxc_and_docker-1](files/feasibility-lxc_and_docker-1.png)
+Docker 也使用了进程控制群组和命名空间去隔离不同容器内的进程。Docker 中的每一个镜像都是由一系列的只读层组成的，Dockerfile 中的每一个命令都会在已有的只读层上创建一个新的层。docker run 可以在镜像的最上层添加一个可写的容器层，所有运行时容器的修改其实都是对这个容器读写层的修改。
+
+（参考：https://www.jianshu.com/p/34efcaa92ae4）
 
 ### 多用户权限支持——RBAC介绍
 
