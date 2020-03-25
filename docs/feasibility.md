@@ -311,147 +311,7 @@ Query 类定义了对上述五个表查询、修改、删除、新增条目的�
 
 （五）对 ResultSet 类实例与 Statement 类实例，执行 close 函数关闭连接； 
 
-（六）在 closeConnection 函数中，调用 Connection 类实例 close 函数关闭连接。 
-
-##### 注册/登录相关代码
-
-UserReg.java
-
-```java
-package userManagement;
-
-import com.opensymphony.xwork2.ActionSupport;
-
-import database.*;
-
-public class UserReg extends ActionSupport{
-
-	private	static final long serialVersionUID = 1L;
-	private String userName;
-	private String userPasswd;
-	//用来返回结果给前端
-    private	String	result;
-    
-    public	void	setResult(String result)
-    {
-    	this.result = result;
-    }
-    
-    public	String	getResult()
-    {
-    	return this.result;
-    }
-    
-	public void setUserName(String name)
-	{
-		this.userName = name;
-	}
-	
-	public void setUserPasswd(String Passwd)
-	{
-		this.userPasswd = Passwd;
-	}
-	
-	public String getUserName()
-	{
-		return this.userName;
-	}
-	
-	public String getUserPasswd()
-	{
-		return this.userPasswd;
-	}
-	
-	@Override  
-	public String execute() throws Exception
-	{
-		
-		Query query = new Query();
-		int ID = query.addUser(userName, userPasswd);
-		query.closeConnection();
-		if(ID==-1)
-			result = "注册失败!";
-		else
-			result = "恭喜你，注册成功!";
-		return "success";
-	}
-}
-```
-
-UserLogin.java
-
-```java
-package userManagement;
-
-import com.opensymphony.xwork2.ActionSupport;
-
-import database.*;
-
-public class UserLogin extends ActionSupport{
-
-	private	static final long serialVersionUID = 1L;
-	private String userName;
-	private String userPasswd;
-	//用来返回结果给前端
-    private	String	result;
-    
-    public	void	setResult(String result)
-    {
-    	this.result = result;
-    }
-    
-    public	String	getResult()
-    {
-    	return this.result;
-    }
-    
-	public void setUserName(String name)
-	{
-		this.userName = name;
-	}
-	
-	public void setUserPasswd(String Passwd)
-	{
-		this.userPasswd = Passwd;
-	}
-	
-	public String getUserName()
-	{
-		return this.userName;
-	}
-	
-	public String getUserPasswd()
-	{
-		return this.userPasswd;
-	}
-	
-	@Override  
-	public String execute() throws Exception
-	{
-		
-		Query query = new Query();
-		String passwdStandard = query.queryUserPasswd(userName);
-		query.closeConnection();
-		
-		if(passwdStandard==null)
-		{
-			result = "登录失败：该用户不存在！";
-			return "success";
-		}
-		if(passwdStandard.compareTo(userPasswd)==0)
-		{
-			result = "login sucessfully!";
-			//System.out.println("登录密码吻合");
-			return "success";	
-		}
-		else
-		{
-			result = "登录失败：密码错误！";
-			return	"success";
-		}
-	}
-}
-```
+（六）在 closeConnection 函数中，调用 Connection 类实例 close 函数关闭连接。
 
 #### 达到改进目标用到的技术
 
@@ -463,7 +323,10 @@ public class UserLogin extends ActionSupport{
 
 Spring Security 是一个Spring生态中安全方面的框架，能够为基于 Spring 的企业应用系统提供声明式的安全访问控制解决方案。
 
+Spring Security主要是从两个方面解决安全性问题：
 
+- web请求级别：使用servlet过滤器保护web请求并限制URL级别的访问；
+- 方法调用级别：使用Spring AOP保护方法调用，确保具有适当权限的用户采用访问安全保护的方。
 
 ### Reed-Solomon
 
