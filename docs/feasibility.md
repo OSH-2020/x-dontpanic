@@ -2,39 +2,45 @@
 
 - [项目介绍](#%e9%a1%b9%e7%9b%ae%e4%bb%8b%e7%bb%8d)
 - [理论依据](#%e7%90%86%e8%ae%ba%e4%be%9d%e6%8d%ae)
-  - [容器化技术](#%e5%ae%b9%e5%99%a8%e5%8c%96%e6%8a%80%e6%9c%af)
-    - [容器化技术的代表：Docker](#%e5%ae%b9%e5%99%a8%e5%8c%96%e6%8a%80%e6%9c%af%e7%9a%84%e4%bb%a3%e8%a1%a8docker)
-  - [多用户权限支持——RBAC介绍](#%e5%a4%9a%e7%94%a8%e6%88%b7%e6%9d%83%e9%99%90%e6%94%af%e6%8c%81rbac%e4%bb%8b%e7%bb%8d)
-  - [纠删码](#%e7%ba%a0%e5%88%a0%e7%a0%81)
-    - [编解码原理](#%e7%bc%96%e8%a7%a3%e7%a0%81%e5%8e%9f%e7%90%86)
-    - [Reed–Solomon 码](#reed%e2%80%93solomon-%e7%a0%81)
-  - [分离数据与控制链接](#%e5%88%86%e7%a6%bb%e6%95%b0%e6%8d%ae%e4%b8%8e%e6%8e%a7%e5%88%b6%e9%93%be%e6%8e%a5)
-    - [上传/下载速度的提升](#%e4%b8%8a%e4%bc%a0%e4%b8%8b%e8%bd%bd%e9%80%9f%e5%ba%a6%e7%9a%84%e6%8f%90%e5%8d%87)
-      - [传统 C/S 模式](#%e4%bc%a0%e7%bb%9f-cs-%e6%a8%a1%e5%bc%8f)
-      - [集中式对等网络](#%e9%9b%86%e4%b8%ad%e5%bc%8f%e5%af%b9%e7%ad%89%e7%bd%91%e7%bb%9c)
-  - [其他](#%e5%85%b6%e4%bb%96)
+	- [容器化技术](#%e5%ae%b9%e5%99%a8%e5%8c%96%e6%8a%80%e6%9c%af)
+		- [容器化技术的代表：Docker](#%e5%ae%b9%e5%99%a8%e5%8c%96%e6%8a%80%e6%9c%af%e7%9a%84%e4%bb%a3%e8%a1%a8docker)
+	- [多用户权限支持——RBAC介绍](#%e5%a4%9a%e7%94%a8%e6%88%b7%e6%9d%83%e9%99%90%e6%94%af%e6%8c%81rbac%e4%bb%8b%e7%bb%8d)
+	- [Reed-Solomon 编码](#reed-solomon-%e7%bc%96%e7%a0%81)
+		- [编解码原理](#%e7%bc%96%e8%a7%a3%e7%a0%81%e5%8e%9f%e7%90%86)
+			- [编码](#%e7%bc%96%e7%a0%81)
+			- [解码](#%e8%a7%a3%e7%a0%81)
+		- [编码矩阵](#%e7%bc%96%e7%a0%81%e7%9f%a9%e9%98%b5)
+			- [基于范德蒙德（Vandermonde）矩阵](#%e5%9f%ba%e4%ba%8e%e8%8c%83%e5%be%b7%e8%92%99%e5%be%b7vandermonde%e7%9f%a9%e9%98%b5)
+			- [基于柯西（Cauchy）矩阵](#%e5%9f%ba%e4%ba%8e%e6%9f%af%e8%a5%bfcauchy%e7%9f%a9%e9%98%b5)
+			- [柯西编解码过程优化](#%e6%9f%af%e8%a5%bf%e7%bc%96%e8%a7%a3%e7%a0%81%e8%bf%87%e7%a8%8b%e4%bc%98%e5%8c%96)
+	- [分离数据与控制链接](#%e5%88%86%e7%a6%bb%e6%95%b0%e6%8d%ae%e4%b8%8e%e6%8e%a7%e5%88%b6%e9%93%be%e6%8e%a5)
+		- [上传/下载速度的提升](#%e4%b8%8a%e4%bc%a0%e4%b8%8b%e8%bd%bd%e9%80%9f%e5%ba%a6%e7%9a%84%e6%8f%90%e5%8d%87)
+			- [传统 C/S 模式](#%e4%bc%a0%e7%bb%9f-cs-%e6%a8%a1%e5%bc%8f)
+			- [集中式对等网络](#%e9%9b%86%e4%b8%ad%e5%bc%8f%e5%af%b9%e7%ad%89%e7%bd%91%e7%bb%9c)
+	- [其他](#%e5%85%b6%e4%bb%96)
 - [技术依据](#%e6%8a%80%e6%9c%af%e4%be%9d%e6%8d%ae)
-  - [Docker](#docker)
-  - [实现多用户权限支持的技术](#%e5%ae%9e%e7%8e%b0%e5%a4%9a%e7%94%a8%e6%88%b7%e6%9d%83%e9%99%90%e6%94%af%e6%8c%81%e7%9a%84%e6%8a%80%e6%9c%af)
-    - [前置项目关于用户权限的设计](#%e5%89%8d%e7%bd%ae%e9%a1%b9%e7%9b%ae%e5%85%b3%e4%ba%8e%e7%94%a8%e6%88%b7%e6%9d%83%e9%99%90%e7%9a%84%e8%ae%be%e8%ae%a1)
-      - [数据库配置](#%e6%95%b0%e6%8d%ae%e5%ba%93%e9%85%8d%e7%bd%ae)
-      - [注册/登录相关代码](#%e6%b3%a8%e5%86%8c%e7%99%bb%e5%bd%95%e7%9b%b8%e5%85%b3%e4%bb%a3%e7%a0%81)
-    - [达到改进目标用到的技术](#%e8%be%be%e5%88%b0%e6%94%b9%e8%bf%9b%e7%9b%ae%e6%a0%87%e7%94%a8%e5%88%b0%e7%9a%84%e6%8a%80%e6%9c%af)
-      - [架构选择](#%e6%9e%b6%e6%9e%84%e9%80%89%e6%8b%a9)
-      - [Spring Security](#spring-security)
-  - [Reed-Solomon](#reed-solomon)
-  - [WebAssembly](#webassembly)
-  - [Token 实现身份验证](#token-%e5%ae%9e%e7%8e%b0%e8%ba%ab%e4%bb%bd%e9%aa%8c%e8%af%81)
-    - [Token 概述](#token-%e6%a6%82%e8%bf%b0)
-    - [JWT 标准](#jwt-%e6%a0%87%e5%87%86)
-    - [非对称加密](#%e9%9d%9e%e5%af%b9%e7%a7%b0%e5%8a%a0%e5%af%86)
-    - [潜在风险](#%e6%bd%9c%e5%9c%a8%e9%a3%8e%e9%99%a9)
-    - [其他](#%e5%85%b6%e4%bb%96-1)
+	- [Docker](#docker)
+	- [实现多用户权限支持的技术](#%e5%ae%9e%e7%8e%b0%e5%a4%9a%e7%94%a8%e6%88%b7%e6%9d%83%e9%99%90%e6%94%af%e6%8c%81%e7%9a%84%e6%8a%80%e6%9c%af)
+		- [前置项目关于用户权限的设计](#%e5%89%8d%e7%bd%ae%e9%a1%b9%e7%9b%ae%e5%85%b3%e4%ba%8e%e7%94%a8%e6%88%b7%e6%9d%83%e9%99%90%e7%9a%84%e8%ae%be%e8%ae%a1)
+			- [数据库配置](#%e6%95%b0%e6%8d%ae%e5%ba%93%e9%85%8d%e7%bd%ae)
+			- [注册/登录相关代码](#%e6%b3%a8%e5%86%8c%e7%99%bb%e5%bd%95%e7%9b%b8%e5%85%b3%e4%bb%a3%e7%a0%81)
+		- [达到改进目标用到的技术](#%e8%be%be%e5%88%b0%e6%94%b9%e8%bf%9b%e7%9b%ae%e6%a0%87%e7%94%a8%e5%88%b0%e7%9a%84%e6%8a%80%e6%9c%af)
+			- [架构选择](#%e6%9e%b6%e6%9e%84%e9%80%89%e6%8b%a9)
+			- [Spring Security](#spring-security)
+	- [Reed-Solomon](#reed-solomon)
+	- [WebAssembly](#webassembly)
+	- [Token 实现身份验证](#token-%e5%ae%9e%e7%8e%b0%e8%ba%ab%e4%bb%bd%e9%aa%8c%e8%af%81)
+		- [Token 概述](#token-%e6%a6%82%e8%bf%b0)
+		- [JWT 标准](#jwt-%e6%a0%87%e5%87%86)
+		- [非对称加密](#%e9%9d%9e%e5%af%b9%e7%a7%b0%e5%8a%a0%e5%af%86)
+		- [潜在风险](#%e6%bd%9c%e5%9c%a8%e9%a3%8e%e9%99%a9)
+		- [OpenVPN 建立虚拟局域网](#openvpn-%e5%bb%ba%e7%ab%8b%e8%99%9a%e6%8b%9f%e5%b1%80%e5%9f%9f%e7%bd%91)
+		- [其他](#%e5%85%b6%e4%bb%96-1)
 - [技术路线](#%e6%8a%80%e6%9c%af%e8%b7%af%e7%ba%bf)
-  - [前端](#%e5%89%8d%e7%ab%af)
-  - [客户端](#%e5%ae%a2%e6%88%b7%e7%ab%af)
-  - [服务器](#%e6%9c%8d%e5%8a%a1%e5%99%a8)
-  - [其他](#%e5%85%b6%e4%bb%96-2)
+	- [前端](#%e5%89%8d%e7%ab%af)
+	- [客户端](#%e5%ae%a2%e6%88%b7%e7%ab%af)
+	- [服务器](#%e6%9c%8d%e5%8a%a1%e5%99%a8)
+	- [其他](#%e5%85%b6%e4%bb%96-2)
 - [参考文献](#%e5%8f%82%e8%80%83%e6%96%87%e7%8c%ae)
 
 ## 项目介绍
@@ -305,147 +311,7 @@ Query 类定义了对上述五个表查询、修改、删除、新增条目的�
 
 （五）对 ResultSet 类实例与 Statement 类实例，执行 close 函数关闭连接； 
 
-（六）在 closeConnection 函数中，调用 Connection 类实例 close 函数关闭连接。 
-
-##### 注册/登录相关代码
-
-UserReg.java
-
-```java
-package userManagement;
-
-import com.opensymphony.xwork2.ActionSupport;
-
-import database.*;
-
-public class UserReg extends ActionSupport{
-
-	private	static final long serialVersionUID = 1L;
-	private String userName;
-	private String userPasswd;
-	//用来返回结果给前端
-    private	String	result;
-    
-    public	void	setResult(String result)
-    {
-    	this.result = result;
-    }
-    
-    public	String	getResult()
-    {
-    	return this.result;
-    }
-    
-	public void setUserName(String name)
-	{
-		this.userName = name;
-	}
-	
-	public void setUserPasswd(String Passwd)
-	{
-		this.userPasswd = Passwd;
-	}
-	
-	public String getUserName()
-	{
-		return this.userName;
-	}
-	
-	public String getUserPasswd()
-	{
-		return this.userPasswd;
-	}
-	
-	@Override  
-	public String execute() throws Exception
-	{
-		
-		Query query = new Query();
-		int ID = query.addUser(userName, userPasswd);
-		query.closeConnection();
-		if(ID==-1)
-			result = "注册失败!";
-		else
-			result = "恭喜你，注册成功!";
-		return "success";
-	}
-}
-```
-
-UserLogin.java
-
-```java
-package userManagement;
-
-import com.opensymphony.xwork2.ActionSupport;
-
-import database.*;
-
-public class UserLogin extends ActionSupport{
-
-	private	static final long serialVersionUID = 1L;
-	private String userName;
-	private String userPasswd;
-	//用来返回结果给前端
-    private	String	result;
-    
-    public	void	setResult(String result)
-    {
-    	this.result = result;
-    }
-    
-    public	String	getResult()
-    {
-    	return this.result;
-    }
-    
-	public void setUserName(String name)
-	{
-		this.userName = name;
-	}
-	
-	public void setUserPasswd(String Passwd)
-	{
-		this.userPasswd = Passwd;
-	}
-	
-	public String getUserName()
-	{
-		return this.userName;
-	}
-	
-	public String getUserPasswd()
-	{
-		return this.userPasswd;
-	}
-	
-	@Override  
-	public String execute() throws Exception
-	{
-		
-		Query query = new Query();
-		String passwdStandard = query.queryUserPasswd(userName);
-		query.closeConnection();
-		
-		if(passwdStandard==null)
-		{
-			result = "登录失败：该用户不存在！";
-			return "success";
-		}
-		if(passwdStandard.compareTo(userPasswd)==0)
-		{
-			result = "login sucessfully!";
-			//System.out.println("登录密码吻合");
-			return "success";	
-		}
-		else
-		{
-			result = "登录失败：密码错误！";
-			return	"success";
-		}
-	}
-}
-```
+（六）在 closeConnection 函数中，调用 Connection 类实例 close 函数关闭连接。
 
 #### 达到改进目标用到的技术
 
@@ -457,9 +323,22 @@ public class UserLogin extends ActionSupport{
 
 Spring Security 是一个Spring生态中安全方面的框架，能够为基于 Spring 的企业应用系统提供声明式的安全访问控制解决方案。
 
-### Reed-Solomon
+Spring Security主要是从两个方面解决安全性问题：
 
-### WebAssembly
+- web请求级别：使用servlet过滤器保护web请求并限制URL级别的访问；
+- 方法调用级别：使用Spring AOP保护方法调用，确保具有适当权限的用户采用访问安全保护的方。
+
+### Reed-Solomon 码
+
+纠删码本身目前已经是一种比较成熟的算法，且其中的 Reed-Solomon 算法是比较早并且已
+经有开源实现的一种算法，相对引入系统的难度较低。  
+
+#### 现有的开源项目
+
+Backblaze 是一家数据储存服务供应商，开源提供了一个使用 Java 编写的 Reed-Solomon 库。以此为基础实现了许多其他语言如 Go，Python 编写的 RS 码项目，在 GitHub 上可以找到。为了在浏览器端实现文件编解码以减少服务器的工作量，我们需要应用 WebAssembly 以编译现有的开源算法。
+
+#### 应用WebAssembly
+WebAssembly（wasm）是一个实验性的低级编程语言，应用于浏览器内的客户端。WebAssembly 是便携式的抽象语法树，被设计来提供比 JavaScript 更快速的编译及运行。 WebAssembly 将让开发者能运用自己熟悉的编程语言（最初以 C/C++ 作为实现目标）编译，再藉虚拟机引擎在浏览器内运行。WebAssembly的开发团队分别来自 Mozilla、Google、Microsoft、Apple，代表着四大网络浏览器 Firefox、Chrome、Microsoft Edge、Safari。2017年11月，以上四个浏览器都开始实验性的支持 WebAssembly。WebAssembly 于 2019 年 12 月 5 日成为万维网联盟（W3C）的推荐，与 HTML，CSS 和 JavaScript 一起，成为 Web 的第四种语言。
 
 ### Token 实现身份验证
 
@@ -534,6 +413,24 @@ Token 一旦泄露，将会授予拿到 Token 的非法用户合法的权限，�
 TODO link：
 [基于 Token 的身份验证：JSON Web Token](https://ninghao.net/blog/2834)
 
+#### OpenVPN 建立虚拟局域网
+
+数据连接直接建立在用户和存储设备之间还会产生一个问题：寻址。中央服务器通常有公网IP，但是寻常的存储设备在NAT之后。两个在 NAT 背后的设备没有办法直接通信。
+
+采用 OpenVPN 构建虚拟的局域网，使得当存储设备和用户不在同一个局域网内时，也能够进行寻址。
+
+工作原理：
+
+OpenVPN 服务器一般需要配置一个虚拟 IP 地址池和一个自用的静态虚拟 IP 地址（静态地址和地址池必须在同一个子网中），然后为每一个成功建立SSL连接的客户端动态分配一个虚拟 IP 地址池中未分配的地址。这样，物理网络中的客户端和 OpenVPN 服务器就连接成一个虚拟网络上的星型结构局域网，OpenVPN 服务器成为每个客户端在虚拟网络上的网关。OpenVPN 服务器同时提供对客户端虚拟网卡的路由管理。当客户端对 OpenVPN 服务器后端的应用服务器的任何访问时，数据包都会经过路由流经虚拟网卡，OpenVPN程序在虚拟网卡上截获数据IP报文，然后使用SSL协议将这些IP报文封装起来，再经过物理网卡发送出去。OpenVPN的服务器和客户端在虚拟网卡之上建立起一个虚拟的局域网络，这个虚拟的局域网对系统的用户来说是透明的。
+
+为了充分利用直接进行数据连接的传输效率，可以对以下情况分类处理：
+
+1. 存储设备已经有公网IP，直接访问
+2. 存储设备和用户在一个物理局域网内，直接访问
+3. 1、2外的其他情况，采用 OpenVPN 的虚拟局域网。
+
+TODO link：
+[OpenVPN 的工作原理](http://blog.sina.com.cn/s/blog_6d51d1b70101cs5m.html)
 
 #### 其他
 
