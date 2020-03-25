@@ -23,12 +23,12 @@
 	- [实现多用户权限支持的技术](#%e5%ae%9e%e7%8e%b0%e5%a4%9a%e7%94%a8%e6%88%b7%e6%9d%83%e9%99%90%e6%94%af%e6%8c%81%e7%9a%84%e6%8a%80%e6%9c%af)
 		- [前置项目关于用户权限的设计](#%e5%89%8d%e7%bd%ae%e9%a1%b9%e7%9b%ae%e5%85%b3%e4%ba%8e%e7%94%a8%e6%88%b7%e6%9d%83%e9%99%90%e7%9a%84%e8%ae%be%e8%ae%a1)
 			- [数据库配置](#%e6%95%b0%e6%8d%ae%e5%ba%93%e9%85%8d%e7%bd%ae)
-			- [注册/登录相关代码](#%e6%b3%a8%e5%86%8c%e7%99%bb%e5%bd%95%e7%9b%b8%e5%85%b3%e4%bb%a3%e7%a0%81)
 		- [达到改进目标用到的技术](#%e8%be%be%e5%88%b0%e6%94%b9%e8%bf%9b%e7%9b%ae%e6%a0%87%e7%94%a8%e5%88%b0%e7%9a%84%e6%8a%80%e6%9c%af)
 			- [架构选择](#%e6%9e%b6%e6%9e%84%e9%80%89%e6%8b%a9)
 			- [Spring Security](#spring-security)
-	- [Reed-Solomon](#reed-solomon)
-	- [WebAssembly](#webassembly)
+	- [Reed-Solomon 码](#reed-solomon-%e7%a0%81)
+		- [现有的开源项目](#%e7%8e%b0%e6%9c%89%e7%9a%84%e5%bc%80%e6%ba%90%e9%a1%b9%e7%9b%ae)
+		- [应用WebAssembly](#%e5%ba%94%e7%94%a8webassembly)
 	- [Token 实现身份验证](#token-%e5%ae%9e%e7%8e%b0%e8%ba%ab%e4%bb%bd%e9%aa%8c%e8%af%81)
 		- [Token 概述](#token-%e6%a6%82%e8%bf%b0)
 		- [JWT 标准](#jwt-%e6%a0%87%e5%87%86)
@@ -51,11 +51,7 @@
 
 ### 容器化技术
 
-由于需要在不增加成本的情况下设置隔离的应用程序和服务器环境，虚拟化变得非常流行。使用虚拟机，我们可以在一台称为主机的计算机内安装一台完整的计算机（称为虚拟机），而不是在每个其他硬件单元上购买和安装服务器。这样的软件有很多：VMware Workstation、Hyper-V、VirtualBox、KVM、XEN 等等。
-
-但是这样的完全虚拟化技术资源利用效率低下，需要模拟全部硬件，且不便于扩展，对于很多轻量型应用是小题大做。而容器只虚拟化了部分操作子系统，如文件系统、网络、运行环境等；容器共享主机内核，没有虚拟化开销，因此性能远远优于虚拟机。容器软件有 LXC/LXD、Docker、Solaris Zones、Kubernetes 等等。
-
-![feasibility-vm_and_container-1](files/feasibility-vm_and_container-1.png)
+容器化技术可以让我们在一个资源隔离的进程中运行应用及其依赖项、运行应用程序所必需的组件都将打包成一个可以复用的镜像。在运行环境改变时，或者网络拓扑、安全策略和存储方案变化时，软件可能会显现一些出乎意料的问题；而容器化技术使开发环境和运行环境统一。同时容器并不像虚拟机那样效率低下、模拟全部硬件、对于很多轻量型应用小题大做，它只虚拟化了文件系统、网络、运行环境等，减少很多虚拟化开销。容器软件有 LXC/LXD、Docker、Solaris Zones、Kubernetes 等等。
 
 #### 容器化技术的代表：Docker
 
