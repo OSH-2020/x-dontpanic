@@ -38,6 +38,7 @@
     - [Hadoop Distributed File System](#hadoop-distributed-file-system)
     - [Network File System](#network-file-system)
     - [分布式文件系统间的对比](#%e5%88%86%e5%b8%83%e5%bc%8f%e6%96%87%e4%bb%b6%e7%b3%bb%e7%bb%9f%e9%97%b4%e7%9a%84%e5%af%b9%e6%af%94)
+  - [参考文献](#%e5%8f%82%e8%80%83%e6%96%87%e7%8c%ae)
 
 ## 项目成员
 
@@ -426,3 +427,10 @@ NFS 最主要的一个特点是无记忆性（第四代除外），其不会保�
 - 实现层次：与现有的大多数分布式文件系统相同，我们在客户进程的层次提供服务，和 AFS 相比，我们的分布式文件系统不需要修改操作系统；
 - 备份方式：我们基于 Erasure Code 技术实现数据的备份，这在设备经常离线的系统中可以较 GFS 采用的文件完整的方式大大节省存储空间；
 - 网络环境：目前，大多数高性能分布式文件系统只支持在局域网上运行，而我们的分布式文件系统可以在互联网上运行。
+
+## 参考文献
+
+[docker 技术](https://blog.csdn.net/qq_43371556/article/details/102631158)
+[容器化技术与 docker](https://www.jianshu.com/p/34efcaa92ae4)
+[OpenVPN 的工作原理](http://blog.sina.com.cn/s/blog_6d51d1b70101cs5m.html)
+[纠删码原理](https://blog.csdn.net/shelldon/article/details/54144730)
