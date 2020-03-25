@@ -44,11 +44,17 @@ LXC/LXD（Linux Container）来自进程控制群组 cgroup 和命名空间 name
 
 ### 分离数据与控制链接
 
-### //其他
+### 其他
 
 ## 技术依据
 
 ### Docker
+
+若采用 tomcat 和 apache 方案分别部署 html 和 jsp 页面，则可以用 Docker 来管理 Apache 和 Tomcat，动静分离。
+
+使用 `docker search tomcat` 可以查到存在 Docker Hub 上的 Docker Tomcat 镜像。
+
+（tmp：参考 github.com/Paritosh-Anand/Docker-Httpd-Tomcat 和 github.com/EdSingleton/docker-httpd-mod_jk）
 
 ### 实现多用户权限支持的技术
 
@@ -280,7 +286,7 @@ Spring Security 是一个Spring生态中安全方面的框架，能够为基于 
 
 ### TODO 实现分离数据与控制链接的技术
 
-#### //其他
+#### 其他
 
 ## 技术路线
 
