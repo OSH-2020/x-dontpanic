@@ -335,18 +335,76 @@ Query 类定义了对上述五个表查询、修改、删除、新增条目的�
 
 #### 达到改进目标用到的技术
 
-##### 架构选择
+##### 新的数据库设计
 
-服务器端采用三层架构的方式，分成了表现层、业务层和持久层。表现层使用JSP和Servlet程序，与浏览器客户端进行数据的交互。业务层使用Service程序，进行业务逻辑处理和事务处理。持久层使用Dao程序，进行数据库的持久化操作。
+RBAC是基于角色的权限访问技术，需要设计新的数据表：
 
-##### Spring Security
+```
+用户表
+角色表
+权限表
+用户角色表
+角色权限表
+```
 
-Spring Security 是一个Spring生态中安全方面的框架，能够为基于 Spring 的企业应用系统提供声明式的安全访问控制解决方案。
+考虑到本项目私人网盘的定位，设计思路如下：
 
-Spring Security主要是从两个方面解决安全性问题：
+- 每个用户创建时，同时生成同名的角色，角色唯一对应只有自己有权限访问的网盘空间，即角色与权限一对一，权限包含浏览内容和下载等等；
 
-- web请求级别：使用servlet过滤器保护web请求并限制URL级别的访问；
-- 方法调用级别：使用Spring AOP保护方法调用，确保具有适当权限的用户采用访问安全保护的方。
+- 提供创建小组的功能：角色表生成新的小组角色，小组角色唯一对应网盘空间，权限仍为一对一；
+- 同时考虑用户与小组两类角色，用户与角色是多对多的关系。为了建立更明晰的表格，将用户-用户权限严格绑定，只额外建立用户小组角色表，暂考虑用户只能加入0或1个小组；
+- 从分析可以看出，角色与权限一一对应，可以把角色权限表、权限表纳入角色表中，即只需用户表、小组角色表、用户小组角色表；
+- 暂不考虑超级管理员。
+
+具体设计如下：（待实现的加粗显示）
+
+表 FILE 用于存储文件的逻辑位置与属性
+
+表 FRAGMENT 用于存储碎片的物理位置
+
+表 REQUEST 用于存储服务器对客户端的碎片请求
+
+表 DEVICE 用于存储系统中客户端的信息
+
+**表 USER 用于存储网页的注册用户**
+
+**表 GROUP_ROLE 用于存储小组角色**
+
+**表 USER_GROUP 用于存储用户对应小组角色的信息**
+
+```mysql
+CREATE TABLE `USER` ( 
+`ID` int NOT NULL AUTO_INCREMENT, 
+`NAME` char(20) NOT NULL UNIQUE DEFAULT '', 
+`PASSWD` char(20) NOT NULL DEFAULT '', 
+`URIS` varchar(1000) NOT NULL DEFAULT '',
+PRIMARY KEY (`ID`) 
+) ENGINE=InnoDB DEFAULT CHARSET=utf8; 
+
+CREATE TABLE `GROUP_ROLE` ( 
+`ID` int NOT NULL AUTO_INCREMENT, 
+`NAME` char(20) NOT NULL UNIQUE DEFAULT '', 
+`URIS` varchar(1000) NOT NULL DEFAULT '',
+PRIMARY KEY (`ID`) 
+) ENGINE=InnoDB DEFAULT CHARSET=utf8; 
+
+CREATE TABLE `USER_GROUP` (
+`ID` int NOT NULL AUTO_INCREMENT, 
+`GID` int NOT NULL DEFAULT '0',
+
+) ENGINE=InnoDB DEFAULT CHARSET=utf8; 
+```
+
+##### 新的web端设计
+
+思路如下：（待实现的加粗显示）
+
+- 注册时，判断用户名不重复，**分配ID等等数据模块**；
+
+- 登录时，输入用户名、密码，检测对应模块，**跳转至特定文件空间（涉及到由抓取所有文件列表到抓取特定文件列表的转变）**；
+- **原网页基础上添加创建小组、加入小组等功能（涉及到网页设计以及和数据库交互）**。
+
+（参考RBAC库：https://github.com/peer44/java-rbac）
 
 ### Reed-Solomon 码
 
