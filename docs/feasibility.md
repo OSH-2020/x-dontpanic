@@ -19,13 +19,13 @@
 			- [集中式对等网络](#%e9%9b%86%e4%b8%ad%e5%bc%8f%e5%af%b9%e7%ad%89%e7%bd%91%e7%bb%9c)
 	- [其他](#%e5%85%b6%e4%bb%96)
 - [技术依据](#%e6%8a%80%e6%9c%af%e4%be%9d%e6%8d%ae)
-	- [Docker](#docker)
+	- [Docker 部署服务端](#docker-%e9%83%a8%e7%bd%b2%e6%9c%8d%e5%8a%a1%e7%ab%af)
 	- [实现多用户权限支持的技术](#%e5%ae%9e%e7%8e%b0%e5%a4%9a%e7%94%a8%e6%88%b7%e6%9d%83%e9%99%90%e6%94%af%e6%8c%81%e7%9a%84%e6%8a%80%e6%9c%af)
 		- [前置项目关于用户权限的设计](#%e5%89%8d%e7%bd%ae%e9%a1%b9%e7%9b%ae%e5%85%b3%e4%ba%8e%e7%94%a8%e6%88%b7%e6%9d%83%e9%99%90%e7%9a%84%e8%ae%be%e8%ae%a1)
 			- [数据库配置](#%e6%95%b0%e6%8d%ae%e5%ba%93%e9%85%8d%e7%bd%ae)
 		- [达到改进目标用到的技术](#%e8%be%be%e5%88%b0%e6%94%b9%e8%bf%9b%e7%9b%ae%e6%a0%87%e7%94%a8%e5%88%b0%e7%9a%84%e6%8a%80%e6%9c%af)
-			- [架构选择](#%e6%9e%b6%e6%9e%84%e9%80%89%e6%8b%a9)
-			- [Spring Security](#spring-security)
+			- [新的数据库设计](#%e6%96%b0%e7%9a%84%e6%95%b0%e6%8d%ae%e5%ba%93%e8%ae%be%e8%ae%a1)
+			- [新的web端设计](#%e6%96%b0%e7%9a%84web%e7%ab%af%e8%ae%be%e8%ae%a1)
 	- [Reed-Solomon 码](#reed-solomon-%e7%a0%81)
 		- [现有的开源项目](#%e7%8e%b0%e6%9c%89%e7%9a%84%e5%bc%80%e6%ba%90%e9%a1%b9%e7%9b%ae)
 		- [应用WebAssembly](#%e5%ba%94%e7%94%a8webassembly)
@@ -251,13 +251,11 @@ $Xi$ 和 $Yi$ 都是迦罗华域 $GF(2^w)$ 中的元素。
 
 ## 技术依据
 
-### Docker
+### Docker 部署服务端
 
-本项目使用了 Apache 和 Tomcat，把互联网网页作为用户的交互页面。Apache 作为一个 Web 服务器，缺乏处理 JSP/Servlet 的功能。为了能够处理 JSP/Servlet 的请求，需要使用 JSP/Servlet 容器如 Tomcat。虽然 Tomcat 本身也是个 Web 服务器，但是其功能远不及 Apache，所以 Tomcat 往往作为 JSP/Servlet 容器使用。mod_jk（JK）是 Apache 与 Tomcat 的连接器，附带集群和负载均衡。
+本项目使用了 Apache 和 Tomcat，使用网页作为用户的交互页面。Apache 作为一个 Web 服务器，缺乏处理 JSP 的功能，为了能够处理 JSP 的请求，需要使用 JSP 容器如 Tomcat。mod_jk（JK）是 Apache 与 Tomcat 的连接器，附带集群和负载均衡。就 Docker 而言，应该对每个服务使用单独容器，如 Web 服务器运行在一个容器上，应用程序服务器运行在另一个容器上。若采用 Apache 和 Tomcat 方案分别部署 HTML 和 JSP 页面，则容易使用 Docker 分别管理 Apache 和 Tomcat，动静分离。
 
-就 Docker 而言，应该对每个服务使用单独容器，如 Web 服务器运行在一个容器上，应用程序服务器运行在另一个容器上。若采用 Apache 和 Tomcat 方案分别部署 html 和 jsp 页面，则容易使用 Docker 分别管理 Apache 和 Tomcat，动静分离。
-
-使用 `docker search tomcat` 可以查到存在 Docker Hub 上的 Docker Tomcat 镜像。
+使用 Docker 创建容器时，基础镜像通常是 Ubuntu 或 Centos，不管哪个镜像的大小都在 100MB 以上。Alpine Linux 采用了 musl libc 和 busybox 以减小系统的体积和运行时消耗，相比于其他 Linux 的 Docker 镜像，它的占用仅仅只有 5MB。故项目会采用 docker-alpine-java 镜像，同时提供 JRE 运行时和较小的镜像体积。
 
 （tmp：参考 github.com/Paritosh-Anand/Docker-Httpd-Tomcat 和 github.com/EdSingleton/docker-httpd-mod_jk）
 
