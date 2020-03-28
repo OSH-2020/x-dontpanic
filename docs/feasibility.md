@@ -23,19 +23,19 @@
 	- [实现多用户权限支持的技术](#%e5%ae%9e%e7%8e%b0%e5%a4%9a%e7%94%a8%e6%88%b7%e6%9d%83%e9%99%90%e6%94%af%e6%8c%81%e7%9a%84%e6%8a%80%e6%9c%af)
 		- [前置项目关于用户权限的设计](#%e5%89%8d%e7%bd%ae%e9%a1%b9%e7%9b%ae%e5%85%b3%e4%ba%8e%e7%94%a8%e6%88%b7%e6%9d%83%e9%99%90%e7%9a%84%e8%ae%be%e8%ae%a1)
 			- [数据库配置](#%e6%95%b0%e6%8d%ae%e5%ba%93%e9%85%8d%e7%bd%ae)
-			- [注册/登录相关代码](#%e6%b3%a8%e5%86%8c%e7%99%bb%e5%bd%95%e7%9b%b8%e5%85%b3%e4%bb%a3%e7%a0%81)
 		- [达到改进目标用到的技术](#%e8%be%be%e5%88%b0%e6%94%b9%e8%bf%9b%e7%9b%ae%e6%a0%87%e7%94%a8%e5%88%b0%e7%9a%84%e6%8a%80%e6%9c%af)
 			- [架构选择](#%e6%9e%b6%e6%9e%84%e9%80%89%e6%8b%a9)
 			- [Spring Security](#spring-security)
-	- [Reed-Solomon](#reed-solomon)
-	- [WebAssembly](#webassembly)
+	- [Reed-Solomon 码](#reed-solomon-%e7%a0%81)
+		- [现有的开源项目](#%e7%8e%b0%e6%9c%89%e7%9a%84%e5%bc%80%e6%ba%90%e9%a1%b9%e7%9b%ae)
+		- [应用WebAssembly](#%e5%ba%94%e7%94%a8webassembly)
 	- [Token 实现身份验证](#token-%e5%ae%9e%e7%8e%b0%e8%ba%ab%e4%bb%bd%e9%aa%8c%e8%af%81)
 		- [Token 概述](#token-%e6%a6%82%e8%bf%b0)
 		- [JWT 标准](#jwt-%e6%a0%87%e5%87%86)
 		- [非对称加密](#%e9%9d%9e%e5%af%b9%e7%a7%b0%e5%8a%a0%e5%af%86)
 		- [潜在风险](#%e6%bd%9c%e5%9c%a8%e9%a3%8e%e9%99%a9)
-		- [OpenVPN 建立虚拟局域网](#openvpn-%e5%bb%ba%e7%ab%8b%e8%99%9a%e6%8b%9f%e5%b1%80%e5%9f%9f%e7%bd%91)
-		- [其他](#%e5%85%b6%e4%bb%96-1)
+	- [OpenVPN 建立虚拟局域网](#openvpn-%e5%bb%ba%e7%ab%8b%e8%99%9a%e6%8b%9f%e5%b1%80%e5%9f%9f%e7%bd%91)
+	- [其他](#%e5%85%b6%e4%bb%96-1)
 - [技术路线](#%e6%8a%80%e6%9c%af%e8%b7%af%e7%ba%bf)
 	- [前端](#%e5%89%8d%e7%ab%af)
 	- [客户端](#%e5%ae%a2%e6%88%b7%e7%ab%af)
@@ -51,19 +51,37 @@
 
 ### 容器化技术
 
-由于需要在不增加成本的情况下设置隔离的应用程序和服务器环境，虚拟化变得非常流行。使用虚拟机，我们可以在一台称为主机的计算机内安装一台完整的计算机（称为虚拟机），而不是在每个其他硬件单元上购买和安装服务器。这样的软件有很多：VMware Workstation、Hyper-V、VirtualBox、KVM、XEN 等等。
+在生产环境上，传统的手工部署方法可能会出现下列事件：
 
-但是这样的完全虚拟化技术资源利用效率低下，需要模拟全部硬件，且不便于扩展，对于很多轻量型应用是小题大做。而容器只虚拟化了部分操作子系统，如文件系统、网络、运行环境等；容器共享主机内核，没有虚拟化开销，因此性能远远优于虚拟机。容器软件有 LXC/LXD、Docker、Solaris Zones、Kubernetes 等等。
+- 你的 Linux 发行版很老，而你需要运行一个给新版本的 Linux 或者完全不同的 Linux 发行版设计的程序。
+- 你和朋友一起设计一个大型程序，由于你们的运行环境不同，有时候在某台机器上正常运行的程序，在另一台机器上没法正常运行。
+- 你希望在多台服务器上部署同一个项目，但是项目需要非常复杂的配置，一个一个配置服务器的成本非常大。
 
-![feasibility-vm_and_container-1](files/feasibility-vm_and_container-1.png)
+而容器化技术可以方便解决上述问题，容器可以把应用及其依赖项都将打包成一个可以复用的镜像并与其他进程环境隔离。
+
+在运行环境、网络拓扑、安全策略和存储方案变化时，软件可能会显现一些出乎意料的问题；而容器使开发环境和运行环境统一。同时容器并不像虚拟机那样模拟全部硬件（这对于很多轻量型应用是小题大做），它只虚拟化了文件系统、网络、运行环境等，在核心本地运行指令，不需要任何专门的接口翻译和系统调用替换机制，减少了很多虚拟化开销。
+
+容器软件有 LXC/LXD、Docker、Solaris Zones、Kubernetes 等等，下面这张图阐述了容器发展史：
+
+![feasibility-container_history](files/feasibility-container_history.webp)
+
+CGroup（Control Groups）是 Linux 内核提供的一种可以限制、记录、隔离进程组使用的资源的系统。CGroup 将任意进程进行分组化管理，有内存控制器、进程调度控制器、虚拟文件系统等。运行中的内核可以用 CGroup 的子系统 /proc/cgroup 来确认。
+
+Namespace，包括 CLONE_NEWCGROUP、CLONE_NEWIPC、CLONE_NEWNET、CLONE_NEWNS、CLONE_NEWPID、CLONE_NEWUSER、CLONE_NEWUTS 这七个选项，是对全局系统资源的一种封装隔离。处于不同 Namespace 的进程拥有独立的全局系统资源，改变一个 Namespace 中的系统资源只会影响当前 Namespace 里的进程，对其他 Namespace 中的进程没有影响。内核将这些命名空间保存在 /proc/[pid]/ns/ 目录下。
+
+![feasibility-lxc_and_docker-1](files/feasibility-lxc_and_docker-1.png)
+
+LXC/LXD（Linux Container）容器来自进程控制群组 cgroup 和命名空间 namespaces，使得容器内的进程相互隔离，但是 LXC/LXD 包含了完整的操作系统，对于本项目的小型分布式系统并不友好。
 
 #### 容器化技术的代表：Docker
 
 ![feasibility-docker](files/research-docker.png)
 
-LXC/LXD（Linux Container）来自进程控制群组 cgroup 和命名空间 namespaces，使得进程之间相互隔离，但是 LXC/LXD 包含了完整的操作系统；而 Docker 容器将应用和其依赖环境全部打包到一个单一对象中，在不包含完整的操作系统时就能运行普通应用，更加轻量级，可移植性更好。Docker 的可移植性和轻量级的特性，可以使我们轻松地完成动态管理的工作负担，并根据需求指示，实时扩展或拆除应用程序和服务。
+Docker 容器将应用和其依赖环境打包在一起，在不包含完整的操作系统时就能运行普通应用，更加轻量级，可移植性更好。Docker 的可移植性和轻量级的特性，可以使我们轻松地完成动态管理的工作负担，并根据需求指示，实时扩展或拆除应用程序和服务。
 
-![feasibility-lxc_and_docker-1](files/feasibility-lxc_and_docker-1.png)
+Docker 也使用了进程控制群组和命名空间去隔离不同容器内的进程。Docker 中的每一个镜像都是由一系列的只读层组成的，Dockerfile 中的每一个命令都会在已有的只读层上创建一个新的层。docker run 可以在镜像的最上层添加一个可写的容器层，所有运行时容器的修改其实都是对这个容器读写层的修改。
+
+（参考：https://www.jianshu.com/p/34efcaa92ae4 和 https://101.ustclug.org/Ch08/）
 
 ### 多用户权限支持——RBAC介绍
 
@@ -235,7 +253,9 @@ $Xi$ 和 $Yi$ 都是迦罗华域 $GF(2^w)$ 中的元素。
 
 ### Docker
 
-若采用 tomcat 和 apache 方案分别部署 html 和 jsp 页面，则可以用 Docker 来管理 Apache 和 Tomcat，动静分离。
+本项目使用了 Apache 和 Tomcat，把互联网网页作为用户的交互页面。Apache 作为一个 Web 服务器，缺乏处理 JSP/Servlet 的功能。为了能够处理 JSP/Servlet 的请求，需要使用 JSP/Servlet 容器如 Tomcat。虽然 Tomcat 本身也是个 Web 服务器，但是其功能远不及 Apache，所以 Tomcat 往往作为 JSP/Servlet 容器使用。mod_jk（JK）是 Apache 与 Tomcat 的连接器，附带集群和负载均衡。
+
+就 Docker 而言，应该对每个服务使用单独容器，如 Web 服务器运行在一个容器上，应用程序服务器运行在另一个容器上。若采用 Apache 和 Tomcat 方案分别部署 html 和 jsp 页面，则容易使用 Docker 分别管理 Apache 和 Tomcat，动静分离。
 
 使用 `docker search tomcat` 可以查到存在 Docker Hub 上的 Docker Tomcat 镜像。
 
@@ -315,18 +335,76 @@ Query 类定义了对上述五个表查询、修改、删除、新增条目的�
 
 #### 达到改进目标用到的技术
 
-##### 架构选择
+##### 新的数据库设计
 
-服务器端采用三层架构的方式，分成了表现层、业务层和持久层。表现层使用JSP和Servlet程序，与浏览器客户端进行数据的交互。业务层使用Service程序，进行业务逻辑处理和事务处理。持久层使用Dao程序，进行数据库的持久化操作。
+RBAC是基于角色的权限访问技术，需要设计新的数据表：
 
-##### Spring Security
+```
+用户表
+角色表
+权限表
+用户角色表
+角色权限表
+```
 
-Spring Security 是一个Spring生态中安全方面的框架，能够为基于 Spring 的企业应用系统提供声明式的安全访问控制解决方案。
+考虑到本项目私人网盘的定位，设计思路如下：
 
-Spring Security主要是从两个方面解决安全性问题：
+- 每个用户创建时，同时生成同名的角色，角色唯一对应只有自己有权限访问的网盘空间，即角色与权限一对一，权限包含浏览内容和下载等等；
 
-- web请求级别：使用servlet过滤器保护web请求并限制URL级别的访问；
-- 方法调用级别：使用Spring AOP保护方法调用，确保具有适当权限的用户采用访问安全保护的方。
+- 提供创建小组的功能：角色表生成新的小组角色，小组角色唯一对应网盘空间，权限仍为一对一；
+- 同时考虑用户与小组两类角色，用户与角色是多对多的关系。为了建立更明晰的表格，将用户-用户权限严格绑定，只额外建立用户小组角色表，暂考虑用户只能加入0或1个小组；
+- 从分析可以看出，角色与权限一一对应，可以把角色权限表、权限表纳入角色表中，即只需用户表、小组角色表、用户小组角色表；
+- 暂不考虑超级管理员。
+
+具体设计如下：（待实现的加粗显示）
+
+表 FILE 用于存储文件的逻辑位置与属性
+
+表 FRAGMENT 用于存储碎片的物理位置
+
+表 REQUEST 用于存储服务器对客户端的碎片请求
+
+表 DEVICE 用于存储系统中客户端的信息
+
+**表 USER 用于存储网页的注册用户**
+
+**表 GROUP_ROLE 用于存储小组角色**
+
+**表 USER_GROUP 用于存储用户对应小组角色的信息**
+
+```mysql
+CREATE TABLE `USER` ( 
+`ID` int NOT NULL AUTO_INCREMENT, 
+`NAME` char(20) NOT NULL UNIQUE DEFAULT '', 
+`PASSWD` char(20) NOT NULL DEFAULT '', 
+`URIS` varchar(1000) NOT NULL DEFAULT '',
+PRIMARY KEY (`ID`) 
+) ENGINE=InnoDB DEFAULT CHARSET=utf8; 
+
+CREATE TABLE `GROUP_ROLE` ( 
+`ID` int NOT NULL AUTO_INCREMENT, 
+`NAME` char(20) NOT NULL UNIQUE DEFAULT '', 
+`URIS` varchar(1000) NOT NULL DEFAULT '',
+PRIMARY KEY (`ID`) 
+) ENGINE=InnoDB DEFAULT CHARSET=utf8; 
+
+CREATE TABLE `USER_GROUP` (
+`ID` int NOT NULL AUTO_INCREMENT, 
+`GID` int NOT NULL DEFAULT '0',
+
+) ENGINE=InnoDB DEFAULT CHARSET=utf8; 
+```
+
+##### 新的web端设计
+
+思路如下：（待实现的加粗显示）
+
+- 注册时，判断用户名不重复，**分配ID等等数据模块**；
+
+- 登录时，输入用户名、密码，检测对应模块，**跳转至特定文件空间（涉及到由抓取所有文件列表到抓取特定文件列表的转变）**；
+- **原网页基础上添加创建小组、加入小组等功能（涉及到网页设计以及和数据库交互）**。
+
+（参考RBAC库：https://github.com/peer44/java-rbac）
 
 ### Reed-Solomon 码
 
