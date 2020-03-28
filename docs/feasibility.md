@@ -397,7 +397,11 @@ WebAssembly（wasm）是一个实验性的低级编程语言，应用于浏览�
 
 WebAssembly的开发团队分别来自 Mozilla、Google、Microsoft、Apple，代表着四大网络浏览器 Firefox、Chrome、Microsoft Edge、Safari。2017年11月，以上四个浏览器都开始实验性的支持 WebAssembly。WebAssembly 于 2019 年 12 月 5 日成为万维网联盟（W3C）的推荐，与 HTML，CSS 和 JavaScript 一起，成为 Web 的第四种语言。
 
-要使Go代码与浏览器进行交互，我们还需要一个 DOM API。我们有 `syscall/js` 库来帮助我们解决这个问题。它是一个非常简单却功能强大的DOM API形式，我们可以在其上构建我们的应用程序。
+#### DOM API
+
+文档对象模型（Document Object Model，简称 DOM），是 W3C 组织推荐的处理可扩展置标语言的标准编程接口。它是一种与平台和语言无关的应用程序接口（API），它可以动态地访问程序和脚本，更新其内容、结构和www 文档的风格（目前，HTML 和 XML 文档是通过说明部分定义的）。
+
+要使Go代码与浏览器进行交互，我们需要一个 DOM API。我们有 `syscall/js` 库来帮助我们解决这个问题。它是一个非常简单却功能强大的DOM API形式，我们可以在其上构建我们的应用程序。
 
 参考:
 
