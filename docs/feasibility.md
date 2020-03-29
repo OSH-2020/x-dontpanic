@@ -443,7 +443,7 @@ Token 一旦泄露，将会授予拿到 Token 的非法用户合法的权限，�
 
 可以通过两个途径解决：
 
-1. 加密传输 Token，例如使用 sslsocket 替代普通 socket
+1. 加密传输 Token，例如使用 SSLSocket 替代普通 Socket
 2. 对文件进行加密，保证收集到足够碎片也无法复原文件。
 
 ### OpenVPN 建立虚拟局域网
