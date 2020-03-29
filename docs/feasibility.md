@@ -3,6 +3,7 @@
 - [项目介绍](#%e9%a1%b9%e7%9b%ae%e4%bb%8b%e7%bb%8d)
 - [理论依据](#%e7%90%86%e8%ae%ba%e4%be%9d%e6%8d%ae)
 	- [容器化技术](#%e5%ae%b9%e5%99%a8%e5%8c%96%e6%8a%80%e6%9c%af)
+		- [实现原理](#%e5%ae%9e%e7%8e%b0%e5%8e%9f%e7%90%86)
 		- [容器化技术的代表：Docker](#%e5%ae%b9%e5%99%a8%e5%8c%96%e6%8a%80%e6%9c%af%e7%9a%84%e4%bb%a3%e8%a1%a8docker)
 	- [多用户权限支持——RBAC介绍](#%e5%a4%9a%e7%94%a8%e6%88%b7%e6%9d%83%e9%99%90%e6%94%af%e6%8c%81rbac%e4%bb%8b%e7%bb%8d)
 	- [Reed-Solomon 编码](#reed-solomon-%e7%bc%96%e7%a0%81)
@@ -25,10 +26,11 @@
 			- [数据库配置](#%e6%95%b0%e6%8d%ae%e5%ba%93%e9%85%8d%e7%bd%ae)
 		- [达到改进目标用到的技术](#%e8%be%be%e5%88%b0%e6%94%b9%e8%bf%9b%e7%9b%ae%e6%a0%87%e7%94%a8%e5%88%b0%e7%9a%84%e6%8a%80%e6%9c%af)
 			- [新的数据库设计](#%e6%96%b0%e7%9a%84%e6%95%b0%e6%8d%ae%e5%ba%93%e8%ae%be%e8%ae%a1)
-			- [新的web端设计](#%e6%96%b0%e7%9a%84web%e7%ab%af%e8%ae%be%e8%ae%a1)
-	- [Reed-Solomon 码](#reed-solomon-%e7%a0%81)
+			- [新的 Web 端设计](#%e6%96%b0%e7%9a%84-web-%e7%ab%af%e8%ae%be%e8%ae%a1)
+	- [纠删码的实现](#%e7%ba%a0%e5%88%a0%e7%a0%81%e7%9a%84%e5%ae%9e%e7%8e%b0)
 		- [现有的开源项目](#%e7%8e%b0%e6%9c%89%e7%9a%84%e5%bc%80%e6%ba%90%e9%a1%b9%e7%9b%ae)
-		- [应用WebAssembly](#%e5%ba%94%e7%94%a8webassembly)
+		- [应用 WebAssembly](#%e5%ba%94%e7%94%a8-webassembly)
+		- [DOM API](#dom-api)
 	- [Token 实现身份验证](#token-%e5%ae%9e%e7%8e%b0%e8%ba%ab%e4%bb%bd%e9%aa%8c%e8%af%81)
 		- [Token 概述](#token-%e6%a6%82%e8%bf%b0)
 		- [JWT 标准](#jwt-%e6%a0%87%e5%87%86)
@@ -61,13 +63,13 @@
 
 在运行环境、网络拓扑、安全策略和存储方案变化时，软件可能会显现一些出乎意料的问题；而容器使开发环境和运行环境统一。同时容器并不像虚拟机那样模拟全部硬件（这对于很多轻量型应用是小题大做），它只虚拟化了文件系统、网络、运行环境等，在核心本地运行指令，不需要任何专门的接口翻译和系统调用替换机制，减少了很多虚拟化开销。
 
-容器软件有 LXC/LXD、Docker、Solaris Zones、Kubernetes 等等，下面这张图阐述了容器发展史：
+#### 实现原理
 
-![feasibility-container_history](files/feasibility-container_history.webp)
+容器软件有 LXC/LXD、Docker、Solaris Zones、Kubernetes 等等。
 
 CGroup（Control Groups）是 Linux 内核提供的一种可以限制、记录、隔离进程组使用的资源的系统。CGroup 将任意进程进行分组化管理，有内存控制器、进程调度控制器、虚拟文件系统等。运行中的内核可以用 CGroup 的子系统 /proc/cgroup 来确认。
 
-Namespace，包括 CLONE_NEWCGROUP、CLONE_NEWIPC、CLONE_NEWNET、CLONE_NEWNS、CLONE_NEWPID、CLONE_NEWUSER、CLONE_NEWUTS 这七个选项，是对全局系统资源的一种封装隔离。处于不同 Namespace 的进程拥有独立的全局系统资源，改变一个 Namespace 中的系统资源只会影响当前 Namespace 里的进程，对其他 Namespace 中的进程没有影响。内核将这些命名空间保存在 /proc/[pid]/ns/ 目录下。
+Namespace，包括 CLONE_NEWCGROUP、CLONE_NEWIPC、CLONE_NEWNET、CLONE_NEWNS、CLONE_NEWPID、CLONE_NEWUSER、CLONE_NEWUTS 这七个选项，是对全局系统资源的一种封装隔离。处于不同 Namespace 的进程拥有独立的全局系统资源，改变一个 Namespace 中的系统资源只会影响当前 Namespace 里的进程，对其他 Namespace 中的进程没有影响。内核将这些命名空间保存在 /proc/\[pid\]/ns/ 目录下。
 
 ![feasibility-lxc_and_docker-1](files/feasibility-lxc_and_docker-1.png)
 
@@ -119,15 +121,15 @@ RS 最多能容忍 m 个数据块被删除。 数据恢复的过程如下：
 
 （1）假设 $D_1$、$D_4$、$C_2$ 丢失，从编码矩阵中删掉丢失的数据块/编码块对应的行。根据 RS 编码运算等式，可以得到 $B'$ 以及等式。
 
-![img](files\research-RS-2-new)
+![img](files/research-RS-2-new)
 
 （2）由于 $B'$ 是可逆的，记 $B'$ 的逆矩阵为 $B'^{-1}$，则 $B' * B'^{-1} = I$ 单位矩阵。两边左乘 $B'$ 逆矩阵。
 
-![img](files\research-RS-4)
+![img](files/research-RS-4)
 
 （3）得到如下原始数据 $D$ 的计算公式，从而恢复原始数据 $D$ ：
 
-![img](files\research-RS-5-new)
+![img](files/research-RS-5-new)
 
 #### 编码矩阵
 
@@ -137,7 +139,7 @@ RS 最多能容忍 m 个数据块被删除。 数据恢复的过程如下：
 
 一个m行n列的范德蒙德矩阵定义如下图左边，其中 $A_i$ 均不相同，且不为 0。令$A_1, A_2 \dots A_n$ 分别为 $1,2,3,\dots,n$，则得到范德蒙德矩阵为下图右边：
 
-![img](files\feasibility-RS-Vandermonde-1)
+![img](files/feasibility-RS-Vandermonde-1)
 
 编码矩阵就是单位矩阵和范德蒙德矩阵的组合。输入数据 $D$ 和编码矩阵的乘积就是编码后的数据。 
 采用这种方法的算法复杂度还是比较高的，编码复杂度为 $O(mn)$，其中 m 为校验数据个数，n 为输入数据个数。解码复杂度为 $O(n^3)$。
@@ -151,7 +153,7 @@ RS 最多能容忍 m 个数据块被删除。 数据恢复的过程如下：
 
 柯西矩阵的描述如下图左边， $Xi$ 和 $Yi$ 都是迦罗华域 $GF(2^w)$ 中的元素。右边是基于柯西矩阵的编码矩阵：
 
-![img](files\feasibility-RS-Cauchy-1-new.png)
+![img](files/feasibility-RS-Cauchy-1-new.png)
 
 ##### 柯西编解码过程优化 
 
@@ -161,13 +163,11 @@ RS 最多能容忍 m 个数据块被删除。 数据恢复的过程如下：
 
 从数学的角度，在迦罗华有限域中，任何一个 $GF(2^w)$ 域上的元素都可以映射到 $GF(2)$ 二进制域，并且采用一个二进制矩阵的方式表示 $GF(2^w)$ 中的元素。例如 $GF(2^3)$ 域中的元素可以表示成 $GF(2)$ 域中的二进制矩阵： 
 
-![img](files\feasibility-RS-GF-1)
-
+![img](files/feasibility-RS-GF-1)
 
 上图中，黑色方块表示逻辑1，白色方块表示逻辑0。通过这种转换， $GF(2^w)$ 域中的阵列就可以转换成 $GF(2)$ 域中的二进制阵列。生成矩阵的阵列转换表示如下：
 
- ![img](files\feasibility-RS-GF-2)
-
+![img](files/feasibility-RS-GF-2)
 
 在 $GF(2^w)$ 域中的编码矩阵为 $K*(K+m)$，转换到 $GF(2)$ 域中，使用二进制矩阵表示，编码矩阵变成了 $wk* w(k+m)$ 二进制矩阵。采用域转换的目的是简化 $GF(2^w)$ 域中的乘法运算。在 $GF(2)$ 域中，乘法运算变成了逻辑与运算，加法运算变成了XOR运算，可以大大降低运算复杂度。
 
@@ -180,7 +180,6 @@ RS 最多能容忍 m 个数据块被删除。 数据恢复的过程如下：
 参考资料 
 
 《Erasure Code - EC纠删码原理》，2017-01-07，shelldon， https://blog.csdn.net/shelldon/article/details/54144730
-
 
 ### 分离数据与控制链接
 
@@ -301,7 +300,7 @@ Query 类定义了对上述五个表查询、修改、删除、新增条目的�
 
 （二）通过 Connection 类实例的 createStatement 函数创建一个 Statement 类实例； 
 
-（三）通过 Statement 类实例的 executeQuery 函数执行 SQL，SQL 的内容可以使用格式化字符串根据函数的参数填入不同的内容，该函数将返回一个 ResultSet 类实例； 
+（三）通过 Statement 类实例的 executeQuery 函数执行 SQL，SQL 的内容可以使用格式化字符串根据函数的参数填入不同的内容，该函数将返回一个 ResultSet 类实例；
 
 （四）对 ResultSet 类实例，使用 next 函数与 getInt、getBoolean、getString 等函数遍历查询的每个结果； 
 
@@ -326,7 +325,6 @@ RBAC是基于角色的权限访问技术，需要设计新的数据表：
 考虑到本项目私人网盘的定位，设计思路如下：
 
 - 每个用户创建时，同时生成同名的角色，角色唯一对应只有自己有权限访问的网盘空间，即角色与权限一对一，权限包含浏览内容和下载等等；
-
 - 提供创建小组的功能：角色表生成新的小组角色，小组角色唯一对应网盘空间，权限仍为一对一；
 - 同时考虑用户与小组两类角色，用户与角色是多对多的关系。为了建立更明晰的表格，将用户-用户权限严格绑定，只额外建立用户小组角色表，暂考虑用户只能加入0或1个小组；
 - 从分析可以看出，角色与权限一一对应，可以把角色权限表、权限表纳入角色表中，即只需用户表、小组角色表、用户小组角色表；
@@ -371,12 +369,11 @@ PRIMARY KEY (`ID`)
 ) ENGINE=InnoDB DEFAULT CHARSET=utf8; 
 ```
 
-##### 新的web端设计
+##### 新的 Web 端设计
 
 思路如下：（待实现的加粗显示）
 
-- 注册时，判断用户名不重复，**分配ID等等数据模块**；
-
+- 注册时，判断用户名不重复，**分配 ID 等等数据模块**；
 - 登录时，输入用户名、密码，检测对应模块，**跳转至特定文件空间（涉及到由抓取所有文件列表到抓取特定文件列表的转变）**；
 - **原网页基础上添加创建小组、加入小组等功能（涉及到网页设计以及和数据库交互）**。
 
@@ -390,7 +387,8 @@ PRIMARY KEY (`ID`)
 
 数据储存服务供应商 Backblaze 在 GitHub 开源提供了一个使用 Java 编写的 Reed-Solomon 库。以此为基础实现了许多其他语言如 Go，Python 编写的 RS 码实现，其中 Go 语言的实现有较多的 Star 量，内容也较为完善。我们希望能够在浏览器上应用它，而这需要借助 WebAssembly。
 
-#### 应用WebAssembly
+#### 应用 WebAssembly
+
 WebAssembly（wasm）是一个实验性的低级编程语言，应用于浏览器内的客户端。
 
 在过去很长一段时间里，Javascript是Web开发人员中的通用语言。如果想写一个稳定成熟的 Web 应用程序，用javascript几乎是唯一的方法。WebAssembly（也称为wasm）将很快改变这种情况。它是便携式的抽象语法树，被设计来提供比 JavaScript 更快速的编译及运行。 WebAssembly 将让开发者能运用自己熟悉的编程语言（最初以 C/C++ 作为实现目标）编译，再藉虚拟机引擎在浏览器内运行。
@@ -399,9 +397,13 @@ WebAssembly的开发团队分别来自 Mozilla、Google、Microsoft、Apple，�
 
 #### DOM API
 
+//TODO
+
 文档对象模型（Document Object Model，简称 DOM），是 W3C 组织推荐的处理可扩展置标语言的标准编程接口。它是一种与平台和语言无关的应用程序接口（API），它可以动态地访问程序和脚本，更新其内容、结构和www 文档的风格（目前，HTML 和 XML 文档是通过说明部分定义的）。
 
-要使Go代码与浏览器进行交互，我们需要一个 DOM API。我们有 `syscall/js` 库来帮助我们解决这个问题。它是一个非常简单却功能强大的DOM API形式，我们可以在其上构建我们的应用程序。
+要使 Go 代码与浏览器进行交互，我们需要一个 DOM API。我们有 `syscall/js` 库来帮助我们解决这个问题。它是一个非常简单却功能强大的DOM API形式，我们可以在其上构建我们的应用程序。
+
+要使 Go 代码与浏览器进行交互，我们需要一个 DOM API。我们有 `syscall/js` 库来帮助我们解决这个问题。它是一个非常简单却功能强大的DOM API形式，我们可以在其上构建我们的应用程序。
 
 参考:
 
