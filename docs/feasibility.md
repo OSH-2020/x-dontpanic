@@ -295,7 +295,7 @@ Query 类定义了对上述五个表查询、修改、删除、新增条目的�
 
 ##### 新的数据库设计
 
-RBAC是基于角色的权限访问技术，需要设计新的数据表：
+RBAC 是基于角色的权限访问技术，需要设计新的数据表：
 
 ```code
 用户表
@@ -368,11 +368,9 @@ WebAssembly 是一个实验性的低级编程语言，应用于浏览器内的�
 
 在过去很长一段时间里，JavaScript 是 Web 开发人员中的通用语言。如果想写一个稳定成熟的 Web 应用程序，用 JavaScript 几乎是唯一的方法。WebAssembly（也称为 wasm）将很快改变这种情况。它是便携式的抽象语法树，被设计来提供比 JavaScript 更快速的编译及运行。 WebAssembly 将让开发者能运用自己熟悉的编程语言（最初以 C/C++ 作为实现目标）编译，再藉虚拟机引擎在浏览器内运行。
 
-WebAssembly 的开发团队分别来自 Mozilla、Google、Microsoft、Apple，代表着四大网络浏览器 Firefox、Chrome、Microsoft Edge、Safari。2017 年 11 月，以上四个浏览器都开始实验性的支持 WebAssembly。WebAssembly 于 2019 年 12 月 5 日成为万维网联盟（W3C）的推荐，与 HTML、CSS 和 JavaScript 一起，成为 Web 的第四种语言。
+WebAssembly 的开发团队分别来自 Mozilla、Google、Microsoft、Apple，代表着四大网络浏览器 Firefox、Chrome、Microsoft Edge、Safari。2017 年 11 月，以上四个浏览器都开始实验性地支持 WebAssembly。WebAssembly 于 2019 年 12 月 5 日成为万维网联盟（W3C）的推荐，与 HTML、CSS 和 JavaScript 一起，成为 Web 的第四种语言。
 
 #### DOM API
-
-//TODO
 
 文档对象模型（Document Object Model，简称 DOM），是 W3C 组织推荐的处理可扩展置标语言的标准编程接口。它是一种与平台和语言无关的应用程序接口（API），它可以动态地访问程序和脚本，更新其内容、结构和 www 文档的风格（目前，HTML 和 XML 文档是通过说明部分定义的）。
 
@@ -520,7 +518,9 @@ OpenVPN 服务器一般需要配置一个虚拟 IP 地址池和一个自用的�
 - [github.com/Paritosh-Anand/Docker-Httpd-Tomcat](https://github.com/Paritosh-Anand/Docker-Httpd-Tomcat)
 - [github.com/EdSingleton/docker-httpd-mod_jk](https://github.com/EdSingleton/docker-httpd-mod_jk)
 - [github.com/peer44/java-rbac](https://github.com/peer44/java-rbac)
+- [Backblaze Reed-Solomon](https://www.backblaze.com/open-source-reed-solomon.html)
+- [github.com/klauspost/reedsolomon](https://github.com/klauspost/reedsolomon)
 - [译 Go和WebAssembly：在浏览器中运行Go程序](https://www.qichengzx.com/2019/01/01/go-in-the-browser.html)
-- [Wikipedia]()
+- [WebAssembly](https://zh.wikipedia.org/wiki/WebAssembly)
 - [基于 Token 的身份验证：JSON Web Token](https://ninghao.net/blog/2834)
 - [OpenVPN 的工作原理](http://blog.sina.com.cn/s/blog_6d51d1b70101cs5m.html)
