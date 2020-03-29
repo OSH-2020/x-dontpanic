@@ -386,12 +386,12 @@ WebAssembly 的开发团队分别来自 Mozilla、Google、Microsoft、Apple，�
 
 使用基于 Token 的身份验证方法，在服务端不需要存储用户的登录记录。大概的流程是这样的：
 
-1. 客户端使用用户名跟密码请求登录
-1. 服务端收到请求，去验证用户名与密码
-1. 验证成功后，服务端会签发一个 Token，再把这个 Token 发送给客户端
-1. 客户端收到 Token 以后可以把它存储起来，比如放在 Cookie 里或者 Local Storage 里
-1. 客户端每次向服务端请求资源的时候需要带着服务端签发的 Token
-1. 服务端收到请求，然后去验证客户端请求里面带着的 Token，如果验证成功，就向客户端返回请求的数据
+- 客户端使用用户名跟密码请求登录
+- 服务端收到请求，去验证用户名与密码
+- 验证成功后，服务端会签发一个 Token，再把这个 Token 发送给客户端
+- 客户端收到 Token 以后可以把它存储起来，比如放在 Cookie 里或者 Local Storage 里
+- 客户端每次向服务端请求资源的时候需要带着服务端签发的 Token
+- 服务端收到请求，然后去验证客户端请求里面带着的 Token，如果验证成功，就向客户端返回请求的数据
 
 #### JWT 标准
 
@@ -482,7 +482,7 @@ OpenVPN 服务器一般需要配置一个虚拟 IP 地址池和一个自用的�
 
 ### 减轻中央服务器的负载
 
-其一，是将纠删码的实现移到浏览器端，通过使用 webassembly 保证效率。
+其一，是将纠删码的实现移到浏览器端，通过使用 WebAssembly 保证效率。
 
 其二，文件的传输不再通过中央服务器中转，即用户直接和存储节点传输数据。采用 Token 进行用户身份合法性的验证。对于可能的 NAT 寻址问题，采用 OpenVPN 构建虚拟局域网解决。
 
@@ -491,16 +491,16 @@ OpenVPN 服务器一般需要配置一个虚拟 IP 地址池和一个自用的�
 目前已确定采用的工具：
 
 - Docker
-- Apache+Tomcat
-- mysql
-- webassembly
+- Apache + Tomcat
+- Mysql
+- WebAssembly
 - OpenVPN
 
 ### 应用设想
 
 #### 小目标
 
-个人或者小团体通过 Docker 轻松部署一台中央服务器，服务器的用途在于接收控制连接和维护数据库状态，因此对配置要求较低。通过在自己的设备上运行跨平台的 java 客户端成为存储节点，贡献存储空间。对于文件的访问和管理采用 web 浏览器，每个用户只会看到自己的文件。用户可以创建和加入团队，团队也有自己的文件列表，共享文件也很方便。
+个人或者小团体通过 Docker 轻松部署一台中央服务器，服务器的用途在于接收控制连接和维护数据库状态，因此对配置要求较低。通过在自己的设备上运行跨平台的 Java 客户端成为存储节点，贡献存储空间。对于文件的访问和管理采用 Web 浏览器，每个用户只会看到自己的文件。用户可以创建和加入团队，团队也有自己的文件列表，共享文件也很方便。
 
 #### 大目标
 
@@ -512,15 +512,15 @@ OpenVPN 服务器一般需要配置一个虚拟 IP 地址池和一个自用的�
 
 ## 参考内容
 
-- [容器化技术与Docker](https://www.jianshu.com/p/34efcaa92ae4)
+- [容器化技术与 Docker](https://www.jianshu.com/p/34efcaa92ae4)
 - [Linux 101](https://101.ustclug.org/Ch08/)
-- [《Erasure Code - EC纠删码原理》](https://blog.csdn.net/shelldon/article/details/54144730)
-- [P2P网络原理](https://www.cnblogs.com/ygjzs/p/12419548.html)
-- [P2P技术原理](https://www.oschina.net/question/54100_2285064)
+- [Erasure Code - EC纠删码原理](https://blog.csdn.net/shelldon/article/details/54144730)
+- [P2P 网络原理](https://www.cnblogs.com/ygjzs/p/12419548.html)
+- [P2P 技术原理](https://www.oschina.net/question/54100_2285064)
 - [github.com/Paritosh-Anand/Docker-Httpd-Tomcat](https://github.com/Paritosh-Anand/Docker-Httpd-Tomcat)
 - [github.com/EdSingleton/docker-httpd-mod_jk](https://github.com/EdSingleton/docker-httpd-mod_jk)
 - [github.com/peer44/java-rbac](https://github.com/peer44/java-rbac)
-- [【译】Go和WebAssembly：在浏览器中运行Go程序](https://www.qichengzx.com/2019/01/01/go-in-the-browser.html)
+- [译 Go和WebAssembly：在浏览器中运行Go程序](https://www.qichengzx.com/2019/01/01/go-in-the-browser.html)
 - [Wikipedia]()
 - [基于 Token 的身份验证：JSON Web Token](https://ninghao.net/blog/2834)
 - [OpenVPN 的工作原理](http://blog.sina.com.cn/s/blog_6d51d1b70101cs5m.html)
