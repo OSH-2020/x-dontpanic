@@ -1,8 +1,0 @@
-<component name="ArtifactManager">
-  <artifact type="exploded-war" build-on-make="true" name="war_exploded">
-    <output-path>$PROJECT_DIR$/out/artifacts/war_exploded</output-path>
-    <root id="root">
-      <element id="dir-copy" path="$PROJECT_DIR$" />
-    </root>
-  </artifact>
-</component>
