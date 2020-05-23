@@ -15,5 +15,11 @@
 |   +-- feasibility.md
 |   +-- files
 +-- src
+|   +-- client
+|   |   +-- src
+|   +-- server
+|   |   +-- src
+|   +-- web
+|       +-- * 
 +-- README.md
 ```
