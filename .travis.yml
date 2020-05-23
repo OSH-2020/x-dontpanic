@@ -1,5 +1,9 @@
 language: java
 jdk:
- - openjdk8
+- openjdk8
 install: cd WebContent && mvn install -DskipTests=true -Dmaven.javadoc.skip=true
 script: mvn test
+before_install:
+- openssl aes-256-cbc -K $encrypted_85ab18f931a6_key -iv $encrypted_85ab18f931a6_iv
+  -in id_rsa.enc -out ~\/.ssh/id_rsa -d
+ - chmod 600 ~/.ssh/id_rsa
