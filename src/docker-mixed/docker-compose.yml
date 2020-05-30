@@ -1,18 +1,21 @@
 version: '2'
 services:
   mytomcat:
-    image: tomcat:7
+    build: ./mytomcat
+    image: mytomcat:test
     hostname: mytomcat
     container_name: mytomcat
     restart: always
     ports:
+      - "2333:2333"
+      - "2334:2334"
       - "8080:8080"
+      - "58279:58279"
+      - "58280:58280"
     depends_on:
-      - myserver
       - mymysql
     links:
       - mymysql
-      - myserver
     volumes:
       - "$PWD/WebContent:/usr/local/tomcat/webapps"
   mymysql:
@@ -34,17 +37,3 @@ services:
       serverTimezone: Asia/Shanghai
     volumes:
       - "$PWD/mysqldata:/var/lib/mysql"
-  myserver:
-    build: ./myserver
-    image: myserver:test
-    container_name: myserver
-    restart: always
-    depends_on:
-      - mymysql
-    links:
-      - mymysql
-    ports:
-      - "2333:2333"
-      - "2334:2334"
-      - "58279:58279"
-      - "58280:58280"

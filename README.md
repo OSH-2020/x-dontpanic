@@ -21,6 +21,8 @@
 |   |   +-- src
 |   +-- web
 |   |   +-- * 
+|   +-- docker-mixed
+|   |   +-- * 
 |   +-- docker
 |       +-- *
 |
