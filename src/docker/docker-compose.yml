@@ -13,6 +13,12 @@ services:
     links:
       - mymysql
       - myserver
+    environment:
+      - Xmn384m
+      - XX:MaxPermSize=128m
+      - XX:+UseConcMarkSweepGC
+      - XX:+DisableExplicitGC
+      - XX:+UseParNewGC
     volumes:
       - "$PWD/WebContent:/usr/local/tomcat/webapps"
   mymysql:
