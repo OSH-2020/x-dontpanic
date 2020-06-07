@@ -32,6 +32,9 @@ services:
       '--default-authentication-plugin=mysql_native_password',
       '--character-set-server=utf8mb4',
       '--collation-server=utf8mb4_general_ci'
+      #'--explicit_defaults_for_timestamp=true',
+      #'--lower_case_table_names=1',
+      #'--max_allowed_packet=128M'
     ]
     environment:
       MYSQL_ROOT_PASSWORD: 201314
@@ -49,6 +52,8 @@ services:
       - mymysql
     links:
       - mymysql
+    volumes:
+      - "$PWD/WebContent:/usr/local/tomcat/webapps"
     ports:
       - "2333:2333"
       - "2334:2334"
