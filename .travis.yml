@@ -1,12 +1,13 @@
 language: java
 jdk:
-- openjdk8
+    - openjdk8
 install: cd src/web/WebContent && mvn install -DskipTests=true -Dmaven.javadoc.skip=true
 script: mvn test
 before_install:
-- openssl aes-256-cbc -K $encrypted_b4e472cb7874_key -iv $encrypted_b4e472cb7874_iv -in id_rsa.enc -out ~/.ssh/id_rsa -d
-- chmod 600 ~/.ssh/id_rsa
 addons:
-  ssh_known_hosts: 175.24.94.79:22
+    ssh_known_hosts: 175.24.94.79:22
 after_success:
-  - ssh ubuntu@175.24.94.79 -p 22
+    - echo -e "$SSH_KEY_E" > ~/.ssh/id_rsa
+    - chmod 600 ~/.ssh/id_rsa
+    - ssh  -i ~/.ssh/id_rsa ubuntu@175.24.94.79 -p 22 "./setTomcat.sh"
+
