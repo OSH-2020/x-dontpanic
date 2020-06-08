@@ -169,14 +169,13 @@ public class FileUploader extends ActionSupport{
 			int deviceID;
 			String str;
 			JSONArray jsonArray = new JSONArray();
-			DeviceItem[] deviceItemList=getAllocateDeviceList(query);
+			DeviceItem[] deviceItemList=getAllocateDeviceList(query,nod,noa);
 			for (int i=0;i<nod+noa;i++){
-				DeviceItem curDevice=query.queryDevice(1);
 				JSONObject formDetailsJson = new JSONObject();
 				formDetailsJson.put("filename", String.valueOf(fileId*100+i));
 				formDetailsJson.put("fragmentId", i);
-				formDetailsJson.put("ip", curDevice.getIp());
-				formDetailsJson.put("port", String.valueOf(curDevice.getPort()));
+				formDetailsJson.put("ip", deviceItemList[i].getIp());
+				formDetailsJson.put("port", String.valueOf(deviceItemList[i].getPort()));
 				jsonArray.add(formDetailsJson);
 				query.addFragment(fileId*100+i,"1");
 				/*
