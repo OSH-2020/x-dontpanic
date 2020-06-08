@@ -1,19 +1,21 @@
 package userManagement;
 
-import java.io.File;
-import java.util.LinkedList;
-
 import com.opensymphony.xwork2.ActionSupport;
-
-import database.*;
+import database.AnotherRequestItem;
+import database.DeviceItem;
+import database.FileItem;
+import database.Query;
 import net.sf.json.JSONArray;
 import net.sf.json.JSONObject;
 
-public class FileDownloader extends ActionSupport{
+import java.io.File;
+import java.util.LinkedList;
+
+public class FileUploader extends ActionSupport{
 	
 	private	static final long serialVersionUID = 1L;
 	private String path;
-	private String name;
+	private String fileName;
 	//用来返回结果给前端
     private	String	result;
 	private JSONObject devices;
@@ -21,6 +23,8 @@ public class FileDownloader extends ActionSupport{
 	private int fileSize;
 	private int noa;
 	private int nod;
+	private String whose;
+	private int fileId;
 	//TODO
 	private static final String fragmentFolderPath = "/opt/tomcat/webapps/DFS/CloudDriveServer/downloadFragment";
 	private static final String fileFolderPath = "/opt/tomcat/webapps/DFS/CloudDriveServer/tmpFile";
@@ -45,28 +49,15 @@ public class FileDownloader extends ActionSupport{
 		this.result = result;
 	}
 	
-    public	String	getName()
+    public	String getFileName()
     {
-    	return this.name;
+    	return this.fileName;
     }
     
-	public void setName(String name)
+	public void setFileName(String fileName)
 	{
-		this.name = name;
+		this.fileName = fileName;
 	}
-
-	private JSONObject test;
-
-	public	JSONObject	getTest()
-	{
-		return this.test;
-	}
-
-	public void setTest(String name)
-	{
-		this.name = name;
-	}
-
 
 	public	JSONObject	getDevices()
 	{
@@ -83,10 +74,11 @@ public class FileDownloader extends ActionSupport{
 		return this.fileType;
 	}
 
-	public void setFileType(String devices)
+	public void setFileType(String fileType)
 	{
 		this.fileType = fileType;
 	}
+
 	public	int	getFileSize()
 	{
 		return this.fileSize;
@@ -117,55 +109,68 @@ public class FileDownloader extends ActionSupport{
 		this.nod = nod;
 	}
 
+	public String getWhose()
+	{
+		return this.whose;
+	}
+
+	public void setWhose(String whose)
+	{
+		this.whose = whose;
+	}
+
+	public	int	getFileId()
+	{
+		return this.fileId;
+	}
+
+	public void setFileId(int fileId)
+	{
+		this.fileId = fileId;
+	}
 	
-	public String downloadRegister(){
+	public String uploadRegister(){
 		//return -1 if error
 		//return 0 if can not collect enough fragments
 		//else, return 1
 		
-		System.out.println("downloadRegister is called");
+		System.out.println("uploadRegister is called");
 		
 		Query query=new Query();
-		FileItem fileItem=query.queryFile(path, name);
-		DeviceItem onlineDevice[]=query.queryOnlineDevice();
+		FileItem fileItem=query.queryFile(path, fileName);
+		DeviceItem[] onlineDevice =query.queryOnlineDevice();
 
 		if(onlineDevice==null)
 		{
 			System.out.println(1);
-			result = "NotEnoughFragments";
-			/*
-			JSONObject responseDetailsJson = new JSONObject();
-			JSONArray jsonArray = new JSONArray();
-
-			JSONObject formDetailsJson = new JSONObject();
-			formDetailsJson.put("id", "1");
-			formDetailsJson.put("name", "name1");
-			jsonArray.add(formDetailsJson);
-			formDetailsJson = new JSONObject();
-			formDetailsJson.put("id", "2");
-			formDetailsJson.put("name", "name2");
-			jsonArray.add(formDetailsJson);
-
-			responseDetailsJson.put("forms", jsonArray);
-			test=responseDetailsJson;
-			System.out.println(test);*/
+			result = "NotEnoughDevices";
 			return "success";
 		}
 
-		if (fileItem==null || fileItem.getNod()<1){
+		if (fileItem!=null ){
 			query.closeConnection();
-			result = "Error";
+			result = "DuplicateFileName";
 			return "success";
 		}		
 		else{
-			int nod=fileItem.getNod();
-			int noa=fileItem.getNoa();
-			int id=fileItem.getId();
+			FileItem newFile=new FileItem(fileName,path,"rwxrwxrwx","",nod,noa,false,fileType,fileSize,whose);
+			fileId=query.addFile(newFile);
+			if(fileId<0){
+				//TODO
+			}
 			int deviceID;
 			String str;
-			LinkedList<AnotherRequestItem> reqItems = new LinkedList<>();
 			JSONArray jsonArray = new JSONArray();
 			for (int i=0;i<nod+noa;i++){
+				DeviceItem curDevice=query.queryDevice(1);
+				JSONObject formDetailsJson = new JSONObject();
+				formDetailsJson.put("filename", String.valueOf(fileId*100+i));
+				formDetailsJson.put("fragmentId", i);
+				formDetailsJson.put("ip", curDevice.getIp());
+				formDetailsJson.put("port", String.valueOf(curDevice.getPort()));
+				jsonArray.add(formDetailsJson);
+				query.addFragment(fileId*100+i,"1");
+				/*
 				str=query.queryFragment(id*100+i);
 				if (str==null || str.equals("-1"))
 					continue;
@@ -183,28 +188,19 @@ public class FileDownloader extends ActionSupport{
 						jsonArray.add(formDetailsJson);
 						break;
 					}
-				}
+				}*/
 			}
-			if (jsonArray.size() < nod){
+			if (jsonArray.size() < nod+noa){
 				query.closeConnection();
-				result = "NotEnoughFragments";
+				result = "NotEnoughDevices";
 				return "success";
 			}
 			else{
-
-				System.out.println(reqItems.size());
-
-				//System.out.println(jsonArray.size());
-				//System.out.println(jsonArray.toString());
 				devices= new JSONObject();
 
 				devices.put("forms", jsonArray);
 				System.out.println(devices);
 
-				this.fileSize= fileItem.getFileSize();
-				this.fileType= fileItem.getFileType();
-				this.nod=fileItem.getNod();
-				this.noa=fileItem.getNoa();
 				query.closeConnection();
 				result = "OK";
 				return "success";
@@ -216,7 +212,7 @@ public class FileDownloader extends ActionSupport{
 		//return -1 if error
 		//else, return a number from 0 to 100 as # of fragments which have been downloaded
 		Query query=new Query();
-		FileItem fileItem=query.queryFile(path, name);
+		FileItem fileItem=query.queryFile(path, fileName);
 		query.closeConnection();
 		if (fileItem==null)
 		{
@@ -253,7 +249,7 @@ public class FileDownloader extends ActionSupport{
 		System.out.println("decodeFile is called");
 		
 		Query query=new Query();
-		FileItem fileItem=query.queryFile(path, name);
+		FileItem fileItem=query.queryFile(path, fileName);
 		query.closeConnection();
 		if (fileItem==null)
 		{
@@ -263,7 +259,7 @@ public class FileDownloader extends ActionSupport{
 		else{
 			try {
 				if (com.backblaze.erasure.Decoder.decode(
-						new File(fragmentFolderPath), new File(fileFolderPath+'/'+name), 
+						new File(fragmentFolderPath), new File(fileFolderPath+'/'+ fileName),
 						fileItem.getId(), fileItem.getNoa())) {
 					File dir=new File(fragmentFolderPath);			
 					File files[]=dir.listFiles();

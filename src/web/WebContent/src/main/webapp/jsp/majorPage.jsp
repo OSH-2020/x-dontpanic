@@ -14,6 +14,11 @@
 <script src="../js/bootstrap-3.3.7/js/bootstrap.min.js"></script>
 <link rel="stylesheet" type="text/css" href="../js/bootstrap-3.3.7/css/bootstrap.min.css">
 <!--AJAX相关js动作-->
+
+<script src="../js/ec/object_hash.js" type="text/javascript"></script>
+<script src="../js/ec/erasure.js"></script>
+<script src="../js/ec/funcs.js"></script>
+
 <script src="../js/majorPage_ajax.js"></script>
 
 <meta name="viewport" content="width=device-width, initial-scale=1.0">					<!-- 为了让 Bootstrap 开发的网站对移动设备友好，确保适当的绘制和触屏缩放 -->
@@ -147,7 +152,7 @@
       	<%
 			int i;
 			Query query = new Query();
-			FileItem[] files = query.NewqueryFile(username, "/");
+			FileItem[] files = query.queryFileList(username, "/");
 			query.closeConnection();
 
 			
@@ -160,9 +165,9 @@
 					out.println("<tr class='file_list_go'>");
 					out.println("<td></td>");
 					if(files[i].isFolder()==false)
-						out.println("<td> <label><input type=\"checkbox\"></label> 　　<span class=\"glyphicon glyphicon-file\"></span>　" + files[i].getName()+"</td>");
+						out.println("<td> <label><input type=\"checkbox\"></label> 　　<span class=\"glyphicon glyphicon-file\"></span>　" + files[i].getFileName()+"</td>");
 					else
-						out.println("<td> <label><input type=\"checkbox\"></label> 　　<span class=\"glyphicon glyphicon-folder-open\"></span>　" + files[i].getName()+"</td>");
+						out.println("<td> <label><input type=\"checkbox\"></label> 　　<span class=\"glyphicon glyphicon-folder-open\"></span>　" + files[i].getFileName()+"</td>");
 					out.println("<td>"+files[i].getAttribute()+"</td>");
 					out.println("<td>"+files[i].getTime()+"</td>");
 					out.println("</tr>");
@@ -200,8 +205,8 @@
 			<div class="clearfix" style="margin-bottom: 50px;"></div><!-- 清除浮动 -->				
 					
 				<!-- 下载、上传、删除按钮 -->
-	   				<div class="col-md-1 column col-md-offset-1" id="button_download">
-						<button class="btn btn-primary" type="button">
+	   				<div class="col-md-1 column col-md-offset-1">
+						<button class="btn btn-primary" type="button" id="button_download">
 						预下载		
 						</button>
 					</div>
@@ -211,6 +216,7 @@
 						</button>
 					</div>
 					<div class="col-md-1 column col-md-offset-1">
+						<input type="file" id="files" style="display: none" onchange="fileUpload();">
 						<button class="btn btn-primary" type="button" id="button_upload">
 						上传
 						</button>

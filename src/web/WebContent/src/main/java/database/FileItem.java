@@ -3,43 +3,54 @@ package database;
 public class FileItem {
 		
 	private int id;
-	private String name;
+	private String fileName;
 	private String path;
 	private String attribute;
 	private String time;
+	private int nod;
 	private int noa;
 	private boolean isFolder;
+	private String fileType;
+	private int fileSize;
+	private String whose;
 	
-	FileItem(int id,String name,String path,String attribute,String time,int noa,boolean isFolder) {
+	FileItem(int id, String fileName, String path, String attribute, String time, int nod, int noa, boolean isFolder, String fileType, int fileSize,String whose) {
 		this.id=id;
-		this.name=name;
+		this.fileName = fileName;
 		this.path=path;
 		this.attribute=attribute;
 		this.time=time;
+		this.nod=nod;
 		this.noa=noa;
 		this.isFolder=isFolder;
+		this.fileType=fileType;
+		this.fileSize=fileSize;
+		this.whose=whose;
 	}
-	
-	public FileItem(String name,String path,String attribute,String time,int noa,boolean isFolder){
-		this.id=0;
-		this.name=name;
+
+	public FileItem(String fileName, String path, String attribute, String time, int nod, int noa, boolean isFolder, String fileType, int fileSize,String whose){
+		this.fileName = fileName;
 		this.path=path;
 		this.attribute=attribute;
 		this.time=time;
+		this.nod=nod;
 		this.noa=noa;
 		this.isFolder=isFolder;
+		this.fileType=fileType;
+		this.fileSize=fileSize;
+		this.whose=whose;
 	}
 
 	public int getId() {
 		return id;
 	}
 
-	public String getName() {
-		return name;
+	public String getFileName() {
+		return fileName;
 	}
 
-	public void setName(String name) {
-		this.name = name;
+	public void setFileName(String fileName) {
+		this.fileName = fileName;
 	}
 
 	public String getPath() {
@@ -66,6 +77,10 @@ public class FileItem {
 		this.time = time;
 	}
 
+	public int getNod() {
+		return nod;
+	}
+
 	public int getNoa() {
 		return noa;
 	}
@@ -82,4 +97,13 @@ public class FileItem {
 		this.isFolder = isFolder;
 	}
 
+	public String getFileType() {
+		return fileType;
+	}
+	public int getFileSize() {
+		return fileSize;
+	}
+
+	public void setWhose(String whose){this.whose=whose;}
+	public String getWhose(){return  whose;}
 }

@@ -5,7 +5,7 @@ import java.sql.*;
 public class Query {
 	
     static final String JDBC_DRIVER = "com.mysql.jdbc.Driver";  
-    static final String DB_URL = "jdbc:mysql://localhost:3306/";
+    static final String DB_URL = "jdbc:mysql://localhost:3306?useSSL=false";//TODO
     static final String USER = "root";
     static final String PASS = "201314";
 
@@ -43,12 +43,16 @@ public class Query {
             
             if (rs.next()) {
                 int id  = rs.getInt("ID");
+                int nod = rs.getInt("NOD");
                 int noa = rs.getInt("NOA");
                 String attr = rs.getString("ATTRIBUTE");
                 String time = rs.getString("TIME");
                 boolean isFolder = rs.getBoolean("ISFOLDER");
+                String fileType=rs.getString("FILETYPE");
+                int fileSize=rs.getInt("FILESIZE");
+                String whose=rs.getString("WHOSE");
     
-                fileItem=new FileItem(id,name,path,attr,time,noa,isFolder);
+                fileItem=new FileItem(id,name,path,attr,time,nod,noa,isFolder,fileType,fileSize,whose);
             }
         }
         catch(Exception e){
@@ -70,7 +74,7 @@ public class Query {
         }
         return fileItem;
 	}
-	
+	/*
 	public FileItem queryFile(int id){
         Statement stmt = null;
         ResultSet rs = null;
@@ -170,14 +174,14 @@ public class Query {
             }
         }
         return fileArray;
-    }
+    }*/
 
-    public FileItem[] NewqueryFile(String whose, String path){
+    public FileItem[] queryFileList(String whose, String path){
         Statement stmt = null;
         ResultSet rs = null;
         FileItem fileArray[] = null;
 
-        int id, noa;
+        int id, noa,nod;
         String name,attr, time;
         boolean isFolder;
 
@@ -197,13 +201,16 @@ public class Query {
 
             while (i<count) {
                 id = rs.getInt("ID");
+                nod = rs.getInt("NOD");
                 noa = rs.getInt("NOA");
                 name = rs.getString("NAME");
                 attr = rs.getString("ATTRIBUTE");
                 time = rs.getString("TIME");
                 isFolder = rs.getBoolean("ISFOLDER");
+                String fileType=rs.getString("FILETYPE");
+                int fileSize=rs.getInt("FILESIZE");
 
-                fileArray[i]=new FileItem(id,name,path,attr,time,noa,isFolder);
+                fileArray[i]=new FileItem(id,name,path,attr,time,nod,noa,isFolder,fileType,fileSize,whose);
                 rs.next();
                 i++;
             }
@@ -714,25 +721,25 @@ public class Query {
 		Statement stmt = null;
 		ResultSet rs = null;
         int suc = -1;
+        int fileId=-1;
         try{
             stmt = conn.createStatement();
             String sql;
             if (file.isFolder())
-	            sql = String.format("INSERT INTO DFS.FILE (NAME,PATH,ATTRIBUTE,TIME,NOA,ISFOLDER) "
-	            		+ "VALUES ('%s','%s','%s','%s',%d,true);",file.getName(),file.getPath(),
-	            		file.getAttribute(),file.getTime(),file.getNoa());
+                sql = String.format("INSERT INTO DFS.FILE (NAME,PATH,ATTRIBUTE,TIME,NOD,NOA,ISFOLDER,WHOSE,FILETYPE,FILESIZE) "
+                                + "VALUES ('%s','%s','%s','%s',%d,%d,true,'%s','%s',%d);",file.getFileName(),file.getPath(),
+                        file.getAttribute(),file.getTime(),1,0,file.getWhose(),"",0);
             else
-            	sql = String.format("INSERT INTO DFS.FILE (NAME,PATH,ATTRIBUTE,TIME,NOA,ISFOLDER) "
-	            		+ "VALUES ('%s','%s','%s','%s',%d,false);",file.getName(),file.getPath(),
-	            		file.getAttribute(),file.getTime(),file.getNoa());
+                sql = String.format("INSERT INTO DFS.FILE (NAME,PATH,ATTRIBUTE,TIME,NOD,NOA,ISFOLDER,WHOSE,FILETYPE,FILESIZE) "
+                            + "VALUES ('%s','%s','%s','%s',%d,%d,false,'%s','%s',%d);",file.getFileName(),file.getPath(),
+                    file.getAttribute(),file.getTime(),file.getNod(),file.getNoa(),file.getWhose(),file.getFileType(),file.getFileSize());
+            System.out.println(sql);
             suc = stmt.executeUpdate(sql);
             if (suc>0){
             	rs = stmt.executeQuery("select LAST_INSERT_ID()");
             	rs.next();
-            	suc=rs.getInt(1);
+            	fileId=rs.getInt(1);
             }
-            else
-            	suc=-1;
         }
         catch(Exception e){
             e.printStackTrace();
@@ -751,7 +758,7 @@ public class Query {
             catch(Exception e){
             }            
         }
-        return suc;
+        return fileId;
 	}
 
 	public int deleteFile(int id){
@@ -789,11 +796,11 @@ public class Query {
             String sql;
             if (file.isFolder())
 	            sql = String.format("UPDATE DFS.FILE SET NAME='%s',PATH='%s',ATTRIBUTE='%s',"
-	            		+ "TIME='%s',NOA=%d,ISFOLDER=true WHERE id=%d;",file.getName(),file.getPath(),
+	            		+ "TIME='%s',NOA=%d,ISFOLDER=true WHERE id=%d;",file.getFileName(),file.getPath(),
 	            		file.getAttribute(),file.getTime(),file.getNoa(),file.getId());
             else
             	sql = String.format("UPDATE DFS.FILE SET NAME='%s',PATH='%s',ATTRIBUTE='%s',"
-	            		+ "TIME='%s',NOA=%d,ISFOLDER=false WHERE id=%d;",file.getName(),file.getPath(),
+	            		+ "TIME='%s',NOA=%d,ISFOLDER=false WHERE id=%d;",file.getFileName(),file.getPath(),
 	            		file.getAttribute(),file.getTime(),file.getNoa(),file.getId());
             suc = stmt.executeUpdate(sql);
             if (suc>0)
