@@ -1,0 +1,8 @@
+<component name="ArtifactManager">
+  <artifact type="jar" build-on-make="true" name="server:jar">
+    <output-path>$PROJECT_DIR$/out/artifacts/server_jar</output-path>
+    <root id="archive" name="server.jar">
+      <element id="module-output" name="DFS_server" />
+    </root>
+  </artifact>
+</component>
