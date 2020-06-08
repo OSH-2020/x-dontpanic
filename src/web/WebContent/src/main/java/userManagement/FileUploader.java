@@ -128,7 +128,15 @@ public class FileUploader extends ActionSupport{
 	{
 		this.fileId = fileId;
 	}
-	
+
+	private DeviceItem[] getAllocateDeviceList(Query query,int nod,int noa){
+    	DeviceItem[] deviceItemList=new DeviceItem[nod+noa];
+    	for(int i=0;i<nod+noa;i++){
+    		deviceItemList[i]=query.queryDevice(1);
+		}
+    	return deviceItemList;
+	}
+
 	public String uploadRegister(){
 		//return -1 if error
 		//return 0 if can not collect enough fragments
@@ -161,6 +169,7 @@ public class FileUploader extends ActionSupport{
 			int deviceID;
 			String str;
 			JSONArray jsonArray = new JSONArray();
+			DeviceItem[] deviceItemList=getAllocateDeviceList(query);
 			for (int i=0;i<nod+noa;i++){
 				DeviceItem curDevice=query.queryDevice(1);
 				JSONObject formDetailsJson = new JSONObject();
