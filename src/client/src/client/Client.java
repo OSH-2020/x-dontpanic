@@ -11,12 +11,10 @@ import java.io.IOException;
 import java.util.Scanner;
 
 public class Client {
-	private int clientId;
-	private File uploadFolders[];
-	private String uploadAddrs[];
+	private static int clientId;
+	private static int selfDataPort;
 	private SynItem syn;
 	private static int rs = 0;
-	private static int selfDataPort;
 
 	private static final String setUpFile = "setup.ini";
 
@@ -42,10 +40,10 @@ public class Client {
 	private boolean setUp() throws IOException {
 		Scanner scanner = null;
 		String uploadFolder, fragmentFolder, tmpFragmentFolder;
-		int serverControlPort, dataPort, selfDataPort;
+
+
 		String serverIp;
-
-
+		int serverControlPort;
 		try {
 			FileInputStream f = new FileInputStream(setUpFile);
 			scanner = new Scanner(f);
@@ -53,11 +51,9 @@ public class Client {
 			serverControlPort = scanner.nextInt();
 			selfDataPort = scanner.nextInt();
 			clientId = scanner.nextInt();
-			//empty line
-			scanner.nextLine();
+			scanner.nextLine();//read eol
 			fragmentFolder = scanner.nextLine();
-
-			tmpFragmentFolder = scanner.nextLine();
+			rs=scanner.nextInt();
 			/*
 			int i=scanner.nextInt();
 			uploadFolders=new File[i];
@@ -86,13 +82,9 @@ public class Client {
 			return false;
 		//TODO
 		connect.FragmentManager.init(file);
-		file = new File(tmpFragmentFolder);
-		if (!file.exists() || !file.isDirectory())
-			return false;
 		//fileDetector.FolderScanner.init(file);
 		//fileDetector.FileUploader.init(file, serverIp, dataPort);
 
-		rs = 250;
 		return true;
 	}
 
@@ -121,6 +113,10 @@ public class Client {
 		}
 		//folderScanner.stopDetecting();
 		serverConnector.stopConnect();
-
+		try {
+			requestManager.join();
+		} catch (Exception e) {
+			System.out.println(e);
+		}
 	}
 }

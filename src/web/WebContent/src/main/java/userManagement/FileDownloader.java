@@ -22,8 +22,8 @@ public class FileDownloader extends ActionSupport{
 	private int noa;
 	private int nod;
 	//TODO
-	private static final String fragmentFolderPath = "/opt/tomcat/webapps/DFS/CloudDriveServer/downloadFragment";
-	private static final String fileFolderPath = "/opt/tomcat/webapps/DFS/CloudDriveServer/tmpFile";
+	private static final String fragmentFolderPath = "/usr/local/tomcat/webapps/DFS/CloudDriveServer/downloadFragment";
+	private static final String fileFolderPath = "/usr/local/tomcat/webapps/DFS/CloudDriveServer/tmpFile";
 	
     public	String	getPath()
     {
