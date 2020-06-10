@@ -149,7 +149,14 @@
 				out.println("<h2>没有发现 Cookie</h2>");
 			}
 		%>
-      	<%
+		<%
+   // 重定向到新地址
+	if(username == null){
+   String site = new String("../index.html");
+   response.setStatus(response.SC_MOVED_TEMPORARILY);
+   response.setHeader("Location", site); }
+%>
+		<%
 			int i;
 			Query query = new Query();
 			FileItem[] files = query.queryFileList(username, "/");
