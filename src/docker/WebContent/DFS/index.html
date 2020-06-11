@@ -4,6 +4,7 @@
 
 <!--bootstrap和JQerry相关库-->
 <script src="js/jquery/jquery.js"></script>
+<script src="js/jquery/jquery.cookie.js"></script>
 <script src="js/bootstrap-3.3.7/js/bootstrap.min.js"></script>
 <link rel="stylesheet" type="text/css" href="js/bootstrap-3.3.7/css/bootstrap.min.css">
 <!--AJAX相关js动作-->
@@ -11,6 +12,21 @@
 
 <meta charset="utf-8">
 <meta name="viewport" content="width=device-width, initial-scale=1.0">					<!-- 为了让 Bootstrap 开发的网站对移动设备友好，确保适当的绘制和触屏缩放 -->
+
+<script>
+	window.onload=function () {
+		var btnObj = document.getElementById("loginSubmitButton");
+		btnObj.onclick=function () {
+			//this.style.background="red";
+			var userName=$("#inputUsername_login").val();
+			if($.cookie().username!="undefine") {
+				$.removeCookie('username', { path: '/' });
+			}
+			$.cookie("username", userName, { path:'/'});
+			window.console.log($.cookie().username);
+		};
+	};
+</script>
 
 <title>DFS-私有网盘</title>
 
@@ -180,7 +196,6 @@
 		</div>
 	</div>
 </div>
-
 
 </body>
 </html>
