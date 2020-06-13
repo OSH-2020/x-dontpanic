@@ -53,7 +53,7 @@ public class Client {
 			clientId = scanner.nextInt();
 			scanner.nextLine();//read eol
 			fragmentFolder = scanner.nextLine();
-			rs=scanner.nextInt();
+			rs = scanner.nextInt();
 			/*
 			int i=scanner.nextInt();
 			uploadFolders=new File[i];
