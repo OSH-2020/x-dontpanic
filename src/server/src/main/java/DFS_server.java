@@ -2,7 +2,7 @@ import java.io.IOException;
 
 public class DFS_server {
 	
-	private static final int controlPort=58279;
+	private static final int controlPort=2333;
 	private static final int dataPort=58280;
 	
 	public static void main(String args[]) throws Exception{
