@@ -78,12 +78,11 @@ public class ReedSolomon {
     /**
      * Encodes parity for a set of data shards.
      *
-     * @param shards An array containing data shards followed by parity shards.
-     *               Each shard is a byte array, and they must all be the same
-     *               size.
-     * @param offset The index of the first byte in each shard to encode.
+     * @param shards    An array containing data shards followed by parity shards.
+     *                  Each shard is a byte array, and they must all be the same
+     *                  size.
+     * @param offset    The index of the first byte in each shard to encode.
      * @param byteCount The number of bytes to encode in each shard.
-     *
      */
     public void encodeParity(byte[][] shards, int offset, int byteCount) {
         // Check arguments.
@@ -104,9 +103,9 @@ public class ReedSolomon {
     /**
      * Returns true if the parity shards contain the right data.
      *
-     * @param shards An array containing data shards followed by parity shards.
-     *               Each shard is a byte array, and they must all be the same
-     *               size.
+     * @param shards    An array containing data shards followed by parity shards.
+     *                  Each shard is a byte array, and they must all be the same
+     *                  size.
      * @param firstByte The index of the first byte in each shard to check.
      * @param byteCount The number of bytes to check in each shard.
      */
@@ -129,15 +128,15 @@ public class ReedSolomon {
 
     /**
      * Returns true if the parity shards contain the right data.
-     *
+     * <p>
      * This method may be significantly faster than the one above that does
      * not use a temporary buffer.
      *
-     * @param shards An array containing data shards followed by parity shards.
-     *               Each shard is a byte array, and they must all be the same
-     *               size.
-     * @param firstByte The index of the first byte in each shard to check.
-     * @param byteCount The number of bytes to check in each shard.
+     * @param shards     An array containing data shards followed by parity shards.
+     *                   Each shard is a byte array, and they must all be the same
+     *                   size.
+     * @param firstByte  The index of the first byte in each shard to check.
+     * @param byteCount  The number of bytes to check in each shard.
      * @param tempBuffer A temporary buffer (the same size as each of the
      *                   shards) to use when computing parity.
      */
@@ -164,9 +163,9 @@ public class ReedSolomon {
     /**
      * Given a list of shards, some of which contain data, fills in the
      * ones that don't have data.
-     *
+     * <p>
      * Quickly does nothing if all of the shards are present.
-     *
+     * <p>
      * If any shards are missing (based on the flags in shardsPresent),
      * the data in those shards is recomputed and filled in.
      */
@@ -302,7 +301,7 @@ public class ReedSolomon {
     /**
      * Create the matrix to use for encoding, given the number of
      * data shards and the number of total shards.
-     *
+     * <p>
      * The top square of the matrix is guaranteed to be an identity
      * matrix, which means that the data shards are unchanged after
      * encoding.

@@ -10,7 +10,7 @@ import java.util.Arrays;
 
 /**
  * A matrix over the 8-bit Galois field.
- *
+ * <p>
  * This class is not performance-critical, so the implementations
  * are simple and straightforward.
  */
@@ -28,9 +28,9 @@ public class Matrix {
 
     /**
      * The data in the matrix, in row major form.
-     *
+     * <p>
      * To get element (r, c): data[r][c]
-     *
+     * <p>
      * Because this this is computer science, and not math,
      * the indices for both the row and column start at 0.
      */
@@ -39,7 +39,7 @@ public class Matrix {
     /**
      * Initialize a matrix of zeros.
      *
-     * @param initRows The number of rows in the matrix.
+     * @param initRows    The number of rows in the matrix.
      * @param initColumns The number of columns in the matrix.
      */
     public Matrix(int initRows, int initColumns) {
@@ -82,7 +82,7 @@ public class Matrix {
 
     /**
      * Returns a human-readable string of the matrix contents.
-     *
+     * <p>
      * Example: [[1, 2], [3, 4]]
      */
     @Override
@@ -108,12 +108,12 @@ public class Matrix {
 
     /**
      * Returns a human-readable string of the matrix contents.
-     *
+     * <p>
      * Example:
-     *    00 01 02
-     *    03 04 05
-     *    06 07 08
-     *    09 0a 0b
+     * 00 01 02
+     * 03 04 05
+     * 06 07 08
+     * 09 0a 0b
      */
     public String toBigString() {
         StringBuilder result = new StringBuilder();
@@ -268,7 +268,7 @@ public class Matrix {
      * Returns the inverse of this matrix.
      *
      * @throws IllegalArgumentException when the matrix is singular and
-     * doesn't have an inverse.
+     *                                  doesn't have an inverse.
      */
     public Matrix invert() {
         // Sanity check.
@@ -290,7 +290,7 @@ public class Matrix {
 
     /**
      * Does the work of matrix inversion.
-     *
+     * <p>
      * Assumes that this is an r by 2r matrix.
      */
     private void gaussianElimination() {

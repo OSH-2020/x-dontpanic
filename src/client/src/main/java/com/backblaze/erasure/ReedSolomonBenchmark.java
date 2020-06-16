@@ -12,10 +12,10 @@ import java.util.Random;
 
 /**
  * Benchmark of Reed-Solomon encoding.
- *
+ * <p>
  * Counts the number of bytes of input data that can be processed per
  * second.
- *
+ * <p>
  * The set of data the test runs over is twice as big as the L3 cache
  * in a Xeon processor, so it should simulate the case where data has
  * been read in from a socket.
