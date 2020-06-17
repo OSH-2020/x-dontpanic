@@ -85,19 +85,21 @@ class ClientThread extends Thread {
 				return 0;
 			}
 			
-			int port = clientsocket.getPort();
+			//int port = clientsocket.getPort();
 			int rs = Integer.parseInt(s[2]);
-			ip = clientsocket.getInetAddress().getHostAddress();
+			//ip = clientsocket.getInetAddress().getHostAddress();
 
 			database.Query query = new database.Query();
 			database.DeviceItem deviceitem;
 			deviceitem = query.queryDevice(id);
 			if (deviceitem == null) {
 				// 不允许通过报文新建client
+				System.out.println("No such device ID!");
+				return 0;
 			} else {
 				clientId = id;
-				deviceitem.setIp(ip);
-				deviceitem.setPort(port);
+				//deviceitem.setIp(ip);
+				//deviceitem.setPort(port);
 				deviceitem.setIsOnline(true);
 				deviceitem.setRs(rs);
 				query.alterDevice(deviceitem);
@@ -134,6 +136,42 @@ class ClientThread extends Thread {
 						String.format("%d %d %d\n", request.getId(), request.getFragmentId(), request.getType()));
 				outToClient.flush();
 			}
+			return 1;
+		}else if (sentence.charAt(0) == '3') {
+			String s[];
+			s = sentence.split(" ");
+
+			int id = Integer.parseInt(s[1]);
+
+			if (clientId!=-1 && clientId!=id){
+				outToClient.writeBytes("Error!\n");
+				outToClient.flush();
+				return 0;
+			}
+
+			String ip = s[2];
+			int port = Integer.parseInt(s[3]);
+
+			database.Query query = new database.Query();
+			database.DeviceItem deviceitem;
+			deviceitem = query.queryDevice(id);
+			if (deviceitem == null) {
+				// 不允许通过报文新建client
+				System.out.println("No such device ID!");
+				return 0;
+			} else {
+				clientId = id;
+				deviceitem.setIp(ip);
+				deviceitem.setPort(port);
+				//deviceitem.setIsOnline(true);
+				//deviceitem.setRs(rs);
+				query.alterDevice(deviceitem);
+			}
+
+			outToClient.writeBytes(String.format("set ip=%s, port=%d successfully\n", ip,port));
+			outToClient.flush();
+
+			query.closeConnection();
 			return 1;
 		}
 		return 0;

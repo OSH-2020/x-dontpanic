@@ -6,6 +6,7 @@ public class Query {
 	
     static final String JDBC_DRIVER = "com.mysql.jdbc.Driver";  
     static final String DB_URL = "jdbc:mysql://localhost:3306?useSSL=false";//TODO
+    //static final String DB_URL = "jdbc:mysql://mysql:3306/mysql?useSSL=false";
     static final String USER = "root";
     static final String PASS = "201314";
 

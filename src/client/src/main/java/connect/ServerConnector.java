@@ -15,10 +15,14 @@ public class ServerConnector extends Thread {
     private int clientId;
     private boolean connecting = true;
     private client.SynItem syn;
+    private String selfIp;
+    private int selfDataPort;
 
-    public ServerConnector(int cId, client.SynItem s) {
+    public ServerConnector(int cId, client.SynItem s, String selfIp, int selfDataPort) {
         clientId = cId;
         syn = s;
+        this.selfIp = selfIp;
+        this.selfDataPort = selfDataPort;
     }
 
     public static void init(String sIp, int cPort) {
@@ -62,9 +66,21 @@ public class ServerConnector extends Thread {
             if (!status) {
                 break;
             }
+            try {
+                //TODO change ID
+                outToServer.writeBytes(String.format("3 %d %s %d\n", clientId, selfIp, selfDataPort));
+                outToServer.flush();
+                input = inFromServer.readLine();
 
+                //debug
+                System.out.println(input);
+
+            } catch (Exception e) {
+                e.printStackTrace();
+            }
             while (connecting) {
                 try {
+                    //TODO change ID
                     outToServer.writeBytes(String.format("1 %d %d\n", clientId, client.Client.getRS()));
                     outToServer.flush();
                     input = inFromServer.readLine();

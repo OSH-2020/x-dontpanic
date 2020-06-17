@@ -12,6 +12,7 @@ import java.util.Scanner;
 
 public class Client {
 	private static int clientId;
+	private static String selfIp;
 	private static int selfDataPort;
 	private SynItem syn;
 	private static int rs = 0;
@@ -49,6 +50,8 @@ public class Client {
 			scanner = new Scanner(f);
 			serverIp = scanner.nextLine();
 			serverControlPort = scanner.nextInt();
+			scanner.nextLine();//read eol
+			selfIp = scanner.nextLine();
 			selfDataPort = scanner.nextInt();
 			clientId = scanner.nextInt();
 			scanner.nextLine();//read eol
@@ -92,7 +95,7 @@ public class Client {
 
 		syn = new SynItem(0);
 
-		//ServerConnector serverConnector = new ServerConnector(clientId, syn);
+		//ServerConnector serverConnector = new ServerConnector(clientId, syn,selfIp,selfDataPort);
 		//serverConnector.start();
 
 		RequestManager requestManager = new RequestManager(selfDataPort);
