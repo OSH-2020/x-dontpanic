@@ -8,19 +8,30 @@
 <script src="js/bootstrap-3.3.7/js/bootstrap.min.js"></script>
 <link rel="stylesheet" type="text/css" href="js/bootstrap-3.3.7/css/bootstrap.min.css">
 <!--AJAX相关js动作-->
-<script src="js/index_ajax.js"></script>
+<script src="js/index_ajax.js" charset="utf-8"></script>
 
 <meta charset="utf-8">
 <link rel="stylesheet" href="https://cdn.staticfile.org/font-awesome/4.7.0/css/font-awesome.css">
 <meta name="viewport" content="width=device-width, initial-scale=1.0">					<!-- 为了让 Bootstrap 开发的网站对移动设备友好，确保适当的绘制和触屏缩放 -->
-<link rel="stylesheet" href="layui/css/layui.css">
-<link rel="stylesheet" href="css/index_css/reset.css"> <!-- CSS reset -->
-<link rel="stylesheet" href="css/index_css/style.css"> <!-- Resource style -->
+<link rel="stylesheet" href="layui/css/layui.css" media="all">
+<script src="layui/js/layui.all.js" charset="utf-8"></script>
+<script src="layui/js/layui.js" charset="utf-8"></script>
 
-<style> 
-	body{text-align:center} 
+<script>
+    layui.use(['element','layer'], function(){
+          var element = layui.element,
+              layer = layui.layer;
+
+        element.on('tab(xyy)', function(data){
+            console.log(data.index);
+        });
+    });
+</script>
+<style>
+	body{text-align:center}
 	.cetr{margin:0 auto; width:400px; height:100px; border:1px}
-</style> 
+	.headcetr{margin:0 auto; border:1px}
+</style>
 
 <script>
 	window.onload=function () {
@@ -43,14 +54,15 @@
 
 <body>
 
-<div class="row clearfix">
-	<div class="row clearfix">
+<div class="layui-row">
+	<div>
 		<div class="cd-intro-content mask-2">
-			<div class="content-wrapper">
+			<div class="content-wrapper layui-col-md12" style="margin:0 auto;">
 				<h1>
 					DFS 分布式网盘 <small>dfs</small>
 				</h1>
 			</div>
+
 			<div class="carousel slide" id="carousel-275345">
 				<ol class="carousel-indicators">
 					<li data-slide-to="0" data-target="#carousel-275345">
@@ -94,56 +106,30 @@
 							</p>
 						</div>
 					</div>
-				</div> 
+				</div>
 				<a class="left carousel-control" href="#carousel-275345" data-slide="prev">
 					<span class="glyphicon glyphicon-chevron-left"></span>
-				</a> 
+				</a>
 				<a class="right carousel-control" href="#carousel-275345" data-slide="next">
 					<span class="glyphicon glyphicon-chevron-right"></span>
 				</a>
 			</div>
+
 		</div>
 	</div>
 </div>
-<div class=container">
+<div class=layui-container">
 	<div class="row clearfix">
-		<div class="col-md-12 column">
+		<div class="col-md-12">
 			<div class="row clearfix">
-				<div class="cetr">
-					<div class="tabbable" id="tabs-626018">
-						<ul class="cetr auto nav nav-tabs">
-							<li class="active">
-								 <a href="#panel-login" data-toggle="tab">登录</a>
-							</li>
-							<li>
-								 <a href="#panel-register" data-toggle="tab">注册</a>
-							</li>
+				<div>
+					<div class="layui-tab layui-tab-brief" lay-filter="xyy" id="tabs-626018">
+						<ul class="layui-tab-title" style="margin:0 auto; width:400px; height:80px; border:1px">
+							<li class="layui-this">登录</li>
+							<li>注册</li>
 						</ul>
-						<div class="tab-content">
-							<div class="tab-pane" id="panel-register">
-								<!-- 这是注册窗口 -->
-								<form class="form-horizontal" role="form" action = "UserReg">
-									<div class="form-group">
-										<label for="userName" class="col-sm-4 control-label">设置用户名</label>
-										<div class="col-sm-6">
-											<input type="text" class="form-control" id="inputUsername_reg"  name = "userName" />
-										</div>
-									</div>
-									<div class="form-group">
-										<label for="userPasswd" class="col-sm-4 control-label">设置密码</label>
-										<div class="col-sm-6">
-											<input type="password" class="form-control" id="inputPassword_reg" name = "userPasswd" />
-										</div>
-									</div>
-									<div class="form-group">
-										<div class="cetr col-sm-10">
-											<button type="button" id="regSubmitButton"  class="cd-btn">注册</button>
-										</div>
-									</div>
-								</form>								
-							</div>
-							<div class="tab-pane active" id="panel-login">
-								<!-- 这是登录窗口 -->
+						<div class="layui-tab-content" style="height: 300px;">
+							<div class="layui-tab-item layui-show">
 								<form class="form-horizontal" role="form">
 									<div class="form-group">
 										<label for="inputUsername_login" class="col-sm-4 control-label">用户名</label>
@@ -158,11 +144,33 @@
 										</div>
 									</div>
 									<div class="form-group">
-										<div class="cetr col-sm-10">
+										<div class="cetr layui-col-md-12 layui-col-xs-12">
 											<button type="button" id = loginSubmitButton class="cd-btn">登录</button>
 										</div>
 									</div>
-								</form>					
+								</form>
+							</div>
+							<div class="layui-tab-item">
+								<form class="layui-form" role="form" action = "UserReg">
+									<div class="layui-form-item">
+										<label for="userName" class="layui-form-label">用户名</label>
+										<div class="layui-input-block">
+											<input class="layui-input" type="text" id="inputUsername_reg"  name = "userName" placeholder="请设置用户名"/>
+										</div>
+									</div>
+									<div class="layui-form-item">
+										<label for="userPasswd" class="layui-form-label">密码</label>
+										<div class="layui-input-block">
+											<input class="layui-input" type="password" id="inputPassword_reg" name = "userPasswd" placeholder="请设置密码"/>
+										</div>
+									</div>
+									<div class="layui-form-item">
+										<!-- style="margin:0 auto; border:1px" -->
+										<div class="layui-input-block">
+											<button type="button" id="regSubmitButton"  class="layui-btn layui-anim" data-anim="layui-anim-scaleSpring">注册</button>
+										</div>
+									</div>
+								</form>
 							</div>
 						</div>
 					</div>
@@ -170,29 +178,29 @@
 			</div>
 		</div>
 	</div>
-	
-	<div class="clearfix" style="margin-bottom: 20px;"></div><!-- 清除浮动 -->
-	
+</div>
+<div>
+	<!-- <div class="clearfix" style="margin-bottom: 20px;"></div> 清除浮动 -->
+
 	<div class="row clearfix">
-		<div class="col-md-12 column">
+		<div class="layui-col-md-12 layui-col-xs-12">
 			<div class="alert alert-success alert-dismissable">
-				 <button type="button" class="close" data-dismiss="alert" aria-hidden="true">×</button>
+				<button type="button" class="close" data-dismiss="alert" aria-hidden="true">×</button>
 				<h4>
 					提示:
-				</h4> 
+				</h4>
 					<p id="statusFeedback">
 					欢迎使用本系统～
 					</p>
 			</div>
 		</div>
 	</div>
+</div>
+<div>
+	<!-- <div class="clearfix" style="margin-bottom: 50px;"></div> 清除浮动 -->
 
-
-	<div class="clearfix" style="margin-bottom: 50px;"></div><!-- 清除浮动 -->
-	
-	
-	<div class="row clearfix">
-		<div class="col-md-12 column">
+	<div class="row clearfix cetr">
+		<div class="layui-col-md-4 layui-col-xs-4">
 			<h2>
 				关于本系统:
 			</h2>
