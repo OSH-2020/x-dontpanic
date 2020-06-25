@@ -10,14 +10,15 @@ import net.sf.json.JSONObject;
 
 import java.io.File;
 import java.util.LinkedList;
+import java.util.ArrayList; // fix
 
 public class FileUploader extends ActionSupport{
-	
+
 	private	static final long serialVersionUID = 1L;
 	private String path;
 	private String fileName;
 	//用来返回结果给前端
-    private	String	result;
+	private	String	result;
 	private JSONObject devices;
 	private String fileType;
 	private int fileSize;
@@ -28,32 +29,32 @@ public class FileUploader extends ActionSupport{
 	//TODO
 	private static final String fragmentFolderPath = "/usr/local/tomcat/webapps/DFS/CloudDriveServer/downloadFragment";
 	private static final String fileFolderPath = "/usr/local/tomcat/webapps/DFS/CloudDriveServer/tmpFile";
-	
-    public	String	getPath()
-    {
-    	return this.path;
-    }
-    
+
+	public	String	getPath()
+	{
+		return this.path;
+	}
+
 	public void setPath(String path)
 	{
 		this.path = path;
 	}
-	
-    public	String	getResult()
-    {
-    	return this.result;
-    }
-    
+
+	public	String	getResult()
+	{
+		return this.result;
+	}
+
 	public void setResult(String result)
 	{
 		this.result = result;
 	}
-	
-    public	String getFileName()
-    {
-    	return this.fileName;
-    }
-    
+
+	public	String getFileName()
+	{
+		return this.fileName;
+	}
+
 	public void setFileName(String fileName)
 	{
 		this.fileName = fileName;
@@ -129,21 +130,80 @@ public class FileUploader extends ActionSupport{
 		this.fileId = fileId;
 	}
 
+	/*
 	private DeviceItem[] getAllocateDeviceList(Query query,int nod,int noa){
     	DeviceItem[] deviceItemList=new DeviceItem[nod+noa];
     	for(int i=0;i<nod+noa;i++){
     		deviceItemList[i]=query.queryDevice(1);
 		}
     	return deviceItemList;
+	}*/
+	private DeviceItem[] getAllocateDeviceList(Query query,int nod,int noa, String whose){
+		// 确认有在线设备
+		DeviceItem[] onlineDevice = query.queryOnlineDevice();
+		if(onlineDevice == null){
+			System.out.println("no onlineDevice");
+			return null;
+		}
+		// 计算相似度 0<=distance<=24
+		int onlineDeviceNum = onlineDevice.length;
+		System.out.println("onlineDeviceNum:" + onlineDeviceNum);
+		int[] distance = new int[onlineDeviceNum];
+		for(int i=0; i<onlineDeviceNum; i++){
+			int time = query.queryDeviceTime(onlineDevice[i].getId());
+			System.out.println("DeviceTime:" + time);
+			int save = query.queryUserTime(whose);
+			System.out.println("UserTime:" + save);
+			distance[i] = 0;
+			for(int j=0; j<24; j++){ // 24维
+				/*if((time & 1) == 1)
+					distance[i] ++;
+				else if((save & 1) == 0)
+					distance[i] ++;*/
+				if((time & 1) == 0 & (save & 1) == 1)
+					distance[i]++;
+				time = time >> 1;
+				save = save >> 1;
+			}
+		}
+		// 由于有 vlab，必然有至少一台distance <= 30% * 24 = 7
+		ArrayList<Integer> distanceId = new ArrayList<>();
+		for(int i=0; i<onlineDeviceNum; i++){
+			if(distance[i]<=7)
+				distanceId.add(0, i); // 一直从头插入
+		}
+		int size = distanceId.size(); // 有效在线主机数
+		if(size < 1)
+			return null;
+		// 根据碎片数量和有效在线主机数，确定结果
+		DeviceItem[] deviceItemList=new DeviceItem[nod+noa];
+		if(noa+nod <= size){
+			for(int i=0;i<nod+noa;i++){
+				deviceItemList[i] = onlineDevice[distanceId.get(i)];
+			}
+		}
+		else{ // noa+nod > size
+			int average = (nod+noa)/size;
+			int remain = (nod+noa)%size;
+			for(int i=0;i<size;i++){
+				for(int j=average*i; j<average*(i+1); j++){
+					deviceItemList[j] = onlineDevice[distanceId.get(i)];
+				}
+			}
+			for(int i=0;i<remain;i++){
+				deviceItemList[average*size+i] = onlineDevice[distanceId.get(i)];
+			}
+		}
+		return deviceItemList;
 	}
 
 	public String uploadRegister(){
 		//return -1 if error
 		//return 0 if can not collect enough fragments
 		//else, return 1
-		
+
 		System.out.println("uploadRegister is called");
-		
+
 		Query query=new Query();
 		FileItem fileItem=query.queryFile(path, fileName);
 		DeviceItem[] onlineDevice =query.queryOnlineDevice();
@@ -159,7 +219,7 @@ public class FileUploader extends ActionSupport{
 			query.closeConnection();
 			result = "DuplicateFileName";
 			return "success";
-		}		
+		}
 		else{
 			FileItem newFile=new FileItem(fileName,path,"rwxrwxrwx","",nod,noa,false,fileType,fileSize,whose);
 			fileId=query.addFile(newFile);
@@ -169,7 +229,7 @@ public class FileUploader extends ActionSupport{
 			int deviceID;
 			String str;
 			JSONArray jsonArray = new JSONArray();
-			DeviceItem[] deviceItemList=getAllocateDeviceList(query,nod,noa);
+			DeviceItem[] deviceItemList=getAllocateDeviceList(query,nod,noa,whose);
 			for (int i=0;i<nod+noa;i++){
 				JSONObject formDetailsJson = new JSONObject();
 				formDetailsJson.put("filename", String.valueOf(fileId*100+i));
@@ -215,7 +275,7 @@ public class FileUploader extends ActionSupport{
 			}
 		}
 	}
-	
+
 	public String progressCheck(){
 		//return -1 if error
 		//else, return a number from 0 to 100 as # of fragments which have been downloaded
@@ -230,7 +290,7 @@ public class FileUploader extends ActionSupport{
 		else{
 			String fileId=Integer.toString(fileItem.getId());
 			int collectedFiles = 0;
-			File dir=new File(fragmentFolderPath);			
+			File dir=new File(fragmentFolderPath);
 			String files[]=dir.list();
 			for (String file : files){
 				if (file.substring(0, file.length()-2).equals(fileId))
@@ -241,21 +301,21 @@ public class FileUploader extends ActionSupport{
 			percentage *= 2;
 			collectedFiles = (int) (percentage * 100);
 			System.out.println("pregress check is called,return "+ collectedFiles);
-			
+
 			result = Integer.toString(collectedFiles);
 			return "success";
-		}		
+		}
 	}
-	
-	
-	
-	
+
+
+
+
 	public String decodeFile(){
 		//return 1 and DELETE ALL FRAGMENTS OF INPUT FILE if decode successfully
 		//else, return 0
-		
+
 		System.out.println("decodeFile is called");
-		
+
 		Query query=new Query();
 		FileItem fileItem=query.queryFile(path, fileName);
 		query.closeConnection();
@@ -269,7 +329,7 @@ public class FileUploader extends ActionSupport{
 				if (com.backblaze.erasure.Decoder.decode(
 						new File(fragmentFolderPath), new File(fileFolderPath+'/'+ fileName),
 						fileItem.getId(), fileItem.getNoa())) {
-					File dir=new File(fragmentFolderPath);			
+					File dir=new File(fragmentFolderPath);
 					File files[]=dir.listFiles();
 					String fileId=Integer.toString(fileItem.getId());
 					String str;
@@ -277,23 +337,23 @@ public class FileUploader extends ActionSupport{
 						str=file.getName();
 						if (str.substring(0, str.length()-2).equals(fileId))
 							file.delete();
-					}	
+					}
+					{
+						result = "OK";
+						return "success";
+					}
+				}
+				else
 				{
-					result = "OK";
+					result = "Error";
 					return "success";
 				}
-			}			
-			else
-			{
+			}
+			catch (Exception e) {
 				result = "Error";
 				return "success";
 			}
-			}
-			catch (Exception e) {
-					result = "Error";
-					return "success";
-			}
-		}		
+		}
 	}
 	
 	/* only for debug 
