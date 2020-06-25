@@ -27,11 +27,6 @@
         });
     });
 </script>
-<style>
-	body{text-align:center}
-	.cetr{margin:0 auto; width:400px; height:100px; border:1px}
-	.headcetr{margin:0 auto; border:1px}
-</style>
 
 <script>
 	window.onload=function () {
@@ -53,7 +48,7 @@
 </head>
 
 <body>
-
+<!--
 <div class="layui-row">
 	<div>
 		<div class="cd-intro-content mask-2">
@@ -118,62 +113,56 @@
 		</div>
 	</div>
 </div>
-<div class=layui-container">
-	<div class="row clearfix">
-		<div class="col-md-12">
-			<div class="row clearfix">
-				<div>
-					<div class="layui-tab layui-tab-brief" lay-filter="xyy" id="tabs-626018">
-						<ul class="layui-tab-title" style="margin:0 auto; width:400px; height:80px; border:1px">
-							<li class="layui-this">登录</li>
-							<li>注册</li>
-						</ul>
-						<div class="layui-tab-content" style="height: 300px;">
-							<div class="layui-tab-item layui-show">
-								<form class="form-horizontal" role="form">
-									<div class="form-group">
-										<label for="inputUsername_login" class="col-sm-4 control-label">用户名</label>
-										<div class="col-sm-6">
-											<input type="text" class="form-control" id="inputUsername_login" />
-										</div>
-									</div>
-									<div class="form-group">
-										<label for="inputPassword_login" class="col-sm-4 control-label">密码</label>
-										<div class="col-sm-6">
-											<input type="password" class="form-control" id="inputPassword_login" />
-										</div>
-									</div>
-									<div class="form-group">
-										<div class="cetr layui-col-md-12 layui-col-xs-12">
-											<button type="button" id = loginSubmitButton class="cd-btn">登录</button>
-										</div>
-									</div>
-								</form>
-							</div>
-							<div class="layui-tab-item">
-								<form class="layui-form" role="form" action = "UserReg">
-									<div class="layui-form-item">
-										<label for="userName" class="layui-form-label">用户名</label>
-										<div class="layui-input-block">
-											<input class="layui-input" type="text" id="inputUsername_reg"  name = "userName" placeholder="请设置用户名"/>
-										</div>
-									</div>
-									<div class="layui-form-item">
-										<label for="userPasswd" class="layui-form-label">密码</label>
-										<div class="layui-input-block">
-											<input class="layui-input" type="password" id="inputPassword_reg" name = "userPasswd" placeholder="请设置密码"/>
-										</div>
-									</div>
-									<div class="layui-form-item">
-										<!-- style="margin:0 auto; border:1px" -->
-										<div class="layui-input-block">
-											<button type="button" id="regSubmitButton"  class="layui-btn layui-anim" data-anim="layui-anim-scaleSpring">注册</button>
-										</div>
-									</div>
-								</form>
+-->
+<div class="row clearfix">
+	<div class=layui-container">
+		<div class="layui-tab layui-tab-brief" lay-filter="xyy" id="tabs-626018">
+			<ul class="layui-tab-title" style="margin:0 auto; width:200px; height:80px; border:1px">
+				<li class="layui-this">登录</li>
+				<li>注册</li>
+			</ul>
+			<div class="layui-tab-content" style="margin:0 auto; width:700px; height: 300px; border:1px">
+				<div class="layui-tab-item layui-show">
+					<form class="form-horizontal" role="form">
+						<div class="layui-form-item">
+							<label for="inputUsername_login" class="layui-form-label">用户名</label>
+							<div class="layui-input-block">
+								<input class="layui-input" type="text" class="form-control" id="inputUsername_login" placeholder="请输入用户名"/>
 							</div>
 						</div>
-					</div>
+						<div class="layui-form-item">
+							<label for="inputPassword_login" class="layui-form-label">密码</label>
+							<div class="layui-input-block">
+								<input class="layui-input" type="password" class="form-control" id="inputPassword_login" placeholder="请输入密码"/>
+							</div>
+						</div>
+						<div class="layui-form-item">
+							<div class="layui-input-block">
+								<button type="button" id = loginSubmitButton class="layui-btn">登录</button>
+							</div>
+						</div>
+					</form>
+				</div>
+				<div class="layui-tab-item">
+					<form class="layui-form" role="form" action = "UserReg">
+						<div class="layui-form-item">
+							<label for="userName" class="layui-form-label">用户名</label>
+							<div class="layui-input-block">
+								<input class="layui-input" type="text" id="inputUsername_reg"  name = "userName" placeholder="请设置用户名"/>
+							</div>
+						</div>
+						<div class="layui-form-item">
+							<label for="userPasswd" class="layui-form-label">密码</label>
+							<div class="layui-input-block">
+								<input class="layui-input" type="password" id="inputPassword_reg" name = "userPasswd" placeholder="请设置密码"/>
+							</div>
+						</div>
+						<div class="layui-form-item">
+							<div class="layui-input-block">
+								<button type="button" id="regSubmitButton" class="layui-btn">注册</button>
+							</div>
+						</div>
+					</form>
 				</div>
 			</div>
 		</div>
@@ -181,26 +170,23 @@
 </div>
 <div>
 	<!-- <div class="clearfix" style="margin-bottom: 20px;"></div> 清除浮动 -->
-
-	<div class="row clearfix">
-		<div class="layui-col-md-12 layui-col-xs-12">
-			<div class="alert alert-success alert-dismissable">
-				<button type="button" class="close" data-dismiss="alert" aria-hidden="true">×</button>
-				<h4>
-					提示:
-				</h4>
-					<p id="statusFeedback">
-					欢迎使用本系统～
-					</p>
-			</div>
+	<div style="margin:0 auto; width:600px; height:100px; border:1px">
+		<div class="alert alert-success alert-dismissable">
+			<button type="button" class="close" data-dismiss="alert" aria-hidden="true">×</button>
+			<h4>
+				提示:
+			</h4>
+				<p id="statusFeedback">
+				欢迎使用本系统～
+				</p>
 		</div>
 	</div>
 </div>
 <div>
 	<!-- <div class="clearfix" style="margin-bottom: 50px;"></div> 清除浮动 -->
 
-	<div class="row clearfix cetr">
-		<div class="layui-col-md-4 layui-col-xs-4">
+	<div style="margin:0 auto; width:600px; height:100px; border:1px">
+		<div class="layui-col-sm-6">
 			<h2>
 				关于本系统:
 			</h2>
