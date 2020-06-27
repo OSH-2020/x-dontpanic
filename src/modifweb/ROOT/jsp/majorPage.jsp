@@ -43,14 +43,6 @@
 <body>
 
 <div class="layui-row">
-	<!-- style="
-		display: table-cell;
-		vertical-align: middle;
-		text-align: center;
-		padding: 0 5%;
-		background: #ffffff;
-		-webkit-font-smoothing: antialiased;
-		-moz-osx-font-smoothing: grayscale;" -->
 	<div style="margin:0 auto; text-align:center;">
 		<h1 style="
 			font-family: Arial, Helvetica, sans-serif;
@@ -64,13 +56,13 @@
 <div class="layui-carousel layui-row" id="xyycarousel" style="margin:0 auto; text-align:center;">
 	<div carousel-item>
 		<div>
-			<img src="material/pic1.jpg"/>
+			<img src="../material/pic1.jpg"/>
 		</div>
 		<div>
-			<img src="material/pic2.jpg"/>
+			<img src="../material/pic2.jpg"/>
 		</div>
 		<div>
-			<img src="material/pic3.jpg"/>
+			<img src="../material/pic3.jpg"/>
 		</div>
 	</div>
 </div>
