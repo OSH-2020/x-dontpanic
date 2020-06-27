@@ -14,94 +14,63 @@
 <script src="../js/bootstrap-3.3.7/js/bootstrap.min.js"></script>
 <link rel="stylesheet" type="text/css" href="../js/bootstrap-3.3.7/css/bootstrap.min.css">
 <!--AJAX相关js动作-->
-
 <script src="../js/ec/object_hash.js" type="text/javascript"></script>
 <script src="../js/ec/erasure.js"></script>
 <script src="../js/ec/funcs.js"></script>
-
 <script src="../js/majorPage_ajax.js"></script>
 <meta name="viewport" content="width=device-width, initial-scale=1.0">					<!-- 为了让 Bootstrap 开发的网站对移动设备友好，确保适当的绘制和触屏缩放 -->
 
-<link rel="stylesheet" href="../layui/css/layui.css" media="all">
-<script src="../layui/js/layui.all.js" charset="utf-8"></script>
-<script src="../layui/js/layui.js" charset="utf-8"></script>
+<script src="https://www.layuicdn.com/layui/layui.js"></script>
+<meta charset="utf-8" />
+<link rel="stylesheet" type="text/css" href="https://www.layuicdn.com/layui/css/layui.css" />
+
+<script>
+	layui.use('carousel', function(){
+		var carousel = layui.carousel;
+		carousel.render({
+			elem: '#xyycarousel',
+			width: '1600',
+			height: '450',
+			arrow: 'hover',
+			anim: 'updown'
+		});
+	});
+</script>
 
 <title>DFS 分布式网盘</title>
 
 </head>
-
 <body>
 
 <div class="layui-row">
-	<div>
-		<div style="
-			display: table-cell;
-			vertical-align: middle;
-			text-align: center;
-			padding: 0 5%;
-			background: #ffffff;
-			-webkit-font-smoothing: antialiased;
-			-moz-osx-font-smoothing: grayscale;">
-			<div style="margin:0 auto;">
-				<h1 style="
-					font-family: Arial, Helvetica, sans-serif;
-					font-size: 6rem;
-					color: #000000;">
-					DFS - Distributed FileSystem
-				</h1>
-			</div>
+	<!-- style="
+		display: table-cell;
+		vertical-align: middle;
+		text-align: center;
+		padding: 0 5%;
+		background: #ffffff;
+		-webkit-font-smoothing: antialiased;
+		-moz-osx-font-smoothing: grayscale;" -->
+	<div style="margin:0 auto; text-align:center;">
+		<h1 style="
+			font-family: Arial, Helvetica, sans-serif;
+			font-size: 6rem;
+			color: #087933;">
+			DFS - Distributed FileSystem
+		</h1>
+	</div>
+</div>
 
-			<div class="carousel slide" id="carousel-275345">
-				<ol class="carousel-indicators">
-					<li data-slide-to="0" data-target="#carousel-275345">
-					</li>
-					<li data-slide-to="1" data-target="#carousel-275345" class="active">
-					</li>
-					<li data-slide-to="2" data-target="#carousel-275345">
-					</li>
-				</ol>
-				<div class="carousel-inner">
-					<div class="item">
-						<img alt="" src="../material/pic1.jpg" />
-						<div class="carousel-caption">
-							<h4>
-								xyy1
-							</h4>
-							<p>
-								xyy1
-							</p>
-						</div>
-					</div>
-					<div class="item active">
-						<img alt="" src="../material/pic2.jpg" />
-						<div class="carousel-caption">
-							<h4>
-								xyy2
-							</h4>
-							<p>
-								xyy2
-							</p>
-						</div>
-					</div>
-					<div class="item">
-						<img alt="" src="../material/pic3.jpg" />
-						<div class="carousel-caption">
-							<h4>
-								xyy3
-							</h4>
-							<p>
-								xyy3
-							</p>
-						</div>
-					</div>
-				</div>
-				<a class="left carousel-control" href="#carousel-275345" data-slide="prev">
-					<span class="glyphicon glyphicon-chevron-left"></span>
-				</a>
-				<a class="right carousel-control" href="#carousel-275345" data-slide="next">
-					<span class="glyphicon glyphicon-chevron-right"></span>
-				</a>
-			</div>
+<div class="layui-carousel layui-row" id="xyycarousel" style="margin:0 auto; text-align:center;">
+	<div carousel-item>
+		<div>
+			<img src="material/pic1.jpg"/>
+		</div>
+		<div>
+			<img src="material/pic2.jpg"/>
+		</div>
+		<div>
+			<img src="material/pic3.jpg"/>
 		</div>
 	</div>
 </div>
