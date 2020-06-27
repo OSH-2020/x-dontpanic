@@ -11,21 +11,38 @@
 <script src="js/index_ajax.js" charset="utf-8"></script>
 
 <meta charset="utf-8">
-<link rel="stylesheet" href="https://cdn.staticfile.org/font-awesome/4.7.0/css/font-awesome.css">
 <meta name="viewport" content="width=device-width, initial-scale=1.0">					<!-- 为了让 Bootstrap 开发的网站对移动设备友好，确保适当的绘制和触屏缩放 -->
+<!--
+<link rel="stylesheet" href="https://cdn.staticfile.org/font-awesome/4.7.0/css/font-awesome.css">
 <link rel="stylesheet" href="layui/css/layui.css" media="all">
 <script src="layui/js/layui.all.js" charset="utf-8"></script>
 <script src="layui/js/layui.js" charset="utf-8"></script>
+-->
+<script src="https://www.layuicdn.com/layui/layui.js"></script>
+<meta charset="utf-8" />
+<link rel="stylesheet" type="text/css" href="https://www.layuicdn.com/layui/css/layui.css" />
 
 <script>
     layui.use(['element','layer'], function(){
-          var element = layui.element,
-              layer = layui.layer;
-
-        element.on('tab(xyy)', function(data){
-            console.log(data.index);
+		var element = layui.element,
+			layer = layui.layer;
+		element.on('tab(xyy)', function(data){
+			console.log(data.index);
         });
     });
+</script>
+
+<script>
+	layui.use('carousel', function(){
+		var carousel = layui.carousel;
+		carousel.render({
+			elem: '#xyycarousel',
+			width: '1600',
+			height: '450',
+			arrow: 'hover',
+			anim: 'updown'
+		});
+	});
 </script>
 
 <script>
@@ -50,23 +67,24 @@
 <body>
 <div class="layui-row">
 	<div>
-		<div style="
+		<!-- style="
 			display: table-cell;
 			vertical-align: middle;
 			text-align: center;
 			padding: 0 5%;
 			background: #ffffff;
 			-webkit-font-smoothing: antialiased;
-			-moz-osx-font-smoothing: grayscale;">
-			<div style="margin:0 auto;">
+			-moz-osx-font-smoothing: grayscale;" -->
+		<div>
+			<div style="margin:0 auto; text-align:center;">
 				<h1 style="
 					font-family: Arial, Helvetica, sans-serif;
 					font-size: 6rem;
-					color: #000000;">
+					color: #087933;">
 					DFS - Distributed FileSystem
 				</h1>
 			</div>
-
+			<!--
 			<div class="carousel slide" id="carousel-275345">
 				<ol class="carousel-indicators">
 					<li data-slide-to="0" data-target="#carousel-275345">
@@ -118,6 +136,22 @@
 					<span class="glyphicon glyphicon-chevron-right"></span>
 				</a>
 			</div>
+			-->
+		</div>
+	</div>
+</div>
+
+
+<div class="layui-carousel layui-row" id="xyycarousel" style="margin:0 auto; text-align:center;">
+	<div carousel-item>
+		<div>
+			<img src="material/pic1.jpg"/>
+		</div>
+		<div>
+			<img src="material/pic2.jpg"/>
+		</div>
+		<div>
+			<img src="material/pic3.jpg"/>
 		</div>
 	</div>
 </div>
