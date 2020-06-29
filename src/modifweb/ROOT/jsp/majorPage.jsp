@@ -65,10 +65,8 @@
 </div>
 
 <div>
-	<div class="clearfix" style="margin-bottom: 50px;"></div>
 
-<!-- 路径导航 -->
-	<div class="row clearfix">
+	<div class="row clearfix" style="margin:50px auto 50px; width:80%;">
 		<div class="col-md-12 column">
 			<div>当前访问位置：　 </div>
 			<ul class="breadcrumb" id = "curr_path">
@@ -88,10 +86,9 @@
 		</div>
 	</div>
 
-<!-- 文件目录表＋进度区 -->
-	<div class="row clearfix">
-		<div class="col-md-7 column">
-			<div class="row pre-scrollable">
+	<div class="layui-row clearfix">
+		<div class="layui-col-md-7 column">
+			<div class="layui-row pre-scrollable">
 				<table class="table" id="fileCatalogTable">
    					<thead>
       					<tr>
@@ -104,7 +101,9 @@
    					<tbody id="file_list_body">
       					<tr class="file_list_back">
       						<td> </td>
-         					<td> <label><input type="checkbox">&emsp;&emsp;</label><span class="glyphicon glyphicon-folder-open"></span>&emsp;../</td>
+							<td> <label><input type="checkbox">&emsp;&emsp;</label>
+								<span class="glyphicon glyphicon-folder-open"></span>&emsp;../
+							</td>
          					<td></td>
          					<td></td>
       					</tr>
@@ -163,67 +162,46 @@
 				</table>
 			</div>
 		</div>
-		<div class="col-md-1 column"></div>
-		<div class="col-md-4 column">
-
-			<h2>
-				当前任务进度：
-			</h2>
-			<!--
-				<div class="progress progress-striped active">
-						<div class="progress-bar progress-bar-success" role="progressbar" style="width: 40%;">当前进度</div>
-				</div>
-			-->
-			<div class="row pre-scrollable" id="download_progress_area">
-
-			</div>
-		</div>
 	</div>
 
-	<!-- 按钮组 -->
-	<div class="row clearfix">
-		<div class="col-md-8 column">
-			<div class="clearfix" style="margin-bottom: 50px;"></div><!-- 清除浮动 -->
+	<div class="layui-container clearfix">
+		<div class="layui-col-md-12 layui-col-xs-12 column">
+			<div class="clearfix" style="margin-bottom: 50px;"></div>
 
-			<!-- 下载、上传、删除按钮 -->
-			<div class="col-md-1 column col-md-offset-1">
-				<button class="btn btn-primary" type="button" id="button_download">
+			<div class="layui-col-md-2 layui-col-md-offset-1">
+				<button class="layui-btn" type="button" id="button_download">
 				预下载
 				</button>
 			</div>
-			<div class="col-md-1 column col-md-offset-1">
-				<button class="btn btn-primary" type="button" id="button_delete">
-				删除
-				</button>
-			</div>
-			<div class="col-md-1 column col-md-offset-1">
+			<div class="layui-col-md-2 layui-col-md-offset-1">
 				<input type="file" id="files" style="display: none" onchange="fileUpload();">
-				<button class="btn btn-primary" type="button" id="button_upload">
+				<button class="layui-btn layui-btn-normal" type="button" id="button_upload">
 				上传
 				</button>
 			</div>
-			<div class="col-md-1 column col-md-offset-1">
-				<button class="btn btn-primary" type="button" id="button_rename">
+			<div class="layui-col-md-2 layui-col-md-offset-1">
+				<button class="layui-btn layui-btn-danger" type="button" id="button_delete">
+				删除
+				</button>
+			</div>
+
+			<div class="layui-col-md-2 layui-col-md-offset-1">
+				<button class="layui-btn layui-btn-primary" type="button" id="button_rename">
 				重命名
 				</button>
 			</div>
 	 	</div>
-
- 		<div class="col-md-4 column">
-		</div>
 	</div>
 
 	<div class="clearfix" style="margin-bottom: 50px;"></div>
 </div>
 
-<div style="margin:50px auto 100px; text-align:center; width:60%;">
-	<p id="statusFeedback">
-	欢迎使用本系统～
-	</p>
+<div style="margin:10px auto 100px; text-align:center; width:60%; font-family:Microsoft YaHei,微软雅黑,Microsoft JhengHei,华文细黑,STHeiti,MingLiu; font-size: 2.5rem;">
+	<p id="statusFeedback">欢迎使用</p>
 </div>
 
 <div>
-	<div style="margin:0 auto; width:80%; text-align:center;">
+	<div style="margin:0 auto; width:80%; text-align:center; font-family:Microsoft YaHei,微软雅黑,Microsoft JhengHei,华文细黑,STHeiti,MingLiu; font-size: 1.2rem;">
 		<p>
 			本系统基于王珺、夏昊珺、滕思洁和郑值开发的「私有网盘」二次开发，
 			剥离了服务器端的数据合并操作，
