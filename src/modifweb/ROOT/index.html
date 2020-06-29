@@ -31,8 +31,8 @@
 		var carousel = layui.carousel;
 		carousel.render({
 			elem: '#xyycarousel',
-			width: '1600',
-			height: '450',
+			width: '800',
+			height: '225',
 			arrow: 'hover',
 			anim: 'updown'
 		});
@@ -59,40 +59,37 @@
 </head>
 
 <body>
-<div class="layui-row">
-	<div style="margin:0 auto; height:150px; text-align:center;">
-		<h1 style="
-			font-family: Arial, Helvetica, sans-serif;
-			font-size: 6rem;
-			color: #087933;">
-			DFS - Distributed FileSystem
-		</h1>
+
+<div class="layui-carousel layui-row" id="xyycarousel" style="margin:0px auto 50px; text-align:center; width:90%;">
+	<div carousel-item>
+		<div>
+			<img src="material/pic1.jpg" alt="pic1" style="width:800px; height:225px;"/>
+		</div>
+		<div>
+			<img src="material/pic2.jpg" alt="pic2" style="width:800px; height:225px;"/>
+		</div>
+		<div>
+			<img src="material/pic3.jpg" alt="pic3" style="width:800px; height:225px;"/>
+		</div>
 	</div>
 </div>
 
-
-<div class="layui-carousel layui-row" id="xyycarousel" style="margin:0 auto; text-align:center;">
-	<div carousel-item>
-		<div>
-			<img src="material/pic1.jpg"/>
-		</div>
-		<div>
-			<img src="material/pic2.jpg"/>
-		</div>
-		<div>
-			<img src="material/pic3.jpg"/>
-		</div>
+<div class="layui-row">
+	<div style="margin:50px auto 10px; text-align:center; width:80%;">
+		<h1 style="font-family: Arial, Helvetica, sans-serif; font-size: 6rem; color: #087933;">
+			DFS - Distributed FileSystem
+		</h1>
 	</div>
 </div>
 
 <div class="row clearfix">
 	<div class="layui-container">
 		<div class="layui-tab layui-tab-brief" lay-filter="xyy" id="tabs-626018">
-			<ul class="layui-tab-title" style="margin:0 auto; width:200px; height:80px; border:1px">
+			<ul class="layui-tab-title" style="margin:10px auto; text-align:center; width:150px;">
 				<li class="layui-this">登录</li>
 				<li>注册</li>
 			</ul>
-			<div class="layui-tab-content" style="margin:0 auto; width:400px; height: 180px; border:1px">
+			<div class="layui-tab-content" style="margin:10px auto; width:350px;">
 				<div class="layui-tab-item layui-show">
 					<form class="form-horizontal" role="form">
 						<div class="layui-form-item">
@@ -107,10 +104,8 @@
 								<input class="layui-input" type="password" class="form-control" id="inputPassword_login" placeholder="请输入密码"/>
 							</div>
 						</div>
-						<div class="layui-form-item">
-							<div class="layui-input-block">
-								<button type="button" id = loginSubmitButton class="layui-btn">登录</button>
-							</div>
+						<div class="layui-form-item" style="text-align:center;">
+							<button type="button" id = loginSubmitButton class="layui-btn">登录</button>
 						</div>
 					</form>
 				</div>
@@ -128,10 +123,8 @@
 								<input class="layui-input" type="password" id="inputPassword_reg" name = "userPasswd" placeholder="请设置密码"/>
 							</div>
 						</div>
-						<div class="layui-form-item">
-							<div class="layui-input-block">
-								<button type="button" id="regSubmitButton" class="layui-btn">注册</button>
-							</div>
+						<div class="layui-form-item" style="text-align:center;">
+							<button type="button" id="regSubmitButton" class="layui-btn">注册</button>
 						</div>
 					</form>
 				</div>
@@ -140,17 +133,14 @@
 	</div>
 </div>
 
-<div style="margin:0 auto; text-align:center; width:60%; height:330px; border:1px">
+<div style="margin:10px auto 100px; text-align:center; width:60%;">
 	<p id="statusFeedback">
 	欢迎使用本系统～
 	</p>
 </div>
 
 <div>
-	<div style="margin:0 auto; width:80%; height:100px; border:1px">
-		<h2>
-			About：
-		</h2>
+	<div style="margin:0 auto; width:80%; text-align:center;">
 		<p>
 			本系统基于王珺、夏昊珺、滕思洁和郑值开发的「私有网盘」二次开发，
 			剥离了服务器端的数据合并操作，

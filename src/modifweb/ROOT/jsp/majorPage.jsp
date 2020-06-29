@@ -29,8 +29,8 @@
 		var carousel = layui.carousel;
 		carousel.render({
 			elem: '#xyycarousel',
-			width: '1600',
-			height: '450',
+			width: '800',
+			height: '225',
 			arrow: 'hover',
 			anim: 'updown'
 		});
@@ -42,28 +42,25 @@
 </head>
 <body>
 
-<div class="layui-row">
-	<div style="margin:0 auto; text-align:center;">
-		<h1 style="
-			font-family: Arial, Helvetica, sans-serif;
-			font-size: 6rem;
-			color: #087933;">
-			DFS - Distributed FileSystem
-		</h1>
+<div class="layui-carousel layui-row" id="xyycarousel" style="margin:0px auto 50px; text-align:center; width:90%;">
+	<div carousel-item>
+		<div>
+			<img src="../material/pic1.jpg" alt="pic1" style="width:800px; height:225px;"/>
+		</div>
+		<div>
+			<img src="../material/pic2.jpg" alt="pic2" style="width:800px; height:225px;"/>
+		</div>
+		<div>
+			<img src="../material/pic3.jpg" alt="pic3" style="width:800px; height:225px;"/>
+		</div>
 	</div>
 </div>
 
-<div class="layui-carousel layui-row" id="xyycarousel" style="margin:0 auto; text-align:center;">
-	<div carousel-item>
-		<div>
-			<img src="../material/pic1.jpg"/>
-		</div>
-		<div>
-			<img src="../material/pic2.jpg"/>
-		</div>
-		<div>
-			<img src="../material/pic3.jpg"/>
-		</div>
+<div class="layui-row">
+	<div style="margin:50px auto 10px; text-align:center; width:80%;">
+		<h1 style="font-family: Arial, Helvetica, sans-serif; font-size: 6rem; color: #087933;">
+			DFS - Distributed FileSystem
+		</h1>
 	</div>
 </div>
 
@@ -218,24 +215,15 @@
 
 	<div class="clearfix" style="margin-bottom: 50px;"></div>
 </div>
-<div>
-	<div style="margin:0 auto; width:60%; height:100px; border:1px">
-		<div class="alert alert-success alert-dismissable">
-			<button type="button" class="close" data-dismiss="alert" aria-hidden="true">×</button>
-			<h4>
-				提示:
-			</h4>
-				<p id="statusFeedback">
-				欢迎使用本系统～
-				</p>
-		</div>
-	</div>
+
+<div style="margin:50px auto 100px; text-align:center; width:60%;">
+	<p id="statusFeedback">
+	欢迎使用本系统～
+	</p>
 </div>
+
 <div>
-	<div style="margin:0 auto; width:80%; height:100px; border:1px">
-		<h2>
-			About：
-		</h2>
+	<div style="margin:0 auto; width:80%; text-align:center;">
 		<p>
 			本系统基于王珺、夏昊珺、滕思洁和郑值开发的「私有网盘」二次开发，
 			剥离了服务器端的数据合并操作，
@@ -248,6 +236,7 @@
 		</p>
 	</div>
 </div>
+
 </body>
 </html>
 
