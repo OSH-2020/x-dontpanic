@@ -56,13 +56,13 @@
 <div class="layui-carousel layui-row" id="xyycarousel" style="margin:0px auto 50px; text-align:center; width:90%;">
 	<div carousel-item class="img-width">
 		<div>
-			<img src="../material/pic1.jpg" alt="pic1" style="width:800px; height:225px;"/>
+			<img src="../material/pic1.jpg" alt="pic1"/>
 		</div>
 		<div>
-			<img src="../material/pic2.jpg" alt="pic2" style="width:800px; height:225px;"/>
+			<img src="../material/pic2.jpg" alt="pic2"/>
 		</div>
 		<div>
-			<img src="../material/pic3.jpg" alt="pic3" style="width:800px; height:225px;"/>
+			<img src="../material/pic3.jpg" alt="pic3"/>
 		</div>
 	</div>
 </div>
