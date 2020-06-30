@@ -24,16 +24,27 @@
 <meta charset="utf-8" />
 <link rel="stylesheet" type="text/css" href="https://www.layuicdn.com/layui/css/layui.css" />
 
+<style type="text/css">
+	.img-width {MARGIN:0; WIDTH: 100%;}
+	.img-width img{MAX-WIDTH: 100%!important;HEIGHT: auto!important;width:expression(this.width > 320 ? "320px" : this.width)!important;}
+</style>
+
 <script>
+	var proport = 1600/450;
+    var W = $(window).width();
+    var H = $(window).height();
 	layui.use('carousel', function(){
 		var carousel = layui.carousel;
 		carousel.render({
 			elem: '#xyycarousel',
-			width: '800',
-			height: '225',
+			width: '90%',
+			height: (0.9*W/proport).toString()+'px',
 			arrow: 'hover',
 			anim: 'updown'
 		});
+	});
+	$(window).resize(function () {
+    	window.location.reload()
 	});
 </script>
 
@@ -43,7 +54,7 @@
 <body>
 
 <div class="layui-carousel layui-row" id="xyycarousel" style="margin:0px auto 50px; text-align:center; width:90%;">
-	<div carousel-item>
+	<div carousel-item class="img-width">
 		<div>
 			<img src="../material/pic1.jpg" alt="pic1" style="width:800px; height:225px;"/>
 		</div>
