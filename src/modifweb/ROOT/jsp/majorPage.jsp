@@ -18,15 +18,16 @@
 <script src="../js/ec/erasure.js"></script>
 <script src="../js/ec/funcs.js"></script>
 <script src="../js/majorPage_ajax.js"></script>
-<meta name="viewport" content="width=device-width, initial-scale=1.0">					<!-- 为了让 Bootstrap 开发的网站对移动设备友好，确保适当的绘制和触屏缩放 -->
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
 
 <script src="https://www.layuicdn.com/layui/layui.js"></script>
 <meta charset="utf-8" />
 <link rel="stylesheet" type="text/css" href="https://www.layuicdn.com/layui/css/layui.css" />
 
+<!-- .img-width img{MAX-WIDTH: 100%!important;HEIGHT: auto!important;width:expression(this.width > 320 ? "320px" : this.width)!important;} -->
 <style type="text/css">
 	.img-width {MARGIN:0; WIDTH: 100%;}
-	.img-width img{MAX-WIDTH: 100%!important;HEIGHT: auto!important;width:expression(this.width > 320 ? "320px" : this.width)!important;}
+	.img-width img{MAX-WIDTH: 100%; HEIGHT:100%; width:100%;}
 </style>
 
 <script>
