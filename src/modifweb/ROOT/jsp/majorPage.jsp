@@ -101,79 +101,77 @@
 	</ul>
 </div>
 
-<div>
-	<div class="layui-row clearfix" style="margin: 50px auto 30px; text-align:center;">
-		<div class="layui-row pre-scrollable">
-			<table class="table" id="fileCatalogTable">
-				<thead>
-					<tr>
-						<th></th>
-						<th>文件名</th>
-						<th>读写权限</th>
-						<th>修改时间</th>
-					</tr>
-				</thead>
-				<tbody id="file_list_body">
-					<tr class="file_list_back">
-						<td> </td>
-						<td> <label><input type="checkbox">&emsp;&emsp;</label>
-							<span class="glyphicon glyphicon-folder-open"></span>&emsp;../
-						</td>
-						<td></td>
-						<td></td>
-					</tr>
-					<%
-						Cookie cookie = null;
-						Cookie[] cookies = null;
-						String username = null;
-						// 获取 cookies 的数据,是一个数组
-						cookies = request.getCookies();
-						if( cookies != null ){
-							//out.println("<h2> 查找 Cookie 名与值</h2>");
-							for (int i = 0; i < cookies.length; i++){
-								cookie = cookies[i];
-								if (("username").equals(cookie.getName())) {
-									username = cookie.getValue();
-									//out.print(username);
-								}
+<div class="layui-row clearfix" style="margin: 50px auto 30px;">
+	<div class="layui-row pre-scrollable">
+		<table class="table" id="fileCatalogTable">
+			<thead>
+				<tr>
+					<th></th>
+					<th>文件名</th>
+					<th>读写权限</th>
+					<th>修改时间</th>
+				</tr>
+			</thead>
+			<tbody id="file_list_body">
+				<tr class="file_list_back">
+					<td> </td>
+					<td> <label><input type="checkbox">&emsp;&emsp;</label>
+						<span class="glyphicon glyphicon-folder-open"></span>&emsp;../
+					</td>
+					<td></td>
+					<td></td>
+				</tr>
+				<%
+					Cookie cookie = null;
+					Cookie[] cookies = null;
+					String username = null;
+					// 获取 cookies 的数据,是一个数组
+					cookies = request.getCookies();
+					if( cookies != null ){
+						//out.println("<h2> 查找 Cookie 名与值</h2>");
+						for (int i = 0; i < cookies.length; i++){
+							cookie = cookies[i];
+							if (("username").equals(cookie.getName())) {
+								username = cookie.getValue();
+								//out.print(username);
 							}
-						} else{
-							out.println("<h2>没有发现 Cookie</h2>");
 						}
-					%>
-					<%
-						// 重定向到新地址
-							if(username == null){
-						String site = new String("../index.html");
-						response.setStatus(response.SC_MOVED_TEMPORARILY);
-						response.setHeader("Location", site); }
-					%>
-					<%
-						int i;
-						Query query = new Query();
-						FileItem[] files = query.queryFileList(username, "/");
-						query.closeConnection();
-						if(files==null)
-							return;
-						else
+					} else{
+						out.println("<h2>没有发现 Cookie</h2>");
+					}
+				%>
+				<%
+					// 重定向到新地址
+						if(username == null){
+					String site = new String("../index.html");
+					response.setStatus(response.SC_MOVED_TEMPORARILY);
+					response.setHeader("Location", site); }
+				%>
+				<%
+					int i;
+					Query query = new Query();
+					FileItem[] files = query.queryFileList(username, "/");
+					query.closeConnection();
+					if(files==null)
+						return;
+					else
+					{
+						for(i=0;i<files.length;i++)
 						{
-							for(i=0;i<files.length;i++)
-							{
-								out.println("<tr class='file_list_go'>");
-								out.println("<td></td>");
-								if(files[i].isFolder()==false)
-									out.println("<td> <label><input type=\"checkbox\"></label> 　　<span class=\"glyphicon glyphicon-file\"></span>　" + files[i].getFileName()+"</td>");
-								else
-									out.println("<td> <label><input type=\"checkbox\"></label> 　　<span class=\"glyphicon glyphicon-folder-open\"></span>　" + files[i].getFileName()+"</td>");
-								out.println("<td>"+files[i].getAttribute()+"</td>");
-								out.println("<td>"+files[i].getTime()+"</td>");
-								out.println("</tr>");
-							}
+							out.println("<tr class='file_list_go'>");
+							out.println("<td></td>");
+							if(files[i].isFolder()==false)
+								out.println("<td> <label><input type=\"checkbox\"></label> 　　<span class=\"glyphicon glyphicon-file\"></span>　" + files[i].getFileName()+"</td>");
+							else
+								out.println("<td> <label><input type=\"checkbox\"></label> 　　<span class=\"glyphicon glyphicon-folder-open\"></span>　" + files[i].getFileName()+"</td>");
+							out.println("<td>"+files[i].getAttribute()+"</td>");
+							out.println("<td>"+files[i].getTime()+"</td>");
+							out.println("</tr>");
 						}
-					%>
-				</tbody>
-			</table>
-		</div>
+					}
+				%>
+			</tbody>
+		</table>
 	</div>
 </div>
 
