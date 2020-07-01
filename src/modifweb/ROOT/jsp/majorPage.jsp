@@ -107,7 +107,7 @@
 
 <div>
 	<div class="layui-row clearfix">
-		<div class="layui-col-md-7 column">
+		<div class="layui-col-md-12 column">
 			<div class="layui-row pre-scrollable">
 				<table class="table" id="fileCatalogTable">
    					<thead>
@@ -185,13 +185,12 @@
 	</div>
 </div>
 
-<div class="layui-btn-container">
-	<div class="clearfix" style="margin-bottom: 50px;"></div>
-	<button class="layui-btn" type="button" id="button_download">下载</button>
-	<button class="layui-btn layui-btn-normal" type="button" id="button_upload">上传<input type="file" id="files" style="display: none" onchange="fileUpload();"></button>
-	<button class="layui-btn layui-btn-danger" type="button" id="button_delete">删除</button>
-	<button class="layui-btn layui-btn-primary" type="button" id="button_rename">重命名</button>
-	<div class="clearfix" style="margin-bottom: 50px;"></div>
+<div class="layui-btn-container" style="margin: 50px auto 50px; text-align:center;">
+	<button class="layui-btn layui-btn-radius" type="button" id="button_download">下载</button>
+	<input type="file" id="files" style="display: none" onchange="fileUpload();">
+	<button class="layui-btn layui-btn-radius layui-btn-normal" type="button" id="button_upload">上传</button>
+	<button class="layui-btn layui-btn-radius layui-btn-danger" type="button" id="button_delete">删除</button>
+	<button class="layui-btn layui-btn-radius layui-btn-primary" type="button" id="button_rename">重命名</button>
 </div>
 
 <div style="margin:10px auto 100px; text-align:center; width:60%; font-family:Microsoft YaHei,微软雅黑,Microsoft JhengHei,华文细黑,STHeiti,MingLiu; font-size: 2.5rem;">
