@@ -32,21 +32,28 @@
 
 <script>
 	var proport = 1600/450;
-    var W = $(window).width();
-    var H = $(window).height();
 	layui.use('carousel', function(){
 		var carousel = layui.carousel;
 		carousel.render({
 			elem: '#xyycarousel',
 			width: '90%',
-			height: (0.9*W/proport).toString()+'px',
+			height: (0.9*$(window).width()/proport).toString()+'px',
 			arrow: 'hover',
 			anim: 'updown'
 		});
 	});
 	$(window).resize(function () {
-    	window.location.reload()
+    	// window.location.reload();
+		document.getElementById("xyycarousel").style.height = (0.9*$(window).width()/proport).toString()+'px';
+		// console.log($(window).width());
 	});
+	/*
+	window.onload = function () {
+		var imgH = 0.9*$(window).width()/proport;
+		// console.log($(window).width());
+		$('.xyycarousel').css('height', imgH+'px');
+	}
+	*/
 </script>
 
 <title>DFS 分布式网盘</title>
