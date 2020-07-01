@@ -84,7 +84,6 @@
 </div>
 
 <div>
-
 	<div class="row clearfix" style="margin:50px auto 50px; width:80%;">
 		<div class="col-md-12 column">
 			<div>当前访问位置：　 </div>
@@ -104,7 +103,9 @@
 			</ul>
 		</div>
 	</div>
+</div>
 
+<div>
 	<div class="layui-row clearfix">
 		<div class="layui-col-md-7 column">
 			<div class="layui-row pre-scrollable">
@@ -182,36 +183,14 @@
 			</div>
 		</div>
 	</div>
+</div>
 
-	<div class="layui-container clearfix">
-		<div class="layui-col-md-12 layui-col-xs-12 column">
-			<div class="clearfix" style="margin-bottom: 50px;"></div>
-
-			<div class="layui-col-md-2 layui-col-md-offset-1">
-				<button class="layui-btn" type="button" id="button_download">
-				预下载
-				</button>
-			</div>
-			<div class="layui-col-md-2 layui-col-md-offset-1">
-				<input type="file" id="files" style="display: none" onchange="fileUpload();">
-				<button class="layui-btn layui-btn-normal" type="button" id="button_upload">
-				上传
-				</button>
-			</div>
-			<div class="layui-col-md-2 layui-col-md-offset-1">
-				<button class="layui-btn layui-btn-danger" type="button" id="button_delete">
-				删除
-				</button>
-			</div>
-
-			<div class="layui-col-md-2 layui-col-md-offset-1">
-				<button class="layui-btn layui-btn-primary" type="button" id="button_rename">
-				重命名
-				</button>
-			</div>
-	 	</div>
-	</div>
-
+<div class="layui-btn-container">
+	<div class="clearfix" style="margin-bottom: 50px;"></div>
+	<button class="layui-btn" type="button" id="button_download">下载</button>
+	<button class="layui-btn layui-btn-normal" type="button" id="button_upload">上传<input type="file" id="files" style="display: none" onchange="fileUpload();"></button>
+	<button class="layui-btn layui-btn-danger" type="button" id="button_delete">删除</button>
+	<button class="layui-btn layui-btn-primary" type="button" id="button_rename">重命名</button>
 	<div class="clearfix" style="margin-bottom: 50px;"></div>
 </div>
 
@@ -219,19 +198,17 @@
 	<p id="statusFeedback">欢迎使用</p>
 </div>
 
-<div>
-	<div style="margin:0 auto; width:80%; text-align:center; font-family:Microsoft YaHei,微软雅黑,Microsoft JhengHei,华文细黑,STHeiti,MingLiu; font-size: 1.2rem;">
-		<p>
-			本系统基于王珺、夏昊珺、滕思洁和郑值开发的「私有网盘」二次开发，
-			剥离了服务器端的数据合并操作，
-			转移到浏览器端进行，
-			实现了分布式。
-		</p>
-		<p>
-			由罗丽薇、邱子悦、袁一玮、余致远共同开发，
-			有疑问欢迎提 <a href="https://github.com/OSH-2020/x-dontpanic">issue</a>。
-		</p>
-	</div>
+<div style="margin:0 auto; width:80%; text-align:center; font-family:Microsoft YaHei,微软雅黑,Microsoft JhengHei,华文细黑,STHeiti,MingLiu; font-size: 1.2rem;">
+	<p>
+		本系统基于王珺、夏昊珺、滕思洁和郑值开发的「私有网盘」二次开发，
+		剥离了服务器端的数据合并操作，
+		转移到浏览器端进行，
+		实现了分布式。
+	</p>
+	<p>
+		由罗丽薇、邱子悦、袁一玮、余致远共同开发，
+		有疑问欢迎提 <a href="https://github.com/OSH-2020/x-dontpanic">issue</a>。
+	</p>
 </div>
 
 </body>
