@@ -26,9 +26,11 @@
     layui.use(['element','layer'], function(){
 		var element = layui.element,
 			layer = layui.layer;
+		/*
 		element.on('tab(xyy)', function(data){
 			console.log(data.index);
         });
+		*/
     });
 </script>
 
@@ -62,13 +64,13 @@
 	window.onload=function () {
 		var btnObj = document.getElementById("loginSubmitButton");
 		btnObj.onclick=function () {
-			//this.style.background="red";
+			// this.style.background="red";
 			var userName=$("#inputUsername_login").val();
 			if($.cookie().username!="undefine") {
 				$.removeCookie('username', { path: '/' });
 			}
 			$.cookie("username", userName, { path:'/'});
-			window.console.log($.cookie().username);
+			// window.console.log($.cookie().username);
 		};
 	};
 </script>
@@ -99,17 +101,20 @@
 			}
 		}
 	}
-
+*/
 $(document).keyup(function (e) {
     if (e.keyCode == 13) {
 		if (document.getElementById("index-login").classList.contains('layui-show')==true) {
 			document.getElementById("loginSubmitButton").click();
+			// console.log("1");
 		}
 		else if (document.getElementById("index-register").classList.contains('layui-show')==true) {
 			document.getElementById("regSubmitButton").click();
+			// console.log("2");
 		}
     }
 });
+/*
 document.onkeyup = function (e) {
 	if (window.event)
 		e = window.event;
@@ -164,7 +169,7 @@ document.onkeyup = function (e) {
 			</ul>
 			<div class="layui-tab-content" style="margin:10px auto; width:350px;">
 				<div class="layui-tab-item layui-show" id="index-login">
-					<form class="form-horizontal" role="form">
+					<form class="layui-form" role="form">
 						<div class="layui-form-item">
 							<label for="inputUsername_login" class="layui-form-label">用户名</label>
 							<div class="layui-input-block">
