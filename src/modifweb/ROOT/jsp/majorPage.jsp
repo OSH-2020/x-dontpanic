@@ -105,7 +105,7 @@
 	<table class="table" id="fileCatalogTable">
 		<thead>
 			<tr>
-				<th>      文件名</th>
+				<th>&emsp;&emsp;&emsp;&emsp;文件名</th>
 				<th>读写权限</th>
 				<th>修改时间</th>
 			</tr>
@@ -160,7 +160,7 @@
 						if(files[i].isFolder()==false)
 							out.println("<td> <label><input type=\"checkbox\"></label> 　　<span class=\"glyphicon glyphicon-file\"></span>　" + files[i].getFileName()+"</td>");
 						else
-							out.println("<td> <label><input type=\"checkbox\"></label> 　　<span class=\"glyphicon glyphicon-folder-open\"></span>　" + files[i].getFileName()+"</td>");
+							out.println("<td> <label><input type=\"checkbox\" disabled=true></label> 　　<span class=\"glyphicon glyphicon-folder-open\"></span>　" + files[i].getFileName()+"</td>");
 						out.println("<td>"+files[i].getAttribute()+"</td>");
 						out.println("<td>"+files[i].getTime()+"</td>");
 						out.println("</tr>");
