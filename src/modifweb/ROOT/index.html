@@ -73,8 +73,8 @@
 	};
 </script>
 
-<script language="javascript">
-		/*
+<script>
+	/*
 	function check() {
 		var formname=document.loginForm;
 		if (formname.userName.value == "") {
@@ -89,7 +89,6 @@
 		}
 	  	formname.submit();
 	}
-		*/
 	function on_return() {
 		if(window.event.keyCode == 13) {
 			if (document.getElementById("index-login").classList.contains('layui-show')==true) {
@@ -100,6 +99,18 @@
 			}
 		}
 	}
+	*/
+
+$(document).keyup(function (e) {
+    if (e.keyCode == 13) {
+		if (document.getElementById("index-login").classList.contains('layui-show')==true) {
+			document.getElementById("loginSubmitButton").click();
+		}
+		else if (document.getElementById("index-register").classList.contains('layui-show')==true) {
+			document.getElementById("regSubmitButton").click();
+		}
+    }
+});
 </script>
 
 <title>DFS 分布式网盘</title>
