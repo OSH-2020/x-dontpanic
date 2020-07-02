@@ -105,15 +105,13 @@
 	<table class="table" id="fileCatalogTable">
 		<thead>
 			<tr>
-				<th></th>
-				<th>文件名</th>
+				<th>      文件名</th>
 				<th>读写权限</th>
 				<th>修改时间</th>
 			</tr>
 		</thead>
 		<tbody id="file_list_body">
 			<tr class="file_list_back">
-				<td> </td>
 				<td> <label><input type="checkbox">&emsp;&emsp;</label>
 					<span class="glyphicon glyphicon-folder-open"></span>&emsp;../
 				</td>
@@ -158,7 +156,7 @@
 					for(i=0;i<files.length;i++)
 					{
 						out.println("<tr class='file_list_go'>");
-						out.println("<td></td>");
+						// out.println("<td></td>");
 						if(files[i].isFolder()==false)
 							out.println("<td> <label><input type=\"checkbox\"></label> 　　<span class=\"glyphicon glyphicon-file\"></span>　" + files[i].getFileName()+"</td>");
 						else
