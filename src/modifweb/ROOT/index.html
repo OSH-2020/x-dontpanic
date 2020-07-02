@@ -73,6 +73,35 @@
 	};
 </script>
 
+<script language="javascript">
+		/*
+	function check() {
+		var formname=document.loginForm;
+		if (formname.userName.value == "") {
+			alert("请输入用户名！");
+			formname.userName.focus();
+			return false;
+		}
+		if (formname.pwd.value == "") {
+			alert("请输入密码！");
+			formname.pwd.focus();
+			return false;
+		}
+	  	formname.submit();
+	}
+		*/
+	function on_return() {
+		if(window.event.keyCode == 13) {
+			if (document.getElementById("index-login").classList.contains('layui-show')==true) {
+				document.getElementById("loginSubmitButton").click();
+			}
+			else if (document.getElementById("index-register").classList.contains('layui-show')==true) {
+				document.getElementById("regSubmitButton").click();
+			}
+		}
+	}
+</script>
+
 <title>DFS 分布式网盘</title>
 
 </head>
@@ -109,7 +138,7 @@
 				<li>注册</li>
 			</ul>
 			<div class="layui-tab-content" style="margin:10px auto; width:350px;">
-				<div class="layui-tab-item layui-show">
+				<div class="layui-tab-item layui-show" id="index-login">
 					<form class="form-horizontal" role="form">
 						<div class="layui-form-item">
 							<label for="inputUsername_login" class="layui-form-label">用户名</label>
@@ -124,11 +153,11 @@
 							</div>
 						</div>
 						<div class="layui-form-item" style="text-align:center;">
-							<button type="button" id = loginSubmitButton class="layui-btn layui-btn-radius">登录</button>
+							<button type="button" id="loginSubmitButton" class="layui-btn layui-btn-radius">登录</button>
 						</div>
 					</form>
 				</div>
-				<div class="layui-tab-item">
+				<div class="layui-tab-item" id="index-register">
 					<form class="layui-form" role="form" action = "UserReg">
 						<div class="layui-form-item">
 							<label for="userName" class="layui-form-label">用户名</label>
