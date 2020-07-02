@@ -10,7 +10,7 @@
 <!--AJAX相关js动作-->
 <script src="js/index_ajax.js" charset="utf-8"></script>
 <meta charset="utf-8">
-<meta name="viewport" content="width=device-width, initial-scale=1.0">					
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
 
 <script src="https://www.layuicdn.com/layui/layui.js"></script>
 <meta charset="utf-8" />
@@ -99,7 +99,6 @@
 			}
 		}
 	}
-	*/
 
 $(document).keyup(function (e) {
     if (e.keyCode == 13) {
@@ -111,6 +110,21 @@ $(document).keyup(function (e) {
 		}
     }
 });
+*/
+document.onkeyup = function (e) {
+	if (window.event)
+		e = window.event;
+	var code = e.charCode || e.keyCode;
+	if (code == 13) {
+		if (document.getElementById("index-login").classList.contains('layui-show')==true) {
+			document.getElementById("loginSubmitButton").click();
+		}
+		else if (document.getElementById("index-register").classList.contains('layui-show')==true) {
+			document.getElementById("regSubmitButton").click();
+		}
+		console.log("13");
+    }
+}
 </script>
 
 <title>DFS 分布式网盘</title>
