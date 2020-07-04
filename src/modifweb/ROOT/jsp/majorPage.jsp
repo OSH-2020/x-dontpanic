@@ -84,21 +84,8 @@
 </div>
 
 <div class="row clearfix" style="margin:50px auto 50px; width:80%;">
-	<div>当前访问位置：　 </div>
-	<ul class="breadcrumb" id = "curr_path">
-	<!--
-		<li>
-				<a href="#">Home</a>
-		</li>
-		<li>
-				<a href="#">Library</a>
-		</li>
-		<li class="active">
-			Data
-		</li>
-		-->
-
-	</ul>
+	<div>当前访问位置：</div>
+	<ul class="breadcrumb" id = "curr_path"></ul>
 </div>
 
 <div class="layui-row pre-scrollable" style="margin: 50px auto 30px; width:90%;">
@@ -112,8 +99,11 @@
 		</thead>
 		<tbody id="file_list_body">
 			<tr class="file_list_back">
-				<td> <label><input type="checkbox">&emsp;&emsp;</label>
-					<span class="glyphicon glyphicon-folder-open"></span>&emsp;../
+				<td>
+					<label>
+						<input type="checkbox">&emsp;&emsp;
+					</label>
+					<i class="layui-icon layui-icon-tabs"></i>&emsp;..
 				</td>
 				<td></td>
 				<td></td>
@@ -156,11 +146,18 @@
 					for(i=0;i<files.length;i++)
 					{
 						out.println("<tr class='file_list_go'>");
-						// out.println("<td></td>");
 						if(files[i].isFolder()==false)
-							out.println("<td> <label><input type=\"checkbox\"></label> 　　<span class=\"glyphicon glyphicon-file\"></span>　" + files[i].getFileName()+"</td>");
+						{
+							out.println("<td>");
+							out.println("<label><input type=\"checkbox\"></label>");
+							out.println("<i class=\"layui-icon layui-icon-file-b\"></i>" + files[i].getFileName() + "</td>");
+						}
 						else
-							out.println("<td> <label><input type=\"checkbox\"></label> 　　<span class=\"glyphicon glyphicon-folder-open\"></span>　" + files[i].getFileName()+"</td>");
+						{
+							out.println("<td>");
+							out.println("<label><input type=\"checkbox\" disabled=true></label>");
+							out.println("<i class=\"layui-icon layui-icon-tabs\"></i>" + files[i].getFileName() + "</td>");
+						}
 						out.println("<td>"+files[i].getAttribute()+"</td>");
 						out.println("<td>"+files[i].getTime()+"</td>");
 						out.println("</tr>");
