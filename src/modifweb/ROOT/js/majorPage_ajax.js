@@ -455,7 +455,7 @@ $(document).ready(function(){
 			function()
 			{
 				//如果是文件而不是文件夹，点击不刷新目录，提示信息
-				if(this.children[1].children[1].className=="glyphicon glyphicon-file")
+				if(this.children[1].children[1].className=="layui-icon layui-icon-file-b")
 				{
 					$("#statusFeedback").text("您所点击的是文件而不是文件夹，无法进入该目录！");
 					return;
@@ -468,7 +468,7 @@ $(document).ready(function(){
 				$("#curr_path").html(curr_path_html);		
 				//ajax
 				var QueryPath="/";
-/*********/		if(curr_path_array.length>1)
+				if(curr_path_array.length>1)
 					QueryPath="";
 				for(var i=1;i<curr_path_array.length;i++)
 				{
@@ -518,7 +518,7 @@ $(document).ready(function(){
 				
 				//ajax
 				var QueryPath="/";
-/*********/		if(curr_path_array.length>1)
+				if(curr_path_array.length>1)
 					QueryPath="";
 				for(var i=1;i<curr_path_array.length;i++)
 				{
