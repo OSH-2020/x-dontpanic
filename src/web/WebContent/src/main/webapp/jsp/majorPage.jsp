@@ -272,6 +272,13 @@
 		</div>
 	</div>
 </div>
+
+<script src="../js/wasm/wasm_exec.js"></script>
+<script>
+	const go = new Go();
+	WebAssembly.instantiateStreaming(fetch("../js/wasm/mycoder.wasm"), go.importObject)
+			.then((result) => go.run(result.instance));
+</script>
 </body>
 </html>
 

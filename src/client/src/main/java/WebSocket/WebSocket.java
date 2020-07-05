@@ -36,14 +36,34 @@ public class WebSocket {
         client.close();
     }
 
+
+    public void sendPong() throws IOException {
+        System.out.println("send a pong ");
+        byte[] head = createHead(0, 0xA);
+        out.write(head, 0, head.length);
+    }
+
+    public byte[] catchBytes(int len) throws IOException {
+        byte[] data = new byte[10000000];
+        in.read(data, 0, len);
+        return data;
+    }
+
     public byte[] recv() throws IOException {
         byte[] head = new byte[14];
-        byte[] data = new byte[1000000];
+        byte[] data = new byte[10000000];
         int total_len = 0;
         while (true) {
             in.read(head, 0, 2);
             boolean fin = head[0] < 0;
             int opcode = head[0] & 0xf;
+            /*
+            1 text
+            2 bin
+            8 close
+            9 ping
+            A pong
+             */
             boolean mask = head[1] < 0;//TODO throw
             int payload_len = head[1] & 0x7f;
             if (payload_len == 0x7e) {
@@ -61,6 +81,17 @@ public class WebSocket {
             in.read(key, 0, 4);
             byte[] encoded = new byte[payload_len];
             int recv_len = in.read(encoded, 0, payload_len);
+
+            System.out.println(String.format("opcode is %d, payload len is %d", opcode, payload_len));
+            if (opcode == 0x9) {
+                sendPong();
+                continue;
+            }
+            if (opcode == 0x8) {
+                System.out.println("closed!");
+                return new byte[0];
+            }
+
             byte[] decoded = new byte[payload_len];
             for (int i = 0; i < encoded.length; i++) {
                 decoded[i] = (byte) (encoded[i] ^ key[i & 0x3]);
@@ -80,10 +111,11 @@ public class WebSocket {
     }
 
     //TODO slip big file
-    public byte[] createHeadBin(int len) {
+
+    public byte[] createHead(int len, int opcode) {
         if (len > 0xffff) {
             return new byte[]{
-                    (byte) 0x82,
+                    (byte) (0x80 | (opcode & 0xf)),
                     (byte) 0x7f,
                     0, 0, 0, 0,
                     (byte) ((len >> 24) & 0xFF),
@@ -93,55 +125,28 @@ public class WebSocket {
             };
         } else if (len > 0x7d) {
             return new byte[]{
-                    (byte) 0x82,
+                    (byte) (0x80 | (opcode & 0xf)),
                     (byte) 0x7e,
                     (byte) ((len >> 8) & 0xFF),
                     (byte) (len & 0xFF)
             };
         } else {
             return new byte[]{
-                    (byte) 0x82,
+                    (byte) (0x80 | (opcode & 0xf)),
                     (byte) (len & 0x7F)
             };
         }
     }
-
-    public byte[] createHeadText(int len) {
-        if (len > 0xffff) {
-            return new byte[]{
-                    (byte) 0x81,
-                    (byte) 0x7f,
-                    0, 0, 0, 0,
-                    (byte) ((len >> 24) & 0xFF),
-                    (byte) ((len >> 16) & 0xFF),
-                    (byte) ((len >> 8) & 0xFF),
-                    (byte) (len & 0xFF)
-            };
-        } else if (len > 0x7d) {
-            return new byte[]{
-                    (byte) 0x81,
-                    (byte) 0x7e,
-                    (byte) ((len >> 8) & 0xFF),
-                    (byte) (len & 0xFF)
-            };
-        } else {
-            return new byte[]{
-                    (byte) 0x81,
-                    (byte) (len & 0x7F)
-            };
-        }
-    }
-
     public void sendText(byte[] payload) throws IOException {
-        System.out.println(payload.length);
-        byte[] head = createHeadText((payload.length));
+        System.out.println(String.format("send text: %s", new String(payload)));
+        byte[] head = createHead((payload.length), 1);
         out.write(head, 0, head.length);
         out.write(payload, 0, payload.length);
     }
 
     public void sendBin(byte[] payload) throws IOException {
-        System.out.println(payload.length);
-        byte[] head = createHeadBin((payload.length));
+        System.out.println(String.format("send binary length: %d", (payload.length)));
+        byte[] head = createHead((payload.length), 2);
         out.write(head, 0, head.length);
         out.write(payload, 0, payload.length);
     }

@@ -114,17 +114,18 @@ function decodeFile(fileName, fileType, numOfDivision, numOfAppend, content, dig
 	for(var i=0;i<content.length;i++){
 		contentView[i]=new Uint8Array(content[i]);
 	}
-	var decoded = erasure.recombine(contentView, fileSize, numOfDivision, numOfAppend);
+	//var decoded = erasure.recombine(contentView, fileSize, numOfDivision, numOfAppend);
+	var decoded = callDecoder(contentView, numOfDivision, numOfAppend);
 	//console.log(decoded);
 	if (decoded.length > fileSize)
-		decoded = decoded.subarray(0, original.length);
+		decoded = decoded.subarray(0, fileSize);
 	const t6 = Date.now();//Decode timing end
 
 	// after decoded, download the file and show info(time, errors)
 	createAndDownloadFile(fileName, fileType, decoded);
 
 	if (document.getElementById("decode") != null)
-		document.getElementById("decode").innerHTML += "Decode with " + errors + " errors suceeded in " + (t6 - t5) + "mS</br>";
+		document.getElementById("decode").innerHTML += "Decode with " + errors + " errors succeeded in " + (t6 - t5) + "mS</br>";
 	console.log("Erasure decode took " + (t6 - t5) + " mS");
 	return Promise.resolve(true);
 }
@@ -139,9 +140,11 @@ function WebSocketUpload(ip,port,fragmentName,fragmentContent,digest)
 			ws.send("U");
 			ws.send(fragmentName);
 			console.log(fragmentName);
+			ws.send(digest);
+			console.log(digest);
 			ws.send(fragmentContent);
 			console.log(fragmentContent);
-			ws.send(digest);
+			//ws.close();
 		};
 
 		ws.onmessage = function (evt)
@@ -224,7 +227,8 @@ function encodeFile(selectedFile) {
 			/*fileEncoder*/
 			const t1 = Date.now();//Encode timing start
 			//TODO
-			content = erasure.split(raw, numOfDivision, numOfAppend);
+			//content = erasure.split(raw, numOfDivision, numOfAppend);
+			content = callEncoder(raw,numOfDivision,numOfAppend);
 			const t2 = Date.now();//Encode timing end
 			console.log("Erasure encode took " + (t2 - t1) + " mS");
 			//if (document.getElementById("encode") != null)

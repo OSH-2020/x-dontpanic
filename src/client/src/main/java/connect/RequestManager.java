@@ -38,7 +38,7 @@ public class RequestManager extends Thread {
                  */
 
             } finally {
-                System.out.println("A user disconnected.");
+                //System.out.println("A user disconnected.");
             }
 
         }

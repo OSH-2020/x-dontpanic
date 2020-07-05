@@ -5,6 +5,7 @@ import WebSocket.WebSocket;
 import java.io.*;
 import java.net.Socket;
 import java.nio.file.Files;
+import java.util.Arrays;
 
 public class FragmentManager extends Thread {
 
@@ -40,8 +41,22 @@ public class FragmentManager extends Thread {
                 System.out.println("Upload");
                 String fileName = new String(user.recv());
                 System.out.println(fileName);
-                recvFragment(fileName);
                 recvDigest(fileName);
+                recvFragment(fileName);
+                /*
+                byte b1,b2;
+                b1=user.catchBytes(1)[0];
+                b2=user.catchBytes(1)[0];
+                System.out.print(b1);
+                System.out.print(',');
+                System.out.print(b2);
+                System.out.print(',');
+                while(b1!=(byte)0x81||b2!=(byte)0xA0){
+                    b1=b2;
+                    b2=user.catchBytes(1)[0];
+                    System.out.print(b2);
+                    System.out.print(',');
+                }*/
             } else if (msg.equals(("D"))) {
                 System.out.println("Download");
                 String fileName = new String(user.recv());
@@ -164,7 +179,7 @@ public class FragmentManager extends Thread {
             return false;
         }*/
         user.recvFile(f);
-        user.sendMessage("success");
+        user.sendMessage("fragment success");
         System.out.println(String.format("recvFragment %s", fileName));
         return true;//TODO
     }
@@ -195,7 +210,7 @@ public class FragmentManager extends Thread {
         byte[] recv_bytes = user.recv();
         System.out.println(String.format("recvDigest : %s", new String(recv_bytes)));
         os.write(recv_bytes);
-        user.sendMessage("success");
+        user.sendMessage("digest success");
         return true;//TODO
     }
 
