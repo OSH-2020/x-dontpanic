@@ -142,34 +142,31 @@ public class FileUploader extends ActionSupport{
 		// 确认有在线设备
 		DeviceItem[] onlineDevice = query.queryOnlineDevice();
 		if(onlineDevice == null){
-			System.out.println("no onlineDevice");
 			return null;
 		}
 		// 计算相似度 0<=distance<=24
 		int onlineDeviceNum = onlineDevice.length;
-		System.out.println("onlineDeviceNum:" + onlineDeviceNum);
 		int[] distance = new int[onlineDeviceNum];
 		for(int i=0; i<onlineDeviceNum; i++){
-			int time = query.queryDeviceTime(onlineDevice[i].getId());
-			System.out.println("DeviceTime:" + time);
 			int save = query.queryUserTime(whose);
-			System.out.println("UserTime:" + save);
+			int time = onlineDevice[i].getTime();
+			//int RS = onlineDevice[i].getRs();
 			distance[i] = 0;
 			for(int j=0; j<24; j++){ // 24维
-				/*if((time & 1) == 1)
-					distance[i] ++;
-				else if((save & 1) == 0)
-					distance[i] ++;*/
 				if((time & 1) == 0 & (save & 1) == 1)
 					distance[i]++;
 				time = time >> 1;
 				save = save >> 1;
 			}
 		}
+
+		int fragmentSize = fileSize/nod;
+		//System.out.println("fragementSize: "+fragmentSize);
 		// 由于有 vlab，必然有至少一台distance <= 30% * 24 = 7
 		ArrayList<Integer> distanceId = new ArrayList<>();
 		for(int i=0; i<onlineDeviceNum; i++){
-			if(distance[i]<=7)
+			if(distance[i]<=7 & onlineDevice[i].getLeftrs() > fragmentSize)
+				// 差距够小 且 至少可以分配一个碎片
 				distanceId.add(0, i); // 一直从头插入
 		}
 		int size = distanceId.size(); // 有效在线主机数
@@ -180,9 +177,26 @@ public class FileUploader extends ActionSupport{
 		if(noa+nod <= size){
 			for(int i=0;i<nod+noa;i++){
 				deviceItemList[i] = onlineDevice[distanceId.get(i)];
+				System.out.println(deviceItemList[i].getLeftrs() - fragmentSize);
+				deviceItemList[i].setLeftrs(deviceItemList[i].getLeftrs() - fragmentSize);
+				System.out.println(query.alterDevice(deviceItemList[i]));
 			}
 		}
 		else{ // noa+nod > size
+			int i = noa+nod-1;
+			int j = 0;
+			while(i>=0){
+				DeviceItem thisdevice = onlineDevice[distanceId.get(j)];
+				if(thisdevice.getLeftrs() > fragmentSize){
+					deviceItemList[i] = thisdevice;
+					System.out.println(thisdevice.getLeftrs() - fragmentSize);
+					thisdevice.setLeftrs(thisdevice.getLeftrs() - fragmentSize);
+					query.alterDevice(thisdevice);
+					i--;
+				}
+				j = (j+1)%size;
+			}
+			/*
 			int average = (nod+noa)/size;
 			int remain = (nod+noa)%size;
 			for(int i=0;i<size;i++){
@@ -192,7 +206,7 @@ public class FileUploader extends ActionSupport{
 			}
 			for(int i=0;i<remain;i++){
 				deviceItemList[average*size+i] = onlineDevice[distanceId.get(i)];
-			}
+			}*/
 		}
 		return deviceItemList;
 	}
@@ -237,7 +251,8 @@ public class FileUploader extends ActionSupport{
 				formDetailsJson.put("ip", deviceItemList[i].getIp());
 				formDetailsJson.put("port", String.valueOf(deviceItemList[i].getPort()));
 				jsonArray.add(formDetailsJson);
-				query.addFragment(fileId*100+i,"1");
+				//query.addFragment(fileId*100+i,"1");
+				query.addFragment(fileId*100+i,String.valueOf(deviceItemList[i].getId()));
 				/*
 				str=query.queryFragment(id*100+i);
 				if (str==null || str.equals("-1"))

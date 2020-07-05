@@ -211,6 +211,7 @@ public class Query {
         return time;
     }
 
+    /*
     public int queryDeviceTime(int id){
         Statement stmt = null;
         ResultSet rs = null;
@@ -243,7 +244,7 @@ public class Query {
         }
         //System.out.println(time);
         return time;
-    }
+    }*/
 
     public FileItem[] queryFileList(String whose, String path){
         Statement stmt = null;
@@ -371,6 +372,7 @@ public class Query {
             sql = String.format("SELECT * FROM DFS.FRAGMENT WHERE ID='%d'",id);
             rs = stmt.executeQuery(sql);
 
+
             if (rs.next())
                 path = rs.getString("PATH");
         }
@@ -434,7 +436,7 @@ public class Query {
         DeviceItem deviceArray[] = null;
 
         String ip;
-        int port,rst,id;
+        int port,rst,id,time,leftrs;
 
         int count,i;
 
@@ -457,8 +459,10 @@ public class Query {
                 ip  = rs.getString("IP");
                 port = rs.getInt("PORT");
                 rst = rs.getInt("RS");
+                time = rs.getInt("TIME");
+                leftrs = rs.getInt("LEFTRS");
 
-                deviceArray[i]=new DeviceItem(id,ip,port,true,rst);
+                deviceArray[i]=new DeviceItem(id,ip,port,true,rst,time,leftrs);
                 rs.next();
                 i++;
             }
@@ -498,8 +502,10 @@ public class Query {
                 int port = rs.getInt("PORT");
                 boolean isOnline = rs.getBoolean("ISONLINE");
                 int rst = rs.getInt("RS");
+                int time = rs.getInt("TIME");
+                int leftrs = rs.getInt("LEFTRS");
 
-                deviceItem=new DeviceItem(id,ip,port,isOnline,rst);
+                deviceItem=new DeviceItem(id,ip,port,isOnline,rst,time,leftrs);
             }
         }
         catch(Exception e){
@@ -897,14 +903,24 @@ public class Query {
         try{
             stmt = conn.createStatement();
             String sql;
+            //sql = "SELECT * FROM DFS.FILE WHERE WHOSE='"+whose+"' AND PATH='"+path+"'";
             if (device.isOnline())
-                sql = String.format("UPDATE DFS.DEVICE SET IP='%s',PORT=%d,ISONLINE=true,"
+                sql = "UPDATE DFS.DEVICE SET IP='"+device.getIp()+"',PORT='"+device.getPort()+
+                        "',ISONLINE=true,RS='"+device.getRs()+"',LEFTRS='"+device.getLeftrs()+
+                        "'WHERE id='"+device.getId()+"';";
+            else
+                sql = "UPDATE DFS.DEVICE SET IP='"+device.getIp()+"',PORT='"+device.getPort()+
+                        "',ISONLINE=false,RS='"+device.getRs()+"',LEFTRS='"+device.getLeftrs()+
+                        "'WHERE id='"+device.getId()+"';";
+            /*
+            if (device.isOnline())
+                sql = String.format("UPDATE DFS.DEVICE SET IP='%s',PORT=%d,ISONLINE=true"
                                 + "RS=%d WHERE id=%d;",device.getIp(),device.getPort(),device.getRs(),
                         device.getId());
             else
-                sql = String.format("UPDATE DFS.DEVICE SET IP='%s',PORT=%d,ISONLINE=false,"
+                sql = String.format("UPDATE DFS.DEVICE SET IP='%s',PORT=%d,ISONLINE=false"
                                 + "RS=%d WHERE id=%d;",device.getIp(),device.getPort(),device.getRs(),
-                        device.getId());
+                        device.getId());*/
             suc = stmt.executeUpdate(sql);
             if (suc>0)
                 return 1;
