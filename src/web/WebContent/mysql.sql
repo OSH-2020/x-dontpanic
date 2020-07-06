@@ -85,12 +85,6 @@ INSERT INTO `FILE` VALUES (2, 'hi', '233/', 'rwxrwxrwx', '20170419', 0,0, true, 
 
 INSERT INTO `FILE` VALUES (3, 'hello', 'TIM/', 'rwxrwxrwx', '20170419', 0,0, true, 'xixi','',0);
 
-INSERT INTO `FILE` VALUES (5, 'test.txt', '/', 'rwxrwxrwx', '20170419', 1,0, false, 'xixi','txt',8);
-INSERT INTO `FILE` VALUES (6, 'test.jpg', '/', 'rwxrwxrwx', '20170419', 1,0, false, 'xixi','jpg',74347);
-
-INSERT INTO FRAGMENT VALUES (500, '1');
-
-INSERT INTO FRAGMENT VALUES (600, '1');
 
 INSERT INTO `DEVICE` VALUES (1, '127.0.0.1', 9998, true, 1, 524287, 1048576);
 
