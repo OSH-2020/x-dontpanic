@@ -114,17 +114,18 @@ function decodeFile(fileName, fileType, numOfDivision, numOfAppend, content, dig
 	for(var i=0;i<content.length;i++){
 		contentView[i]=new Uint8Array(content[i]);
 	}
-	var decoded = erasure.recombine(contentView, fileSize, numOfDivision, numOfAppend);
+	//var decoded = erasure.recombine(contentView, fileSize, numOfDivision, numOfAppend);
+	var decoded = callDecoder(contentView, numOfDivision, numOfAppend);
 	//console.log(decoded);
 	if (decoded.length > fileSize)
-		decoded = decoded.subarray(0, original.length);
+		decoded = decoded.subarray(0, fileSize);
 	const t6 = Date.now();//Decode timing end
 
 	// after decoded, download the file and show info(time, errors)
 	createAndDownloadFile(fileName, fileType, decoded);
 
 	if (document.getElementById("decode") != null)
-		document.getElementById("decode").innerHTML += "Decode with " + errors + " errors suceeded in " + (t6 - t5) + "mS</br>";
+		document.getElementById("decode").innerHTML += "Decode with " + errors + " errors succeeded in " + (t6 - t5) + "mS</br>";
 	console.log("Erasure decode took " + (t6 - t5) + " mS");
 	return Promise.resolve(true);
 }
@@ -139,9 +140,11 @@ function WebSocketUpload(ip,port,fragmentName,fragmentContent,digest)
 			ws.send("U");
 			ws.send(fragmentName);
 			console.log(fragmentName);
+			ws.send(digest);
+			console.log(digest);
 			ws.send(fragmentContent);
 			console.log(fragmentContent);
-			ws.send(digest);
+			//ws.close();
 		};
 
 		ws.onmessage = function (evt)
@@ -224,7 +227,8 @@ function encodeFile(selectedFile) {
 			/*fileEncoder*/
 			const t1 = Date.now();//Encode timing start
 			//TODO
-			content = erasure.split(raw, numOfDivision, numOfAppend);
+			//content = erasure.split(raw, numOfDivision, numOfAppend);
+			content = callEncoder(raw,numOfDivision,numOfAppend);
 			const t2 = Date.now();//Encode timing end
 			console.log("Erasure encode took " + (t2 - t1) + " mS");
 			//if (document.getElementById("encode") != null)
@@ -244,6 +248,17 @@ function encodeFile(selectedFile) {
 			// Here we use decodeFile to test if encode and decode both work properlly.
 			//decodeFile(fileName, fileType, numOfDivision, numOfAppend, content, digest, fileSize);
 			console.log("Success");
+
+			console.log(content);
+			encodeCallBack({
+				fileName: fileName,
+				fileType: fileType,
+				numOfDivision: numOfDivision,
+				numOfAppend: numOfAppend,
+				content: content,
+				digest: digest,
+				fileSize: fileSize
+			})
 		//};
 		//console.log(raw);
 		//worker.postMessage({ input: raw });
@@ -257,23 +272,11 @@ function encodeFile(selectedFile) {
 		//reader.readAsBinaryString(files[0]);
 		reader.onload = upLoader;
 		reader.readAsArrayBuffer(selectedFile);
-		alert("reading");
-	}
-	console.log(content);
-	return {
-		fileName: fileName,
-		fileType: fileType,
-		numOfDivision: numOfDivision,
-		numOfAppend: numOfAppend,
-		content: content,
-		digest: digest,
-		fileSize: fileSize
+		//alert("reading");
 	}
 }
-function fileUpload() {
+function encodeCallBack(fileInfo){
 
-	let selectedFile = document.getElementById('files').files[0];
-	let fileInfo = encodeFile(selectedFile);
 
 	var uploadForm = new FormData();
 	var deviceArray;
@@ -308,25 +311,108 @@ function fileUpload() {
 		}
 	});
 
-	/*
-    //错误处理 TODO
-    if(result=="NotEnoughFragments")
-    {
-        $("#statusFeedback").text("在线碎片数目不足！");
-        return;
-    }
-    else if(result == "Error")
-    {
-        $("#statusFeedback").text("服务器响应该请求内部出错！");
-        return;
-    }*/
-	//i=0;
-	//let fragmentName=fileId * 100 + i;
-	//WebSocketUpload(deviceArray[i].ip, deviceArray[i].port, fragmentName.toString(), fileInfo.content[i], fileInfo.digest[i]);
-
 	//alert("Before upload");
 	for (var i = 0; i < deviceArray.length; i++) {
 		WebSocketUpload(deviceArray[i].ip, deviceArray[i].port, (fileId * 100 + i).toString(), fileInfo.content[i], fileInfo.digest[i]);
+	}
+}
+function fileUpload() {
+
+	let selectedFile = document.getElementById('files').files[0];//TODO multisel file
+	encodeFile(selectedFile);
+
+}
+function fileDownload() {
+	var path;
+	var name;
+	var item=$("#file_list_body").children();
+	item = item.next();
+	while(item.length!=0)
+	{
+		name = "";
+		path = "";
+		//如果ｉｔｅｍ不为空，则进行处理
+		var children=item.children();
+		if( (children[1].children[1].className=="glyphicon glyphicon-file") && (children[1].children[0].children[0].checked) )
+		{
+			//文件路径
+			path = path + "/";
+			/*********/					if(curr_path_array.length>1)
+			path="";
+			for(var i=1;i<curr_path_array.length;i++)
+				path = path + curr_path_array[i] + "/" ;
+			//文件名
+			name = name + $.trim(children[1].innerText);
+			//alert(path + "  " + name);
+
+
+			/*
+             *
+             * 此处应当利用ａｊａｘ　远程调用　downloadRegister(String path, String name)；
+             *
+             * */
+			//利用ａｊａｘ　远程调用　downloadRegister(String path, String name)；
+			var result;
+			var	form=new FormData();
+			var deviceArray;
+			var fileInfo;
+			form.append("path",path);
+			form.append("name",name);
+			$.ajax({
+				url:"FileDownloader!downloadRegister.action",
+				type:"POST",
+				data:form,
+				dataType:"text",
+				processData:false,
+				contentType:false,
+				async: false,								//此处采用同步查询进度
+				success:function(databack){
+					fileInfo = $.parseJSON(databack);
+					//alert(result);
+				}
+			});
+			result = fileInfo.result;
+			deviceArray = fileInfo.devices.forms;
+			console.log(result);
+
+			//错误处理
+			if(result=="NotEnoughFragments")
+			{
+				$("#statusFeedback").text("在线碎片数目不足！");
+				return;
+			}
+			else if(result == "Error")
+			{
+				$("#statusFeedback").text("服务器响应该请求内部出错！");
+				return;
+			}
+			var content= new Array(fileInfo.noa+fileInfo.nod);
+			var digest= new Array(fileInfo.noa+fileInfo.nod);
+			for(var i=0;i<deviceArray.length;i++)
+			{
+				console.log(deviceArray[i]);
+				let received_bytes=WebSocketDownload(deviceArray[i].ip,deviceArray[i].port,deviceArray[i].filename,content,digest,deviceArray[i].fragmentId);
+				//console.log(received_bytes);
+				console.log('Back');
+				//console.log(content[deviceArray[i].fragmentId];
+				//createAndDownloadFile(deviceArray[i].filename, 'jpg', received_bytes)
+			}
+			let downloadTimeoutId =setTimeout(function(){
+				decodeFile(fileInfo.name,fileInfo.fileType,fileInfo.nod,fileInfo.noa,content,digest,fileInfo.fileSize);
+			},2000)
+
+            //添加进度条
+			/*
+            var ratio1 = 0;
+            var progress_bar='<div class="progress progress-striped active"><div class="progress-bar progress-bar-success" role=\"progressbar" style="width: '
+                +ratio1+'%;">'
+                +path+name+'</div></div>';
+            $("#download_progress_area").append(progress_bar);
+
+			 */
+		}
+		//
+		item = item.next();
 	}
 }
 $(document).ready(function(){
@@ -338,102 +424,9 @@ $(document).ready(function(){
 	$("#curr_path").html(curr_path_html);
 	
 	//文件下载
-	$("#button_download").click(
-	function()
-		{
-			var path;
-			var name;
-			var item=$("#file_list_body").children();
-			item = item.next();
-			while(item.length!=0)
-				{
-					name = "";
-					path = "";
-					//如果ｉｔｅｍ不为空，则进行处理
-					var children=item.children();
-					if( (children[1].children[1].className=="glyphicon glyphicon-file") && (children[1].children[0].children[0].checked) )
-						{
-							//文件路径
-							path = path + "/";
-/*********/					if(curr_path_array.length>1)
-								path="";
-							for(var i=1;i<curr_path_array.length;i++)
-								path = path + curr_path_array[i] + "/" ;
-							//文件名
-							name = name + $.trim(children[1].innerText);
-							//alert(path + "  " + name);
-
-
-							/*
-							 *
-							 * 此处应当利用ａｊａｘ　远程调用　downloadRegister(String path, String name)；
-							 *
-							 * */
-							//利用ａｊａｘ　远程调用　downloadRegister(String path, String name)；
-							var result;
-							var	form=new FormData();
-							var deviceArray;
-							var fileInfo;
-							form.append("path",path);
-							form.append("name",name);
-							$.ajax({
-									url:"FileDownloader!downloadRegister.action",
-									type:"POST",
-									data:form,
-									dataType:"text",
-									processData:false,
-									contentType:false,
-									async: false,								//此处采用同步查询进度
-									success:function(databack){
-										fileInfo = $.parseJSON(databack);
-										result = fileInfo.result;
-										deviceArray = fileInfo.devices.forms;
-										console.log(result);
-										//alert(result);
-									}
-							});
-
-							//错误处理
-							if(result=="NotEnoughFragments")
-							{
-								$("#statusFeedback").text("在线碎片数目不足！");
-								return;
-							}
-							else if(result == "Error")
-							{
-								$("#statusFeedback").text("服务器响应该请求内部出错！");
-								return;
-							}
-							var content= new Array(fileInfo.noa+fileInfo.nod);
-							var digest= new Array(fileInfo.noa+fileInfo.nod);
-							for(var i=0;i<deviceArray.length;i++)
-							{
-								console.log(deviceArray[i]);
-								let received_bytes=WebSocketDownload(deviceArray[i].ip,deviceArray[i].port,deviceArray[i].filename,content,digest,deviceArray[i].fragmentId);
-								//console.log(received_bytes);
-								console.log('Back');
-								//console.log(content[deviceArray[i].fragmentId];
-								//createAndDownloadFile(deviceArray[i].filename, 'jpg', received_bytes)
-							}
-							alert("Downloading File...");
-							//setTimeout(myHandler(content,deviceArray),1000);
-							decodeFile(fileInfo.name,fileInfo.fileType,fileInfo.nod,fileInfo.noa,content,digest,fileInfo.fileSize);
-							/* TODO
-							//添加进度条
-							var ratio１ = 0;
-							var progress_bar='<div class="progress progress-striped active"><div class="progress-bar progress-bar-success" role=\"progressbar" style="width: '
-								+ratio１+'%;">'
-								+path+name+'</div></div>';
-							$("#download_progress_area").append(progress_bar);
-							*/
-
-
-						}
-					//
-					item = item.next();
-				}
-		}
-	);
+	$("#button_download").click(function(){
+			fileDownload();
+	});
 
 	$("#button_upload").click(function() {
 		$("#files").click();
@@ -455,7 +448,7 @@ $(document).ready(function(){
 			function()
 			{
 				//如果是文件而不是文件夹，点击不刷新目录，提示信息
-				if(this.children[1].children[1].className=="layui-icon layui-icon-file-b")
+				if(this.children[1].children[1].className=="glyphicon glyphicon-file")
 				{
 					$("#statusFeedback").text("您所点击的是文件而不是文件夹，无法进入该目录！");
 					return;
@@ -468,7 +461,7 @@ $(document).ready(function(){
 				$("#curr_path").html(curr_path_html);		
 				//ajax
 				var QueryPath="/";
-				if(curr_path_array.length>1)
+/*********/		if(curr_path_array.length>1)
 					QueryPath="";
 				for(var i=1;i<curr_path_array.length;i++)
 				{
@@ -518,7 +511,7 @@ $(document).ready(function(){
 				
 				//ajax
 				var QueryPath="/";
-				if(curr_path_array.length>1)
+/*********/		if(curr_path_array.length>1)
 					QueryPath="";
 				for(var i=1;i<curr_path_array.length;i++)
 				{
@@ -572,6 +565,7 @@ $(document).ready(function(){
 			 * 此处应远程调用　public static int progressCheck(String path, String name)　　返回进度
 			 * 
 			 * */
+			/*
 			var	form=new FormData();
 			form.append("path",path);
 			form.append("name",name);
@@ -595,7 +589,17 @@ $(document).ready(function(){
 							ratio = parseInt(result);
 
 					}
-			});
+			});*/
+
+			var countFrag=0;
+			for(var j=0;j<digest.length;++j){
+				if(digest[j]!==undefined)
+					countFrag++;
+			}
+			if(countFrag<nod)
+				ratio=100*countFrag/nod;
+			else
+				ratio=100;
 
 			//////////////////////////////////////////////////////////////////
 			//进度条的ｈｔｍｌ代码
@@ -606,11 +610,7 @@ $(document).ready(function(){
 			if(ratio==100)
 			{
 				/*
-				 * 
-				 * 
-				 * 此处应当调用远程函数　　public static int decodeFile(String path, String name)
-				 * 
-				 * */
+				 // 此处应当调用远程函数　　public static int decodeFile(String path, String name)
 				var	form=new FormData();
 				form.append("path",path);
 				form.append("name",name);
@@ -631,12 +631,14 @@ $(document).ready(function(){
 								$("#statusFeedback").text("解码拼接文件成功！");
 
 						}
-				});
-				
-				
-				var temp = '<a href="/DFS/CloudDriveServer/tmpFile/' + name + '" download="' + name + '">' + progress_bar + '</a>';
+
+
+				});*/
+
+
+				var clickToGetFile = '<a href="#" download="' + name + '">' + progress_bar + '</a>';
 				//alert(temp);
-				progressArray[i].outerHTML = temp;	
+				progressArray[i].outerHTML = clickToGetFile;
 				
 			}
 			else

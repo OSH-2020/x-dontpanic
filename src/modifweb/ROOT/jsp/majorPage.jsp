@@ -92,6 +92,7 @@
 	<table class="table" id="fileCatalogTable">
 		<thead>
 			<tr>
+				<th></th>
 				<th>&emsp;&emsp;&emsp;&emsp;文件名</th>
 				<th>读写权限</th>
 				<th>修改时间</th>
@@ -99,11 +100,12 @@
 		</thead>
 		<tbody id="file_list_body">
 			<tr class="file_list_back">
+				<td></td>
 				<td>
 					<label>
 						<input type="checkbox">&emsp;&emsp;
 					</label>
-					<i class="layui-icon layui-icon-tabs"></i>&emsp;..
+					<i class="glyphicon glyphicon-folder-open"></i>&emsp;..
 				</td>
 				<td></td>
 				<td></td>
@@ -146,17 +148,18 @@
 					for(i=0;i<files.length;i++)
 					{
 						out.println("<tr class='file_list_go'>");
+						out.println("<td></td>");
 						if(files[i].isFolder()==false)
 						{
 							out.println("<td>");
 							out.println("<label><input type=\"checkbox\"></label>");
-							out.println("<i class=\"layui-icon layui-icon-file-b\"></i>" + files[i].getFileName() + "</td>");
+							out.println("<i class=\"glyphicon glyphicon-file\"></i>" + files[i].getFileName() + "</td>");
 						}
 						else
 						{
 							out.println("<td>");
-							out.println("<label><input type=\"checkbox\" disabled=true></label>");
-							out.println("<i class=\"layui-icon layui-icon-tabs\"></i>" + files[i].getFileName() + "</td>");
+							out.println("<label><input type=\"checkbox\"></label>");
+							out.println("<i class=\"glyphicon glyphicon-folder-open\"></i>" + files[i].getFileName() + "</td>");
 						}
 						out.println("<td>"+files[i].getAttribute()+"</td>");
 						out.println("<td>"+files[i].getTime()+"</td>");
@@ -193,8 +196,12 @@
 	</p>
 </div>
 
+<script src="../js/wasm/wasm_exec.js"></script>
+<script>
+	const go = new Go();
+	WebAssembly.instantiateStreaming(fetch("../js/wasm/mycoder.wasm"), go.importObject)
+			.then((result) => go.run(result.instance));
+</script>
+
 </body>
 </html>
-
-
-
