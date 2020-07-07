@@ -54,6 +54,3 @@ services:
       - "$PWD/WebContent:/usr/local/tomcat/webapps"
     ports:
       - "2333:2333"
-      - "2334:2334"
-      - "58279:58279"
-      - "58280:58280"
