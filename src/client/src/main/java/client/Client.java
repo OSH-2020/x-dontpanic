@@ -95,8 +95,8 @@ public class Client {
 
 		syn = new SynItem(0);
 
-		//ServerConnector serverConnector = new ServerConnector(clientId, syn,selfIp,selfDataPort);
-		//serverConnector.start();
+		ServerConnector serverConnector = new ServerConnector(clientId, syn,selfIp,selfDataPort);
+		serverConnector.start();
 
 		RequestManager requestManager = new RequestManager(selfDataPort);
 		requestManager.start();
@@ -115,7 +115,7 @@ public class Client {
 			System.out.println("Err: can not detect files");
 		}
 		//folderScanner.stopDetecting();
-		//serverConnector.stopConnect();
+		serverConnector.stopConnect();
 		try {
 			requestManager.join();
 		} catch (Exception e) {
