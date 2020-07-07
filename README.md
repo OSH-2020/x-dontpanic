@@ -14,14 +14,19 @@
 |   +-- research.md
 |   +-- feasibility.md
 |   +-- files
+|
++-- demo
+|   +-- docker
+|   |   +-- src
+|   +-- normal
+|       +-- *
+|
 +-- src
 |   +-- client
 |   |   +-- src
 |   +-- server
 |   |   +-- src
 |   +-- web
-|   |   +-- * 
-|   +-- docker
 |       +-- *
 |
 +-- README.md
