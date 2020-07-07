@@ -1,0 +1,232 @@
+<!DOCTYPE html>
+<html>
+<head>
+
+<!--bootstrap和JQerry相关库-->
+<script src="js/jquery/jquery.js"></script>
+<script src="js/jquery/jquery.cookie.js"></script>
+<script src="js/bootstrap-3.3.7/js/bootstrap.min.js"></script>
+<link rel="stylesheet" type="text/css" href="js/bootstrap-3.3.7/css/bootstrap.min.css">
+<!--AJAX相关js动作-->
+<script src="js/index_ajax.js" charset="utf-8"></script>
+<meta charset="utf-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+
+<script src="https://www.layuicdn.com/layui/layui.js"></script>
+<meta charset="utf-8" />
+<link rel="stylesheet" type="text/css" href="https://www.layuicdn.com/layui/css/layui.css" />
+
+<!-- .img-width img{MAX-WIDTH: 100%!important;HEIGHT: auto!important;width:expression(this.width > 320 ? "320px" : this.width)!important;} -->
+<style type="text/css">
+	.img-width {MARGIN:0; WIDTH: 100%;}
+	.img-width img{MAX-WIDTH: 100%; HEIGHT:100%; width:100%;}
+</style>
+
+<script>
+    layui.use(['element','layer'], function(){
+		var element = layui.element,
+			layer = layui.layer;
+		/*
+		element.on('tab(xyy)', function(data){
+			console.log(data.index);
+        });
+		*/
+    });
+</script>
+
+<script>
+	var proport = 1600/450;
+	layui.use('carousel', function(){
+		var carousel = layui.carousel;
+		carousel.render({
+			elem: '#xyycarousel',
+			width: '90%',
+			height: (0.9*$(window).width()/proport).toString()+'px',
+			arrow: 'hover',
+			anim: 'updown'
+		});
+	});
+	$(window).resize(function () {
+    	// window.location.reload();
+		document.getElementById("xyycarousel").style.height = (0.9*$(window).width()/proport).toString()+'px';
+		// console.log($(window).width());
+	});
+	/*
+	window.onload = function () {
+		var imgH = 0.9*$(window).width()/proport;
+		// console.log($(window).width());
+		$('.xyycarousel').css('height', imgH+'px');
+	}
+	*/
+</script>
+
+<script>
+	window.onload=function () {
+		var btnObj = document.getElementById("loginSubmitButton");
+		btnObj.onclick=function () {
+			// this.style.background="red";
+			var userName=$("#inputUsername_login").val();
+			if($.cookie().username!="undefine") {
+				$.removeCookie('username', { path: '/' });
+			}
+			$.cookie("username", userName, { path:'/'});
+			// window.console.log($.cookie().username);
+		};
+	};
+</script>
+
+<script>
+	/*
+	function check() {
+		var formname=document.loginForm;
+		if (formname.userName.value == "") {
+			alert("请输入用户名！");
+			formname.userName.focus();
+			return false;
+		}
+		if (formname.pwd.value == "") {
+			alert("请输入密码！");
+			formname.pwd.focus();
+			return false;
+		}
+	  	formname.submit();
+	}
+	function on_return() {
+		if(window.event.keyCode == 13) {
+			if (document.getElementById("index-login").classList.contains('layui-show')==true) {
+				document.getElementById("loginSubmitButton").click();
+			}
+			else if (document.getElementById("index-register").classList.contains('layui-show')==true) {
+				document.getElementById("regSubmitButton").click();
+			}
+		}
+	}
+*/
+$(document).keyup(function (e) {
+    if (e.keyCode == 13) {
+		if (document.getElementById("index-login").classList.contains('layui-show')==true) {
+			document.getElementById("loginSubmitButton").click();
+			// console.log("1");
+		}
+		else if (document.getElementById("index-register").classList.contains('layui-show')==true) {
+			document.getElementById("regSubmitButton").click();
+			// console.log("2");
+		}
+    }
+});
+/*
+document.onkeyup = function (e) {
+	if (window.event)
+		e = window.event;
+	var code = e.charCode || e.keyCode;
+	if (code == 13) {
+		if (document.getElementById("index-login").classList.contains('layui-show')==true) {
+			document.getElementById("loginSubmitButton").click();
+		}
+		else if (document.getElementById("index-register").classList.contains('layui-show')==true) {
+			document.getElementById("regSubmitButton").click();
+		}
+		console.log("13");
+    }
+}
+*/
+</script>
+
+<title>DFS 分布式网盘</title>
+
+</head>
+
+<body>
+
+<div class="layui-carousel layui-row" id="xyycarousel" style="margin:0px auto 50px; text-align:center; width:90%;">
+	<div carousel-item class="img-width">
+		<div>
+			<img src="material/pic1.jpg" alt="pic1"/>
+		</div>
+		<div>
+			<img src="material/pic2.jpg" alt="pic2"/>
+		</div>
+		<div>
+			<img src="material/pic3.jpg" alt="pic3"/>
+		</div>
+	</div>
+</div>
+
+<div class="layui-row">
+	<div style="margin:50px auto 10px; text-align:center; width:80%;">
+		<h1 style="font-family: Arial, Helvetica, sans-serif; font-size: 6rem; color: #087933;">
+			DFS - Distributed FileSystem
+		</h1>
+	</div>
+</div>
+
+<div class="layui-row clearfix">
+	<div class="layui-container">
+		<div class="layui-tab layui-tab-brief" lay-filter="xyy" id="tabs-626018">
+			<ul class="layui-tab-title" style="margin:10px auto; text-align:center; width:150px;">
+				<li class="layui-this">登录</li>
+				<li>注册</li>
+			</ul>
+			<div class="layui-tab-content" style="margin:10px auto; width:350px;">
+				<div class="layui-tab-item layui-show" id="index-login">
+					<form class="layui-form" role="form">
+						<div class="layui-form-item">
+							<label for="inputUsername_login" class="layui-form-label">用户名</label>
+							<div class="layui-input-block">
+								<input class="layui-input" type="text" class="form-control" id="inputUsername_login" placeholder="请输入用户名"/>
+							</div>
+						</div>
+						<div class="layui-form-item">
+							<label for="inputPassword_login" class="layui-form-label">密码</label>
+							<div class="layui-input-block">
+								<input class="layui-input" type="password" class="form-control" id="inputPassword_login" placeholder="请输入密码"/>
+							</div>
+						</div>
+						<div class="layui-form-item" style="text-align:center;">
+							<button type="button" id="loginSubmitButton" class="layui-btn layui-btn-radius">登录</button>
+						</div>
+					</form>
+				</div>
+				<div class="layui-tab-item" id="index-register">
+					<form class="layui-form" role="form" action = "UserReg">
+						<div class="layui-form-item">
+							<label for="userName" class="layui-form-label">用户名</label>
+							<div class="layui-input-block">
+								<input class="layui-input" type="text" id="inputUsername_reg"  name = "userName" placeholder="请设置用户名"/>
+							</div>
+						</div>
+						<div class="layui-form-item">
+							<label for="userPasswd" class="layui-form-label">密码</label>
+							<div class="layui-input-block">
+								<input class="layui-input" type="password" id="inputPassword_reg" name = "userPasswd" placeholder="请设置密码"/>
+							</div>
+						</div>
+						<div class="layui-form-item" style="text-align:center;">
+							<button type="button" id="regSubmitButton" class="layui-btn layui-btn-radius">注册</button>
+						</div>
+					</form>
+				</div>
+			</div>
+		</div>
+	</div>
+</div>
+
+<div class="layui-row" style="margin:10px auto 100px; text-align:center; width:60%; font-family:Microsoft YaHei,微软雅黑,Microsoft JhengHei,华文细黑,STHeiti,MingLiu; font-size: 2.5rem;">
+	<p id="statusFeedback">欢迎使用</p>
+</div>
+
+<div style="margin:0 auto; width:80%; text-align:center; font-family:Microsoft YaHei,微软雅黑,Microsoft JhengHei,华文细黑,STHeiti,MingLiu; font-size: 1.2rem;">
+	<p>
+		本系统基于王珺、夏昊珺、滕思洁和郑值开发的「私有网盘」二次开发，
+		剥离了服务器端的数据合并操作，
+		转移到浏览器端进行，
+		实现了分布式。
+	</p>
+	<p>
+		由罗丽薇、邱子悦、袁一玮、余致远共同开发，
+		有疑问欢迎提 <a href="https://github.com/OSH-2020/x-dontpanic">issue</a>。
+	</p>
+</div>
+
+</body>
+</html>

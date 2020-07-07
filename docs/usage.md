@@ -120,7 +120,17 @@ TBA:控制台输出
 
 ### docker-compose 
 
-TBA
+以下使用以 Arch 为例
+
+安装 docker 包或是 AUR 中的 docker-git 包及 docker-compose 包，（推荐）添加自己的用户到 docker user group。（推荐）在 `/etc/docker/daemon.json` 加入一些 docker hub 镜像。
+
+（推荐）复制 ./src/docker 到一个新的位置，假设文件名为 panic。要确保服务所需要的网络端口已开启。
+
+在主目录（也就是 docker-compose.yml 文件存在的目录）下输入 `docker-compose build`，即可开始构建服务。
+
+使用 `docker-compose up` 即可启动服务，若不想看到服务的命令输出部分，可以加上 `-d` 参数即 `docker-compose up -d` 来分离日志输出。
+
+若要停止服务，在终端里键入 `docker-compose down` 即可停止并删除容器，容器的数据（MySql 的数据表和 TOMCAT 的 webapps）均已进行数据持久化，不会因为删除容器而丢失所有数据。
 
 ## 存储节点配置(client)
 

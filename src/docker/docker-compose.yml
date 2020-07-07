@@ -8,11 +8,9 @@ services:
     ports:
       - "8080:8080"
     depends_on:
-      - myserver
       - mymysql
     links:
       - mymysql
-      - myserver
     environment:
       - Xmn384m
       - XX:MaxPermSize=128m
@@ -56,6 +54,3 @@ services:
       - "$PWD/WebContent:/usr/local/tomcat/webapps"
     ports:
       - "2333:2333"
-      - "2334:2334"
-      - "58279:58279"
-      - "58280:58280"
