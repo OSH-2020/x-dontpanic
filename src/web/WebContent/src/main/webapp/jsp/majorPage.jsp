@@ -31,7 +31,7 @@
 </style>
 
 <script>
-	var proport = 1600/450;
+	var proport = 1440/560;
 	layui.use('carousel', function(){
 		var carousel = layui.carousel;
 		carousel.render({
@@ -105,7 +105,7 @@
 					<label>
 						<input type="checkbox">&emsp;&emsp;
 					</label>
-					<i class="glyphicon glyphicon-folder-open"></i>&emsp;..
+					<span class="glyphicon glyphicon-folder-open"></span>&emsp;..
 				</td>
 				<td></td>
 				<td></td>
@@ -153,13 +153,13 @@
 						{
 							out.println("<td>");
 							out.println("<label><input type=\"checkbox\"></label>");
-							out.println("<i class=\"glyphicon glyphicon-file\"></i>" + files[i].getFileName() + "</td>");
+							out.println("<span class=\"glyphicon glyphicon-file\"></span>" + files[i].getFileName() + "</td>");
 						}
 						else
 						{
 							out.println("<td>");
 							out.println("<label><input type=\"checkbox\"></label>");
-							out.println("<i class=\"glyphicon glyphicon-folder-open\"></i>" + files[i].getFileName() + "</td>");
+							out.println("<span class=\"glyphicon glyphicon-folder-open\"></span>" + files[i].getFileName() + "</td>");
 						}
 						out.println("<td>"+files[i].getAttribute()+"</td>");
 						out.println("<td>"+files[i].getTime()+"</td>");
