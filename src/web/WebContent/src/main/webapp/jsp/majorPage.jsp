@@ -67,10 +67,10 @@
 			<img src="../material/pic1.jpg" alt="pic1"/>
 		</div>
 		<div>
-			<img src="../material/pic2.jpg" alt="pic2"/>
+			<img src="../material/pic2.png" alt="pic2"/>
 		</div>
 		<div>
-			<img src="../material/pic3.jpg" alt="pic3"/>
+			<img src="../material/pic3.png" alt="pic3"/>
 		</div>
 	</div>
 </div>
