@@ -98,7 +98,7 @@ public class Client {
 		ServerConnector serverConnector = new ServerConnector(clientId, syn,selfIp,selfDataPort);
 		serverConnector.start();
 
-		RequestManager requestManager = new RequestManager(selfDataPort);
+		RequestManager requestManager = new RequestManager(selfDataPort, selfIp);
 		requestManager.start();
 
 		/*
