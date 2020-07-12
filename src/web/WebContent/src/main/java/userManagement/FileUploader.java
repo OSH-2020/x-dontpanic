@@ -177,9 +177,9 @@ public class FileUploader extends ActionSupport{
 		if(noa+nod <= size){
 			for(int i=0;i<nod+noa;i++){
 				deviceItemList[i] = onlineDevice[distanceId.get(i)];
-				System.out.println(deviceItemList[i].getLeftrs() - fragmentSize);
+				//System.out.println(deviceItemList[i].getLeftrs() - fragmentSize);
 				deviceItemList[i].setLeftrs(deviceItemList[i].getLeftrs() - fragmentSize);
-				System.out.println(query.alterDevice(deviceItemList[i]));
+				//System.out.println(query.alterDevice(deviceItemList[i]));
 			}
 		}
 		else{ // noa+nod > size
@@ -189,7 +189,7 @@ public class FileUploader extends ActionSupport{
 				DeviceItem thisdevice = onlineDevice[distanceId.get(j)];
 				if(thisdevice.getLeftrs() > fragmentSize){
 					deviceItemList[i] = thisdevice;
-					System.out.println(thisdevice.getLeftrs() - fragmentSize);
+					//System.out.println(thisdevice.getLeftrs() - fragmentSize);
 					thisdevice.setLeftrs(thisdevice.getLeftrs() - fragmentSize);
 					query.alterDevice(thisdevice);
 					i--;
@@ -244,6 +244,10 @@ public class FileUploader extends ActionSupport{
 			String str;
 			JSONArray jsonArray = new JSONArray();
 			DeviceItem[] deviceItemList=getAllocateDeviceList(query,nod,noa,whose);
+			if(deviceItemList==null){
+				result = "NotEnoughDevices";
+				return "success";
+			}
 			for (int i=0;i<nod+noa;i++){
 				JSONObject formDetailsJson = new JSONObject();
 				formDetailsJson.put("filename", String.valueOf(fileId*100+i));

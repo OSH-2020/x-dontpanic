@@ -19,7 +19,7 @@ public class WebSocket {
     private OutputStream out;
 
     public static void init(int port) throws IOException {
-        System.out.println(port);
+        //System.out.println(port);
         server = new ServerSocket(port);
     }
 
