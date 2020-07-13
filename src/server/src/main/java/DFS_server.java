@@ -12,10 +12,12 @@ public class DFS_server {
      	System.out.println("Server start");
 		database.Query query = new database.Query();
 		DeviceItem[] devices =query.queryOnlineDevice();
-		for (DeviceItem device : devices) {
-			device.setIsOnline(false);
-			query.alterDevice(device);
-			//System.out.println(device.getId());
+		if(devices != null) {
+			for (DeviceItem device : devices) {
+				device.setIsOnline(false);
+				query.alterDevice(device);
+				//System.out.println(device.getId());
+			}
 		}
       	try{
 	        Thread t = new controlConnect.ServerThread(controlPort);
