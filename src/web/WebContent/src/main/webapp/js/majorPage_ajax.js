@@ -399,7 +399,7 @@ function fileDownload() {
 			}
 			let downloadTimeoutId =setTimeout(function(){
 				decodeFile(fileInfo.name,fileInfo.fileType,fileInfo.nod,fileInfo.noa,content,digest,fileInfo.fileSize);
-			},2000)
+			}, 10000)
 
             //添加进度条
 			/*
