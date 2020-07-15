@@ -94,7 +94,7 @@ WantedBy=multi-user.target
 
 #### server.jar
 
-用途：接受 client 的控制连接，维护数据库中的节点状态
+用途：作为 coordinator 接受 client 的控制连接，维护数据库中的节点状态
 
 先安装 JDK。安装配置 openjdk-8 的方法如下（参考自原项目配置文档）：
 
@@ -115,8 +115,6 @@ export JAVA_HOME="/usr/lib/jvm/java-8-openjdk-amd64/jre/bin"
 运行：
 
 `java -jar server.jar`
-
-TBA:控制台输出
 
 ### docker-compose （推荐）
 
@@ -158,12 +156,10 @@ TBA:控制台输出
 
 进入该目录，运行 `java -jar client.jar`
 
-TBA: 控制台输出
-
 ## 上传/下载(web)
 
-请连接 vpn （调试时可以单设备，地址写 127.0.0.1，浏览器和存储节点在同一设备）
+如存储节点使用了 vpn，请连接 vpn （调试时可以单设备，地址写 127.0.0.1，浏览器和存储节点在同一设备）
 
-debug 说明：
-- F12 查看 console，network   //TBA detail
+调试说明：
+- F12 查看 console，network  
 - 测试用户名密码：xixi/123456
