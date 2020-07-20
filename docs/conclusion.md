@@ -1,3 +1,5 @@
+# X-dontpanic
+
 [TOC]
 
 # 结题报告
@@ -18,19 +20,19 @@
 
 而家庭和小微企业的存储设备有如下特点：
 
-\- 存储资源小而分散，每个设备的存储容量通常不超过 1 TB；
-\- 设备通常只有在使用时才会在线联网，否则处于关闭状态；
-\- 很多设备的位置随时间而变化，故它们常常并不总在其归属网络上；
-\- 和专用的服务器相比，这些设备的性能较低；
-\- 设备没有统一的指令集和操作系统；
-\- 连接设备的网络环境较差，往往通过一般的局域网或互联网相连接。
+- 存储资源小而分散，每个设备的存储容量通常不超过 1 TB；
+- 设备通常只有在使用时才会在线联网，否则处于关闭状态；
+- 很多设备的位置随时间而变化，故它们常常并不总在其归属网络上；
+- 和专用的服务器相比，这些设备的性能较低；
+- 设备没有统一的指令集和操作系统；
+- 连接设备的网络环境较差，往往通过一般的局域网或互联网相连接。
 
 面对这些特点，很难用一个集中式的文件系统组织分散在这些不同的设备上的存储空间。
 
 然而，即使是传统的分布式文件系统想在这种环境中应用也是十分困难的，这体现在：
 
-\- 传统的分布式文件系统往往要求高性能、稳定的服务器，而上述环境中的机器不但性能不足，更不常在线；
-\- 传统的分布式文件系统往往要求服务器具有相同的操作系统甚至是定制的操作系统以方便管理，而上述环境中的机器运行不同的操作系统上；
+- 传统的分布式文件系统往往要求高性能、稳定的服务器，而上述环境中的机器不但性能不足，更不常在线；
+- 传统的分布式文件系统往往要求服务器具有相同的操作系统甚至是定制的操作系统以方便管理，而上述环境中的机器运行不同的操作系统上；
 
 同时，各大商业网盘的安全性深受质疑，限速或者收费等限制并不能很好地满足我们对存储的需要。
 
@@ -96,8 +98,6 @@ NAS 全称 network attached storage，是一种可以通过网络访问的专用
 
 ![image-20200718185006861](conclusion.assets/image-20200718185006861.png)
 
-
-
 我们的项目从 IPFS 中吸取了 P2P 的思想，在数据的传输上实现了点对点。文件系统由一个目录节点（index）和若干存储节点（storage）组成。目录节点负责提供 web 管理界面，以及协调各存储节点的资源。这样的数据存储和传输方式能够有效节约带宽资源，避免传统 server/client 模式中中央服务器负载过重产生的瓶颈。（像我们参考的另一个大作业项目，就存在中央服务器数据传输瓶颈的问题。）同时，文件内容也不会经过目录节点，不用担心权力集中和监管的弊端。
 
 因为目录节点的存在，我们能够对访问者进行身份验证，对数据的冗余备份进行协调，不会产生IPFS 中的安全性问题和可靠性问题。
@@ -143,12 +143,6 @@ Namespace，包括 CLONE_NEWCGROUP、CLONE_NEWIPC、CLONE_NEWNET、CLONE_NEWNS�
 Docker 使用了 CGroup 和 Namespace 去隔离不同容器内的进程。Docker 容器将应用和其依赖环境打包在一起，在不包含完整的操作系统时就能运行普通应用，更加轻量级，可移植性更好。Docker 的可移植性和轻量级的特性，可以使我们轻松地完成动态管理的工作负担，并根据需求指示，实时扩展或拆除应用程序和服务。
 
 Docker 中的每一个镜像都是由一系列的只读层组成的，Dockerfile 中的每一个命令都会在已有的只读层上创建一个新的层。`docker run` 可以在镜像的最上层添加一个可写的容器层，所有运行时容器的修改其实都是对这个容器读写层的修改。这样的特性使得 Docker 具有一定版本管理的功能。
-
-#### 使用 Docker 创建容器
-
-本项目使用了 Apache 和 Tomcat，使用网页作为用户的交互页面。Apache 作为一个 Web 服务器，缺乏处理 JSP 的功能，为了能够处理 JSP 的请求，需要使用 JSP 容器如 Tomcat。mod_jk（JK）是 Apache 与 Tomcat 的连接器，附带集群和负载均衡。就 Docker 而言，应该对每个服务使用单独容器，如 Web 服务器运行在一个容器上，应用程序服务器运行在另一个容器上。若采用 Apache 和 Tomcat 方案分别部署 HTML 和 JSP 页面，则容易使用 Docker 分别管理 Apache 和 Tomcat，动静分离。
-
-使用 Docker 创建容器时，基础镜像通常是 Ubuntu 或 Centos，不管哪个镜像的大小都在 100MB 以上。Alpine Linux 采用了 musl libc 和 busybox 以减小系统的体积和运行时消耗，相比于其他 Linux 的 Docker 镜像，它的占用仅仅只有 5MB。故项目会采用 docker-alpine-java 镜像，同时提供 JRE 运行时和较小的镜像体积。
 
 #### Docker Compose
 
@@ -255,8 +249,6 @@ RS 最多能容忍 m 个数据块被删除，数据恢复的过程如下：
 
 使用柯西矩阵要优于范德蒙德矩阵的方法，柯西矩阵的运算复杂度为 O(n*(n-m))，解码复杂度为 O(n^2)。
 
-
-
 #### 开源纠删码项目
 
 纠删码本身目前已经是一种比较成熟的算法，且其中的 Reed-Solomon 算法是比较早并且已经有开源实现的一种算法，相对引入系统的难度较低。此外，为了在浏览器端实现文件编解码以减少服务器的工作量，我们希望应用 WebAssembly 编译现有的开源算法。
@@ -271,7 +263,7 @@ WebAssembly 是一个实验性的低级编程语言，应用于浏览器内的�
 
 在过去很长一段时间里，JavaScript 是 Web 开发人员中的通用语言。如果想写一个稳定成熟的 Web 应用程序，用 JavaScript 几乎是唯一的方法。WebAssembly（也称为 wasm）将很快改变这种情况。它是便携式的抽象语法树，被设计来提供比 JavaScript 更快速的编译及运行。
 
- WebAssembly 将让开发者能运用自己熟悉的编程语言（最初以 C/C++ 作为实现目标）编译，再藉虚拟机引擎在浏览器内运行。
+WebAssembly 将让开发者能运用自己熟悉的编程语言（最初以 C/C++ 作为实现目标）编译，再藉虚拟机引擎在浏览器内运行。
 
 WebAssembly 的开发团队分别来自 Mozilla、Google、Microsoft、Apple，代表着四大网络浏览器 Firefox、Chrome、Microsoft Edge、Safari。2017 年 11 月，以上四个浏览器都开始实验性地支持 WebAssembly。WebAssembly 于 2019 年 12 月 5 日成为万维网联盟（W3C）的推荐，与 HTML、CSS 和 JavaScript 一起，成为 Web 的第四种语言。
 
@@ -303,7 +295,7 @@ Go 提供了专有 API syscall/js 包，使我们可以与 JavaScript 之间传�
 
 这三个函数将会完成数据类型的转换和 Go 函数的调用。在 main() 函数中声明这些函数，并阻止 Go 程序退出。
 
-~~~go
+```go
 func main() {
 	c := make(chan struct{}, 0)
 	js.Global().Set("callMd5",js.FuncOf(callMd5))
@@ -311,7 +303,7 @@ func main() {
 	js.Global().Set("callDecoder",js.FuncOf(callDecoder))
 	<-c
 }
-~~~
+```
 
 接下来分别简述 Go-WebAssembly 的三个函数。
 
@@ -319,38 +311,38 @@ func main() {
 
 为了能将 Go 函数传递给 JavaScript 使用，Go 函数的参数和返回值类型在[js 包文档](https://golang.org/pkg/syscall/js/#FuncOf)中有固定格式的要求。
 
-~~~go
+```go
 func FuncOf(fn func(this Value, args []Value) interface{}) Func
-~~~
+```
 
 这意味着 JavaScript 和 Go 的数据需要经过一些转换。callEncoder 函数声明为：
 
-~~~go
+```go
 func callEncoder(this js.Value, args []js.Value) interface{}
-~~~
+```
 
 而在 JavaScript 代码中调用 callEncoder 函数时，我们接收 JavaScript 中 Uint8Array 类型的原始文件数据，以及进行纠删码编码需要的原始数据块、冗余块两个参数，并传递给 goEncoder 以调用 Go 开源库的函数。
 
-~~~go
+```go
 buffer := make([]byte, args[0].Length())
 js.CopyBytesToGo(buffer, args[0])
 content := goEncoder(buffer, args[1].Int(), args[2].Int())
-~~~
+```
 
 得到编码后的数组（content）后，再调用 CopyBytesToJS 函数转换成 js.Value 类型，于是函数的返回值能在 JavaScript 代码中直接使用。
 
-~~~go
+```go
 jsContent := make([]interface{},len(content))
 for i:=0; i<len(content); i++{
     jsContent[i] = js.Global().Get("Uint8Array").New(len(content[0]))
     js.CopyBytesToJS(jsContent[i].(js.Value),content[i])
 }
 return js.ValueOf(jsContent)
-~~~
+```
 
 在 goEncoder 函数中，我们可以直接使用[开源库](https://github.com/klauspost/reedsolomon)中的函数进行编码。为了在生成编码矩阵时使用性能上更好的柯西矩阵，参照[说明文档](https://pkg.go.dev/github.com/klauspost/reedsolomon?tab=doc#WithAutoGoroutines)加入 WithCauchyMatrix() 参数。编码得到的结果返回给 callEncoder 函数进行格式转换。
 
-~~~go
+```go
 func goEncoder(raw []byte, numOfDivision int, numOfAppend int)(content [][]byte){
 	enc, err := reedsolomon.New(numOfDivision, numOfAppend, reedsolomon.WithCauchyMatrix())
 	checkErr(err)
@@ -360,7 +352,7 @@ func goEncoder(raw []byte, numOfDivision int, numOfAppend int)(content [][]byte)
 	checkErr(err)
 	return content
 }
-~~~
+```
 
 ##### callMD5：为碎片生成 MD5 摘要
 
@@ -372,7 +364,7 @@ MD5 是一种被广泛使用的摘要算法，使用它可以为每个碎片产�
 
 这一部分的代码思路借鉴了[使用Go开发前端应用（三）](https://juejin.im/post/5eb2191df265da7bbf21a0f4)。
 
-~~~go
+```go
 func callMd5(this js.Value, args []js.Value) interface{} {
 	// 声明一个和文件大小一样的切片
 	buffer := make([]byte, args[0].Length())
@@ -383,7 +375,7 @@ func callMd5(this js.Value, args []js.Value) interface{} {
 	// 调用js端的方法，将字符串返回给js端
 	return fmt.Sprintf("%x", res)
 }
-~~~
+```
 
 ##### callDecoder：接收碎片并调用 Go 函数解码
 
@@ -391,7 +383,7 @@ func callMd5(this js.Value, args []js.Value) interface{} {
 
 对于每一块碎片（在 Go 代码中它可以表示为 args[0].Index(i)）我们判断它是否为空，并转换成 Go 中的类型，然后进行解码。
 
-~~~go
+```go
 buffer := make([][]byte, args[0].Length())
 for i:=0; i<len(buffer); i++ {
     // if args[0][i]==null, set buffer[i] as nil.
@@ -403,7 +395,7 @@ for i:=0; i<len(buffer); i++ {
     }
 }
 content := goDecoder(buffer, args[1].Int(), args[2].Int())
-~~~
+```
 
 解码完成后，再进行类型转换返回给 JavaScript。
 
@@ -477,7 +469,7 @@ JavaScript 没有可以直接使用的 TCP 接口。为了在浏览器和存储�
 
 本分布式文件系统使用数据库维护所有的元数据，数据库中具体包括表 FILE 用于存储文件的逻辑位置与属性、表 FRAGMENT 用于存储碎片的物理位置、表 REQUEST 用于存储服务器对客户端的碎片请求、表 DEVICE 用于存储系统中客户端的信息、表 USER 用于存储网页的注册用户。
 
-```
+```sql
 CREATE TABLE `DEVICE` (
 `ID` int NOT NULL AUTO_INCREMENT,
 `IP` char(20) NOT NULL DEFAULT '',
@@ -571,7 +563,7 @@ RBAC 是基于角色的权限访问技术，需要设计新的数据表：
 - **表 GROUP_ROLE 用于存储小组角色**
 - **表 USER_GROUP 用于存储用户对应小组角色的信息**
 
-```
+```sql
 CREATE TABLE `USER` (
 `ID` int NOT NULL AUTO_INCREMENT,
 `NAME` char(20) NOT NULL UNIQUE DEFAULT '',
@@ -601,8 +593,6 @@ PRIMARY KEY (`ID`)
 - 注册时，判断用户名不重复，**分配 ID 等等数据模块**；
 - 登录时，输入用户名、密码，检测对应模块，**跳转至特定文件空间（涉及到由抓取所有文件列表到抓取特定文件列表的转变）**；
 - **原网页基础上添加创建小组、加入小组等功能（涉及到网页设计以及和数据库交互）**。
-
-
 
 ## 未来工作展望
 
@@ -685,12 +675,10 @@ TODO：致谢老师和助教。
 3. [Erasure Code - EC纠删码原理](https://blog.csdn.net/shelldon/article/details/54144730)
 4. [P2P 网络原理](https://www.cnblogs.com/ygjzs/p/12419548.html)
 5. [P2P 技术原理](https://www.oschina.net/question/54100_2285064)
-6. [github.com/Paritosh-Anand/Docker-Httpd-Tomcat](https://github.com/Paritosh-Anand/Docker-Httpd-Tomcat)
-7. [github.com/EdSingleton/docker-httpd-mod_jk](https://github.com/EdSingleton/docker-httpd-mod_jk)
-8. [github.com/peer44/java-rbac](https://github.com/peer44/java-rbac)
-9. [Backblaze Reed-Solomon](https://www.backblaze.com/open-source-reed-solomon.html)
-10. [github.com/klauspost/reedsolomon](https://github.com/klauspost/reedsolomon)
-11. [译 Go和WebAssembly：在浏览器中运行Go程序](https://www.qichengzx.com/2019/01/01/go-in-the-browser.html)
-12. [WebAssembly](https://zh.wikipedia.org/wiki/WebAssembly)
-13. [基于 Token 的身份验证：JSON Web Token](https://ninghao.net/blog/2834)
-14. [OpenVPN 的工作原理](http://blog.sina.com.cn/s/blog_6d51d1b70101cs5m.html)
+6. [github.com/peer44/java-rbac](https://github.com/peer44/java-rbac)
+7. [Backblaze Reed-Solomon](https://www.backblaze.com/open-source-reed-solomon.html)
+8. [github.com/klauspost/reedsolomon](https://github.com/klauspost/reedsolomon)
+9. [译 Go和WebAssembly：在浏览器中运行Go程序](https://www.qichengzx.com/2019/01/01/go-in-the-browser.html)
+10. [WebAssembly](https://zh.wikipedia.org/wiki/WebAssembly)
+11. [基于 Token 的身份验证：JSON Web Token](https://ninghao.net/blog/2834)
+12. [OpenVPN 的工作原理](http://blog.sina.com.cn/s/blog_6d51d1b70101cs5m.html)
