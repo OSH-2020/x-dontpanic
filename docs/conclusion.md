@@ -38,7 +38,6 @@
 		- [WebSocket](#websocket)
 		- [碎片分配策略](#碎片分配策略)
 		- [多用户权限支持](#多用户权限支持)
-			- [多用户权限支持 —— RBAC 介绍](#多用户权限支持--rbac-介绍)
 			- [前置项目关于用户权限的设计](#前置项目关于用户权限的设计)
 				- [数据库配置](#数据库配置)
 			- [达到改进目标用到的技术](#达到改进目标用到的技术)
@@ -461,35 +460,87 @@ JavaScript 没有可以直接使用的 TCP 接口。为了在浏览器和存储�
 
 只需要加入一个考虑设备和用户在线时间重合度的分配策略，就可以大幅提高下载成功概率。
 
-为什么呢？
+我们将一个设备或者一个用户一天中的在线时间表示成一个长度为 24 的 01 向量，在上传文件时尽可能地给覆盖上传者的在线时间段 x% 以上的存储结点分配碎片。
 
-假设我们已经有一个分配策略使需要下载文件时，每一个拿到碎片的设备在线率都为 70%。那么取纠删码分4冗余4的参数，代入图中公式，就有高达 94.2% 的成功率。
+这里的 x% 的计算是设备与用户需求的距离。24个时间段内，有 x% 以上的时间段不会发生用户在线而设备不在线的情况。
 
-![image-20200719103305614](conclusion.assets/image-20200719103305614.png)
+我们的分配策略还估计到了剩余容量，碎片不会再分给剩余容量到达上限的节点，避免分配出现严重的倾斜。
 
-我们将一个设备或者一个用户一天中的在线时间表示成一个长度为 24 的 01 向量，在上传文件时尽可能地给覆盖上传者的在线时间段 x% 以上的存储结点分配碎片。这里的 x% 说的是两个向量做 and 操作，得到的向量中 1 的个数占上传者向量中 1 的个数的 x%。
+相关代码如下：
 
-我们将 x 取 70，按照之前的假设，设备数取 8，纠删码参数取数据块 4 块冗余 4 块，此时，下载成功的概率高达 94%。
+```java
+private DeviceItem[] getAllocateDeviceList(Query query,int nod,int noa, String whose){
+	// 确认有在线设备
+	DeviceItem[] onlineDevice = query.queryOnlineDevice();
+	if(onlineDevice == null){
+		return null;
+	}
+	// 计算相似度 0<=distance<=24
+	int onlineDeviceNum = onlineDevice.length;
+	int[] distance = new int[onlineDeviceNum];
+	for(int i=0; i<onlineDeviceNum; i++){
+		int save = query.queryUserTime(whose);
+		int time = onlineDevice[i].getTime();
+		distance[i] = 0;
+		for(int j=0; j<24; j++){ // 24维
+			if((time & 1) == 0 & (save & 1) == 1)
+				distance[i]++;
+			time = time >> 1;
+			save = save >> 1;
+		}
+	}
 
-同时还可以加入一些保证 24h 在线的可靠节点（例如商业云等稳定的云服务）作为一个单独的分类，此时分配策略可以固定向可靠节点分一定比例的碎片，那么那些碎片的在线率可以视为 100%，进一步提高下载成功概率。
+	int fragmentSize = fileSize/nod;
+	// 由于有 vlab，必然有至少一台distance <= 30% * 24 = 7
+	ArrayList<Integer> distanceId = new ArrayList<>();
+	for(int i=0; i<onlineDeviceNum; i++){
+		if(distance[i]<=7 & onlineDevice[i].getLeftrs() > fragmentSize)
+			// 差距够小 且 至少可以分配一个碎片
+			distanceId.add(0, i); // 一直从头插入
+	}
+	int size = distanceId.size(); // 有效在线主机数
+	if(size < 1)
+		return null;
+	// 根据碎片数量和有效在线主机数，确定结果
+	DeviceItem[] deviceItemList=new DeviceItem[nod+noa];
+	if(noa+nod <= size){
+		for(int i=0;i<nod+noa;i++){
+			deviceItemList[i] = onlineDevice[distanceId.get(i)];
+			deviceItemList[i].setLeftrs(deviceItemList[i].getLeftrs() - fragmentSize);
+		}
+	}
+	else{ // noa+nod > size
+		int i = noa+nod-1;
+		int j = 0;
+		while(i>=0){
+			DeviceItem thisdevice = onlineDevice[distanceId.get(j)];
+			if(thisdevice.getLeftrs() > fragmentSize){
+				deviceItemList[i] = thisdevice;
+				thisdevice.setLeftrs(thisdevice.getLeftrs() - fragmentSize);
+				query.alterDevice(thisdevice);
+				i--;
+			}
+			j = (j+1)%size;
+		}
+	}
+	return deviceItemList;
+}
+```
 
-我们的分配策略还估计到了剩余容量，碎片会优先分给剩余容量较多的节点，避免分配出现严重的倾斜。
+接下来，通过数学公式和计算图表来展示分配策略的效果。
+
+我们设上传文件是在线存储节点数目为n，文件分为nod块碎片，冗余noa块碎片，在线率为p，则取得完整文件的成功率表达式如下：
+$$
+\sum_{i= \left \lceil n\times nod{\div} \left ( nod+noa \right )  \right \rceil }^{n} \binom{n}{i}\times p^{i}\times (1-p)^{n-i}
+$$
+
+假设每一个拿到碎片的设备在线率都为 p = 70%，设备为 n 台，取纠删码分 nod = 4 块碎片，冗余 noa = 4 块碎片的参数，代入图中公式，随着 n 的增大得到接近 100% 的成功率。
+
+![n个设备对应成功率折线图](conclusion.assets/n个设备对应成功率折线图.png)
+
+同时，我们还可以加入一些保证 24h 在线的可靠节点（例如商业云等稳定的云服务）作为一个单独的分类，此时分配策略可以固定向可靠节点分一定比例的碎片，那么那些碎片的在线率可以视为 100%，进一步提高下载成功概率。
 
 ### 多用户权限支持
-
-#### 多用户权限支持 —— RBAC 介绍
-
-以角色为基础的访问控制（Role-based access control，RBAC），是一种较新且广为使用的访问控制机制。不同于其他的访问控制直接赋予使用者权限，RBAC 将权限赋予角色。
-
-[![feasibility-RBAC-1](https://github.com/OSH-2020/x-dontpanic/raw/master/docs/files/feasibility-RBAC-1.png)](https://github.com/OSH-2020/x-dontpanic/blob/master/docs/files/feasibility-RBAC-1.png)
-
-在一个组织中，根据不同的职责产生不同的角色，执行某项操作的权限被赋予对应的角色。组织成员通过被赋予不同的角色，从而取得执行某系统功能的权限。
-
-对于批量的用户权限调整，只需调整用户关联的角色权限，无需对每一个用户都进行权限调整，既提升效率，又降低了出现漏调的概率。
-
-数据库设计示意图如下：
-
-[![feasibility-RBAC-2](https://github.com/OSH-2020/x-dontpanic/raw/master/docs/files/feasibility-RBAC-2.jpg)](https://github.com/OSH-2020/x-dontpanic/blob/master/docs/files/feasibility-RBAC-2.jpg)
 
 #### 前置项目关于用户权限的设计
 
@@ -561,68 +612,95 @@ Query 类定义了对上述五个表查询、修改、删除、新增条目的�
 
 （六）在 closeConnection 函数中，调用 Connection 类实例 close 函数关闭连接。
 
-#### 达到改进目标用到的技术
+#### 改进用到的技术
 
 ##### 新的数据库设计
 
-RBAC 是基于角色的权限访问技术，需要设计新的数据表：
-
-```
-用户表
-角色表
-权限表
-用户角色表
-角色权限表
-```
-
-考虑到本项目私人网盘的定位，设计思路如下：
-
-- 每个用户创建时，同时生成同名的角色，角色唯一对应只有自己有权限访问的网盘空间，即角色与权限一对一，权限包含浏览内容和下载等等；
-- 提供创建小组的功能：角色表生成新的小组角色，小组角色唯一对应网盘空间，权限仍为一对一；
-- 同时考虑用户与小组两类角色，用户与角色是多对多的关系。为了建立更明晰的表格，将用户-用户权限严格绑定，只额外建立用户小组角色表，暂考虑用户只能加入0或1个小组；
-- 从分析可以看出，角色与权限一一对应，可以把角色权限表、权限表纳入角色表中，即只需用户表、小组角色表、用户小组角色表；
-- 暂不考虑超级管理员。
-
-具体设计如下：（待实现的加粗显示）
-
-- 表 FILE 用于存储文件的逻辑位置与属性
-- 表 FRAGMENT 用于存储碎片的物理位置
-- 表 REQUEST 用于存储服务器对客户端的碎片请求
-- 表 DEVICE 用于存储系统中客户端的信息
-- **表 USER 用于存储网页的注册用户**
-- **表 GROUP_ROLE 用于存储小组角色**
-- **表 USER_GROUP 用于存储用户对应小组角色的信息**
+利用 `FILE` 表的设计，加入 `WHOSE` 列，使得文件有了归属。
 
 ```sql
-CREATE TABLE `USER` (
-`ID` int NOT NULL AUTO_INCREMENT,
-`NAME` char(20) NOT NULL UNIQUE DEFAULT '',
-`PASSWD` char(20) NOT NULL DEFAULT '',
-`URIS` varchar(1000) NOT NULL DEFAULT '',
-PRIMARY KEY (`ID`)
-) ENGINE=InnoDB DEFAULT CHARSET=utf8;
-
-CREATE TABLE `GROUP_ROLE` (
-`ID` int NOT NULL AUTO_INCREMENT,
-`NAME` char(20) NOT NULL UNIQUE DEFAULT '',
-`URIS` varchar(1000) NOT NULL DEFAULT '',
-PRIMARY KEY (`ID`)
-) ENGINE=InnoDB DEFAULT CHARSET=utf8;
-
-CREATE TABLE `USER_GROUP` (
-`ID` int NOT NULL AUTO_INCREMENT,
-`GID` int NOT NULL DEFAULT '0',
-PRIMARY KEY (`ID`)
+CREATE TABLE `FILE` (
+  `ID` int NOT NULL AUTO_INCREMENT,
+  `NAME` char(100) NOT NULL DEFAULT '',
+  `PATH` char(60) NOT NULL DEFAULT '',
+  `ATTRIBUTE` char(10) NOT NULL DEFAULT 'rwxrwxrwx',
+  `TIME` char(10) NOT NULL DEFAULT '',
+  `NOD` int NOT NULL DEFAULT 1,
+  `NOA` int NOT NULL DEFAULT 0,
+  `ISFOLDER` boolean NOT NULL DEFAULT false,
+  `WHOSE` char(20) NOT NULL DEFAULT '',
+  `FILETYPE` char(50) NOT NULL DEFAULT '',
+  `FILESIZE` int NOT NULL DEFAULT 0,
+  PRIMARY KEY (`id`)
 ) ENGINE=InnoDB DEFAULT CHARSET=utf8;
 ```
 
 ##### 新的 Web 端设计
 
-思路如下：（待实现的加粗显示）
+登录时，输入用户名、密码，检测对应模块，跳转至特定文件空间（涉及到由抓取所有文件列表到抓取特定文件列表的转变）；
 
-- 注册时，判断用户名不重复，**分配 ID 等等数据模块**；
-- 登录时，输入用户名、密码，检测对应模块，**跳转至特定文件空间（涉及到由抓取所有文件列表到抓取特定文件列表的转变）**；
-- **原网页基础上添加创建小组、加入小组等功能（涉及到网页设计以及和数据库交互）**。
+核心是 `sql` 抓取语句的改进：
+
+```java
+public FileItem[] queryFileList(String whose, String path){
+	Statement stmt = null;
+	ResultSet rs = null;
+	FileItem fileArray[] = null;
+
+	int id, noa,nod;
+	String name,attr, time;
+	boolean isFolder;
+
+	int count,i;
+
+	try{
+		stmt = conn.createStatement();
+		String sql;
+		sql = "SELECT * FROM DFS.FILE WHERE WHOSE='"+whose+"' AND PATH='"+path+"'";
+		rs = stmt.executeQuery(sql);
+		if (!rs.last())
+			return null;
+		count = rs.getRow();
+		fileArray=new FileItem[count];
+		i=0;
+		rs.first();
+
+		while (i<count) {
+			id = rs.getInt("ID");
+			nod = rs.getInt("NOD");
+			noa = rs.getInt("NOA");
+			name = rs.getString("NAME");
+			attr = rs.getString("ATTRIBUTE");
+			time = rs.getString("TIME");
+			isFolder = rs.getBoolean("ISFOLDER");
+			String fileType=rs.getString("FILETYPE");
+			int fileSize=rs.getInt("FILESIZE");
+
+			fileArray[i]=new FileItem(id,name,path,attr,time,nod,noa,isFolder,fileType,fileSize,whose);
+			rs.next();
+			i++;
+		}
+	}
+	catch(Exception e){
+		e.printStackTrace();
+	}
+	finally{
+		try{
+			if(rs!=null && !rs.isClosed())
+				rs.close();
+		}
+		catch(Exception e){
+		}
+		try{
+			if(stmt!=null && !stmt.isClosed())
+				stmt.close();
+		}
+		catch(Exception e){
+		}
+	}
+	return fileArray;
+}
+```
 
 ## 未来工作展望
 
