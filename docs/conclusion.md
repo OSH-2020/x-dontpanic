@@ -16,17 +16,8 @@
       - [Docker-Compose](#docker-compose)
     - [前端美化](#前端美化)
     - [文件编解码](#文件编解码)
-      - [Reed-Solomon 编码](#reed-solomon-编码)
-      - [编解码原理](#编解码原理)
-        - [编码](#编码)
-        - [解码](#解码)
       - [稳定性](#稳定性)
-      - [编码矩阵](#编码矩阵)
-        - [基于范德蒙德（Vandermonde）矩阵](#基于范德蒙德vandermonde矩阵)
-        - [基于柯西（Cauchy）矩阵](#基于柯西cauchy矩阵)
-        - [柯西编解码过程优化](#柯西编解码过程优化)
       - [开源纠删码项目](#开源纠删码项目)
-      - [WebAssembly](#webassembly)
       - [WebAssembly 与 JavaScript 效率对比](#webassembly-与-javascript-效率对比)
       - [浏览器端实现文件编解码](#浏览器端实现文件编解码)
         - [使用 FileReader 获取本地文件](#使用-filereader-获取本地文件)
@@ -46,7 +37,7 @@
       - [改进用到的技术](#改进用到的技术)
         - [新的数据库设计](#新的数据库设计)
         - [新的 Web 端设计](#新的-web-端设计)
-  - [未来工作展望](#未来工作展望)
+  - [前景展望](#前景展望)
     - [重新加入中心节点](#重新加入中心节点)
     - [更高性能的纠删码模块设计](#更高性能的纠删码模块设计)
   - [项目总结](#项目总结)
@@ -182,7 +173,7 @@ Docker-Compose 是 Docker 官方用于定义和运行多容器的编排工具。
 
 docker-compose 的 scale 功能还支持创建多个实例进行负载均衡反向代理。这可以在我们想进行用户群的扩展时，轻松解决目录节点高并发的问题，并把处理能力分布在多台主机上。
 
-<img src="conclusion.assets/%E5%9B%BE%E7%89%871.png" alt="图片1" style="zoom:50%;" />
+![图片1](conclusion.assets/%E5%9B%BE%E7%89%871.png)
 
 本项目中，下面这段 docker-compose.yml 描述了 mytomcat、mymysql 和 myserver 这三个 Docker 容器的镜像、端口、依赖等信息。
 
@@ -248,96 +239,30 @@ services:
 
 ### 文件编解码
 
-#### Reed-Solomon 编码
-
-纠删码（Erasure Code）是一种编码技术。它通过计算将 n 份原始数据增加至 n+m 份数据，并能由其中的任意 n 份数据还原出原始数据，即可以容忍不多于 m 份的数据失效。纠删码主要应用在网络传输中，用以提高存储系统的可靠性。相比多副本复制而言，它能以更小的数据冗余度获得更高数据可靠性， 但编码方式较复杂，需要大量计算。
-
-里德-所罗门码（Reed-Solomon codes，RS codes）是纠删码的一类，常被应用在分布式文件系统中，我们希望使用它来提升文件系统的可靠性。下面介绍它的编解码原理。
-
-#### 编解码原理
-
-##### 编码
-
-RS 编码以 word 为编码和解码单位，大的数据块拆分到字长为 w（取值一般为 8 或者 16 位）的 word，然后对 word 进行编解码。数据块的编码原理与 word 编码原理相同。把输入数据视为向量 D = (D1, D2, .., Dn), 编码后数据视为向量 (D1, D2, .., Dn, C1, C2, .., Cm)，RS 编码可视为如下图所示矩阵运算。
-
-[![img](https://github.com/OSH-2020/x-dontpanic/raw/master/docs/files/research-RS-1)](https://github.com/OSH-2020/x-dontpanic/blob/master/docs/files/research-RS-1)
-
-上图最左边是编码矩阵（或称为生成矩阵、分布矩阵，Distribution Matrix），编码矩阵需要满足任意 n\*n 子矩阵可逆。为方便数据存储，编码矩阵上部是单位阵，下部是 m\*n 矩阵。下部矩阵可以选择范德蒙德矩阵或柯西矩阵。
-
-##### 解码
-
-RS 最多能容忍 m 个数据块被删除，数据恢复的过程如下：
-
-- 假设 D1、D4、C2 丢失，从编码矩阵中删掉丢失的数据块/编码块对应的行。根据 RS 编码运算等式，可以得到 B' 以及等式：
-
-[![img](https://github.com/OSH-2020/x-dontpanic/raw/master/docs/files/research-RS-2-new)](https://github.com/OSH-2020/x-dontpanic/blob/master/docs/files/research-RS-2-new)
-
-- 由于 B' 是可逆的，记 B' 的逆矩阵为 B'^(-1)，则 B'*B'^(-1) = I 单位矩阵。两边左乘 B' 逆矩阵：
-
-[![img](https://github.com/OSH-2020/x-dontpanic/raw/master/docs/files/research-RS-4)](https://github.com/OSH-2020/x-dontpanic/blob/master/docs/files/research-RS-4)
-
-- 得到如下原始数据 D 的计算公式，从而恢复原始数据 D：
-
-[![img](https://github.com/OSH-2020/x-dontpanic/raw/master/docs/files/research-RS-5-new)](https://github.com/OSH-2020/x-dontpanic/blob/master/docs/files/research-RS-5-new)
-
 #### 稳定性
 
-我们采用纠删码技术对文件进行冗余。下面我们做个简单的计算，和简单副本备份进行对比。
+我们的项目采用纠删码技术中的里德-所罗门算法（Reed-Solomon Code）对文件进行冗余，并使用性能相比于范德蒙矩阵更好的柯西矩阵作为编码矩阵，这部分内容的详细介绍在[可行性报告](https://github.com/OSH-2020/x-dontpanic/blob/master/docs/feasibility.md)中有比较详细的介绍。下面我们做个简单的计算，将纠删码和简单副本备份进行对比。
 
 假设单个存储节点的故障率为 p。采用副本备份的数量为 k，于是副本冗余的丢失概率为 p^k，就是 k 份全部丢失的概率。采用纠删码时将文件分为 n 块原始数据块，以及冗余 m 块校验块，并且 n+m 块分给不同的节点。纠删码的丢失概率可以用以下式子计算出，就是丢失碎片数量大于 m 块的概率。
 
-![image-20200720181651317](conclusion.assets/image-20200720181651317.png)
+$$
+\begin{aligned}
+&设单个存储节点故障率为 p.\\ 
+&使用纠删码时文件分成 n 块并冗余 m 块, n + m 块分给不同的节点.\\ 
+&备份冗余数量为 k, 分别放在不同节点.\\
+&单点存储丢失概率: p\\
+&副本冗余丢失概率: p^k\\
+&纠删码冗余丢失概率:\sum_{i=m+1}^{n+m}{n+m\choose i}p^i(1-p)^{n+m-i}\\
+&设 p = 1\%, n = 5,m = 5:\\
+&纠删码冗余存储丢失概率: 2.03e-10\\
+&达到同样概率所需备份数量: 5\\
+&纠删码节约空间: file size*3\\
+\end{aligned}
+$$
 
-代入数据，可以看到在故障率为1%，文件分 5 块并冗余 5 块条件下，纠删码的故障率仅有 2*10^(-10)，有效保障了数据安全不易丢失。而靠副本冗余想达到同样的效果，需要 5 份备份。
+代入数据，可以看到在故障率为 1%，文件分 5 块并冗余 5 块条件下，纠删码的故障率仅有 2*10^(-10)，有效保障了数据安全不易丢失。而靠副本冗余想达到同样的效果，需要 5 份备份。
 
 因此纠删码技术在同等丢失率条件下比副本备份节约了3倍于文件大小的空间，大幅减少了冗余所需的额外空间开销。
-
-#### 编码矩阵
-
-##### 基于范德蒙德（Vandermonde）矩阵
-
-在线性代数中有一种矩阵称为范德蒙德矩阵，它的任意的子方阵均为可逆方阵。
-
-一个 m 行 n 列的范德蒙德矩阵定义如下图左边，其中 Ai 均不相同，且不为 0。令 A1, A2, .., An 分别为 1, 2, 3, .., n，则得到范德蒙德矩阵为下图右边：
-
-[![img](https://github.com/OSH-2020/x-dontpanic/raw/master/docs/files/feasibility-RS-Vandermonde-1)](https://github.com/OSH-2020/x-dontpanic/blob/master/docs/files/feasibility-RS-Vandermonde-1)
-
-编码矩阵就是单位矩阵和范德蒙德矩阵的组合。输入数据 D 和编码矩阵的乘积就是编码后的数据。
-
-采用这种方法的算法复杂度还是比较高的，编码复杂度为 O(mn)，其中 m 为校验数据个数，n 为输入数据个数。解码复杂度为 O(n^3)。
-
-##### 基于柯西（Cauchy）矩阵
-
-柯西矩阵的任意一个子方阵都是奇异矩阵，存在逆矩阵。而且柯西矩阵在迦罗华域上的求逆运算，可以在 O(n^2) 的运算复杂度内完成。使用柯西矩阵，比范德蒙德矩阵的优化主要有两点：
-
-- 降低了矩阵求逆的运算复杂度。范德蒙矩阵求逆运算的复杂度为 O(n^3)，而柯西矩阵求逆运算的复杂度仅为 O(n^2)。
-- 通过有限域转换，将 GF(2^w) 域中的元素转换成二进制矩阵，将乘法转换为逻辑与，降低了乘法运算复杂度。（二进制的加法即 XOR，乘法即 AND）
-
-柯西矩阵的描述如下图左边，Xi 和 Yi 都是迦罗华域 GF(2^w) 中的元素。右边是基于柯西矩阵的编码矩阵：
-
-[![img](https://github.com/OSH-2020/x-dontpanic/raw/master/docs/files/feasibility-RS-Cauchy-1-new.png)](https://github.com/OSH-2020/x-dontpanic/blob/master/docs/files/feasibility-RS-Cauchy-1-new.png)
-
-##### 柯西编解码过程优化
-
-在范德蒙编码的时候，我们可以采用对数/反对数表的方法，将乘法运算转换成了加法运算，并且在迦罗华域中，加法运算转换成了 XOR 运算。
-
-柯西编解码为了降低乘法复杂度，采用了有限域上的元素都可以使用二进制矩阵表示的原理，将乘法运算转换成了迦罗华域“AND 运算”和“XOR 逻辑运算”，提高了编解码效率。
-
-从数学的角度，在迦罗华有限域中，任何一个 GF(2^w) 域上的元素都可以映射到 GF(2) 二进制域，并且采用一个二进制矩阵的方式表示 GF(2^w) 中的元素。例如 GF(2^3) 域中的元素可以表示成 GF(2) 域中的二进制矩阵：
-
-[![img](https://github.com/OSH-2020/x-dontpanic/raw/master/docs/files/feasibility-RS-GF-1)](https://github.com/OSH-2020/x-dontpanic/blob/master/docs/files/feasibility-RS-GF-1)
-
-上图中，黑色方块表示逻辑 1，白色方块表示逻辑 0。通过这种转换，GF(2^w) 域中的阵列就可以转换成 GF(2) 域中的二进制阵列。生成矩阵的阵列转换表示如下：
-
-[![img](https://github.com/OSH-2020/x-dontpanic/raw/master/docs/files/feasibility-RS-GF-2)](https://github.com/OSH-2020/x-dontpanic/blob/master/docs/files/feasibility-RS-GF-2)
-
-在 GF(2^w) 域中的编码矩阵为 K*(K+m)，转换到 GF(2) 域中，使用二进制矩阵表示，编码矩阵变成了 wk*w(k+m) 二进制矩阵。采用域转换的目的是简化 GF(2^w) 域中的乘法运算。在 GF(2) 域中，乘法运算变成了逻辑与运算，加法运算变成了 XOR 运算，可以大大降低运算复杂度。
-
-和范德蒙编解码中可能使用的对数/反对数方法相比，这种方法不需要构建对数或反对数表，可以支持 w 为很大的 GF 域空间。采用这种有限域转换的方法之后，柯西编码运算可以表示如下：
-
-[![img](https://github.com/OSH-2020/x-dontpanic/raw/master/docs/files/feasibility-RS-GF-3)](https://github.com/OSH-2020/x-dontpanic/blob/master/docs/files/feasibility-RS-GF-3)
-
-使用柯西矩阵要优于范德蒙德矩阵的方法，柯西矩阵的运算复杂度为 O(n*(n-m))，解码复杂度为 O(n^2)。
 
 #### 开源纠删码项目
 
@@ -345,17 +270,7 @@ RS 最多能容忍 m 个数据块被删除，数据恢复的过程如下：
 
 我们分别尝试了用 JavaScript 和 WebAssembly 在浏览器上做纠删码。其中 JavaScript 直接基于[开源的实现](https://github.com/ianopolous/ErasureCodes)进行了一些修改。
 
-数据储存服务供应商 Backblaze 在 GitHub 开源提供了一个使用 Java 编写的 Reed-Solomon 库。以此为基础实现了许多其他语言如 Go、Python 编写的 RS 纠删码项目，其中 [Go 语言的实现](https://github.com/klauspost/reedsolomon)有较多的 Star 量，内容也较为完善。为了在网页中应用项目中的函数，我们利用它编写了 Go 语言代码编译成 WebAssembly 格式，这部分内容在后面介绍。
-
-#### WebAssembly
-
-WebAssembly 是一个实验性的低级编程语言，应用于浏览器内的客户端。
-
-在过去很长一段时间里，JavaScript 是 Web 开发人员中的通用语言。如果想写一个稳定成熟的 Web 应用程序，用 JavaScript 几乎是唯一的方法。WebAssembly（也称为 wasm）将很快改变这种情况。它是便携式的抽象语法树，被设计来提供比 JavaScript 更快速的编译及运行。
-
-WebAssembly 将让开发者能运用自己熟悉的编程语言（最初以 C/C++ 作为实现目标）编译，再藉虚拟机引擎在浏览器内运行。
-
-WebAssembly 的开发团队分别来自 Mozilla、Google、Microsoft、Apple，代表着四大网络浏览器 Firefox、Chrome、Microsoft Edge、Safari。2017 年 11 月，以上四个浏览器都开始实验性地支持 WebAssembly。WebAssembly 于 2019 年 12 月 5 日成为万维网联盟（W3C）的推荐，与 HTML、CSS 和 JavaScript 一起，成为 Web 的第四种语言。
+数据储存服务供应商 Backblaze 在 GitHub 开源提供了一个使用 Java 编写的 Reed-Solomon 库。以此为基础实现了许多其他语言如 Go、Python 编写的 RS 纠删码项目，其中 [Go 语言的实现](https://github.com/klauspost/reedsolomon)有较多的 Star 量，内容也较为完善。为了在网页中应用项目中的函数，我们利用它编写了 Go 语言代码并编译成 WebAssembly 格式。
 
 #### WebAssembly 与 JavaScript 效率对比
 
@@ -501,6 +416,8 @@ content := goDecoder(buffer, args[1].Int(), args[2].Int())
 
 ![image-20200719102239251](conclusion.assets/image-20200719102239251.png)
 
+这里的[表格](https://github.com/fabfish/ErasureCodeforBrowserSide/blob/master/benchmark.ods)记录了在虚拟机中测得的浏览器端运行纠删码的一些效率数据。
+
 ### WebSocket
 
 <img src="conclusion.assets/image-20200719102716707.png" alt="image-20200719102716707" style="zoom:50%;" />
@@ -640,7 +557,7 @@ WebSocket 使用了自定义的二进制分帧格式，把每个应用消息切�
 
 我们将一个设备或者一个用户一天中的在线时间表示成一个长度为 24 的 01 向量，在上传文件时尽可能地给覆盖上传者的在线时间段 x% 以上的存储结点分配碎片。
 
-这里的 x% 的计算是设备与用户需求的距离。24个时间段内，有 x% 以上的时间段不会发生用户在线而设备不在线的情况。
+这里的 x% 的计算是设备与用户需求的距离。24 个时间段内，有 x% 以上的时间段不会发生用户在线而设备不在线的情况。
 
 我们的分配策略还估计到了剩余容量，碎片不会再分给剩余容量到达上限的节点，避免分配出现严重的倾斜。
 
@@ -708,6 +625,7 @@ private DeviceItem[] getAllocateDeviceList(Query query,int nod,int noa, String w
 接下来，通过数学公式和计算图表来展示分配策略的效果。
 
 我们设上传文件是在线存储节点数目为n，文件分为nod块碎片，冗余noa块碎片，在线率为p，则取得完整文件的成功率表达式如下：
+
 $$
 \sum_{i= \left \lceil n\times nod{\div} \left ( nod+noa \right )  \right \rceil }^{n} \binom{n}{i}\times p^{i}\times (1-p)^{n-i}
 $$
@@ -880,7 +798,7 @@ public FileItem[] queryFileList(String whose, String path){
 }
 ```
 
-## 未来工作展望
+## 前景展望
 
 在实现这个项目的过程中，我们也发现了一些值得思考的有趣问题。
 
@@ -893,15 +811,15 @@ public FileItem[] queryFileList(String whose, String path){
 
 ### 更高性能的纠删码模块设计
 
-现有的 WASM 纠删码模块是把文件当成一个大数进行切割放入 RS 矩阵进行运算，性能较低下且占用资源较大。
+现有的 WebAssembly 纠删码模块是把文件当成一个大数进行切割放入 RS 矩阵进行运算，性能较低下且占用资源较大。
 
-我们可以把上次下载的文件以流的方式处理，以每 5 bit 为单位放入 RS 矩阵中进行运算，对文件进行分块处理，可以大幅度减少内存等资源的占用。
+我们可以把上传下载的文件以流的方式处理，以每块 512 B 为单位放入 RS 矩阵中进行运算，对文件进行分块处理，可以大幅度减少内存等资源的占用。
 
 ## 项目总结
 
 本小组在考虑组员的兴趣并与刑凯老师进行充分的讨论之后，选择实现一个普适性强，P2P传输，有潜力替代商业云存储，建立在互联网上的分布式文件系统。
 
-出于减少重复劳动，实现更多创新点的考虑，我们借鉴了[OSH 2017 的项目](https://github.com/IngramWang/DFS_OSH2017_USTC) 中的部分代码。该项目实现的是基于互联网的中心化分布式文件系统。在此也要感谢实施该项目的学长们。
+出于减少重复劳动，实现更多创新点的考虑，我们参考了[OSH 2017 的项目](https://github.com/IngramWang/DFS_OSH2017_USTC)，和作者取得联系并复用了其中的部分代码。该项目实现的是基于互联网的中心化分布式文件系统。
 
 在目前的 P2P 实现中，存储节点需要公网 IP 和家庭设备通常没有公网 IP 这一矛盾仍无法解决。考虑到如 NAT 之类的解决方案，实现其的难度和工作量可能本身就相当于再做一个一个项目了，故我们在一学期这样有限的时间里不考虑实现这样的解决方案。但是我们的项目并不会受限于这一缺憾，首先在局域网/校园网中的部署可行，其次使用有公网 IP 的存储节点也可部署，最后在 IPv6 进一步普及的未来，我们有望为身边的每一台都方便地获取一个公网 IP。
 
@@ -913,26 +831,23 @@ public FileItem[] queryFileList(String whose, String path){
 
 ## 组员总结
 
-TODO：总结各成员在项目中做的东西。可以大吹。最后加一段总结报告的分块编写。
-
 组长罗丽薇负责项目的整体设计和实施规划，定期组织小组讨论，根据组员特点分配任务并监督进度。同时，根据组员的完成情况和遇到的障碍，适时调整任务和项目设计，使得项目能够顺利推进。在其他组员遇到技术困难时，提供力所能及的帮助。负责联络工作，如与刑凯老师沟通交流，联系参考往届大作业项目的作者。实现了本项目中用于建立数据连接的 WebSocket 服务端 API 和 Web 前后端的相关逻辑。
 
 组员袁一玮对项目的环境进行了 Docker 化封装，把其他组员的工作打包在一起，方便大家的测试和展示，节约了很多测试时不必要的步骤。把前端页面统一为 layui 的实现，使界面相比往届项目更清爽。
 
 组员邱子悦对用户权限进行隔离，通过cookie验证，并尝试 CI 自动部署每次修改后的项目，并设计和实现了高效的碎片分配策略。~~同时配合组长一起鞭策鸽子，推进工作。~~
 
-本报告的整体框架由余致远整合。其中项目介绍，立项依据，项目设计-项目结构，未来工作展望和项目总结的内容来自罗丽薇。项目设计中各项技术的相关内容来自对应负责实现的组员。
+组员余致远在浏览器端实现了纠删码，查阅资料并根据 Go 语言的开源库设计了 Go-WebAssembly 编解码函数，先后提供了 JavaScript 和 Go 语言的纠删码实现，并对性能进行了测试。
 
-![image-20200720180707335](conclusion.assets/image-20200720180707335.png)
-//我觉得这张图不如删了
+本报告的整体框架由余致远整合。其中项目介绍，立项依据，项目设计-项目结构，未来工作展望和项目总结的内容来自罗丽薇。项目设计中各项技术的相关内容来自对应负责实现的组员。
 
 ## 致谢
 
 邢凯老师参与了本小组选题与项目设计各个阶段的大量讨论，并在浏览器端实现纠删码、TODO、小组合作等方面为我们提供了许多建议与无私帮助。
 
-陶柯宇等助教对本项目所采用技术工具给出了很多优质的建议。
+陶柯宇助教等几位助教对本项目所采用技术工具给出了很多优质的建议。
 
-学长。
+王珺、夏昊珺、郑值、滕思洁学长在他们往届项目[基于互联网网页的小型分布式文件系统](https://github.com/IngramWang/DFS_OSH2017_USTC)中的工作为我们提供了一些优秀思路与经验。
 
 在此本小组成员一并表示感谢。
 
