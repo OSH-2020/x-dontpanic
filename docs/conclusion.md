@@ -40,7 +40,7 @@
 		- [多用户权限支持](#多用户权限支持)
 			- [前置项目关于用户权限的设计](#前置项目关于用户权限的设计)
 				- [数据库配置](#数据库配置)
-			- [达到改进目标用到的技术](#达到改进目标用到的技术)
+			- [改进用到的技术](#改进用到的技术)
 				- [新的数据库设计](#新的数据库设计)
 				- [新的 Web 端设计](#新的-web-端设计)
 	- [未来工作展望](#未来工作展望)
@@ -180,6 +180,64 @@ Docker-Compose 是 Docker 官方用于定义和运行多容器的编排工具。
 docker-compose 的 scale 功能还支持创建多个实例进行负载均衡反向代理。这可以在我们想进行用户群的扩展时，轻松解决目录节点高并发的问题，并把处理能力分布在多台主机上。
 
 <img src="conclusion.assets/%E5%9B%BE%E7%89%871.png" alt="图片1" style="zoom:50%;" />
+
+本项目中，下面这段 docker-compose.yml 描述了 mytomcat、mymysql 和 myserver 这三个 Docker 容器的镜像、端口、依赖等信息。
+
+```yaml
+version: '2'
+services:
+  mytomcat:
+    image: tomcat:7
+    hostname: mytomcat
+    container_name: mytomcat
+    restart: always
+    ports:
+      - "8080:8080"
+    depends_on:
+      - mymysql
+    links:
+      - mymysql
+    environment:
+      - Xmn384m
+      - XX:MaxPermSize=128m
+      - XX:+UseConcMarkSweepGC
+      - XX:+DisableExplicitGC
+      - XX:+UseParNewGC
+    volumes:
+      - "$PWD/WebContent:/usr/local/tomcat/webapps"
+  mymysql:
+    build: ./mysqlinit
+    image: mymysql:test
+    container_name: mymysql
+    restart: always
+    ports:
+      - "3306:3306"
+    command: [
+      '--default-authentication-plugin=mysql_native_password',
+      '--character-set-server=utf8mb4',
+      '--collation-server=utf8mb4_general_ci'
+    ]
+    environment:
+      MYSQL_ROOT_PASSWORD: 201314
+      MYSQL_USER: 'root'
+      MYSQL_PASS: '201314'
+      serverTimezone: Asia/Shanghai
+    volumes:
+      - "$PWD/mysqldata:/var/lib/mysql"
+  myserver:
+    build: ./myserver
+    image: myserver:test
+    container_name: myserver
+    restart: always
+    depends_on:
+      - mymysql
+    links:
+      - mymysql
+    volumes:
+      - "$PWD/WebContent:/usr/local/tomcat/webapps"
+    ports:
+      - "2333:2333"
+```
 
 ### 前端美化
 
