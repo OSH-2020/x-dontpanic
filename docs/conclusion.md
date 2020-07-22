@@ -38,6 +38,7 @@
         - [新的数据库设计](#新的数据库设计)
         - [新的 Web 端设计](#新的-web-端设计)
   - [前景展望](#前景展望)
+  - [思考](#思考)
     - [重新加入中心节点](#重新加入中心节点)
     - [更高性能的纠删码模块设计](#更高性能的纠删码模块设计)
   - [项目总结](#项目总结)
@@ -847,11 +848,11 @@ public FileItem[] queryFileList(String whose, String path){
 
 组员袁一玮对项目的环境进行了 Docker 化封装，把其他组员的工作打包在一起，方便大家的测试和展示，节约了很多测试时不必要的步骤。把前端页面统一为 layui 的实现，使界面相比往届项目更清爽。
 
-组员邱子悦对用户权限进行隔离，通过cookie验证，并尝试 CI 自动部署每次修改后的项目，并设计和实现了高效的碎片分配策略。~~同时配合组长一起鞭策鸽子，推进工作。~~
+组员邱子悦对用户权限进行隔离，通过 cookie 验证，并尝试 CI 自动部署每次修改后的项目，并设计和实现了高效的碎片分配策略。~~同时配合组长一起鞭策鸽子，推进工作。~~
 
 组员余致远在浏览器端实现了纠删码，查阅资料并根据 Go 语言的开源库设计了 Go-WebAssembly 编解码函数，先后提供了 JavaScript 和 Go 语言的纠删码实现，并对性能进行了测试。
 
-本报告的整体框架由余致远整合。其中项目介绍，立项依据，项目设计-项目结构，未来工作展望和项目总结的内容来自罗丽薇。项目设计中各项技术的相关内容来自对应负责实现的组员。
+本报告的整体框架由余致远整合。其中项目介绍，立项依据，项目设计-项目结构，前景展望，思考和项目总结的内容来自罗丽薇。项目设计中各项技术的相关内容来自对应负责实现的组员。
 
 ## 致谢
 
@@ -866,20 +867,18 @@ public FileItem[] queryFileList(String whose, String path){
 ## 参考文献
 
 1. [容器化技术与 Docker](https://www.jianshu.com/p/34efcaa92ae4)
-2. [Linux 101](https://101.ustclug.org/Ch08/)
-3. [Erasure Code - EC纠删码原理](https://blog.csdn.net/shelldon/article/details/54144730)
-4. [P2P 网络原理](https://www.cnblogs.com/ygjzs/p/12419548.html)
-5. [P2P 技术原理](https://www.oschina.net/question/54100_2285064)
-6. [github.com/peer44/java-rbac](https://github.com/peer44/java-rbac)
-7. [Backblaze Reed-Solomon](https://www.backblaze.com/open-source-reed-solomon.html)
-8. [github.com/klauspost/reedsolomon](https://github.com/klauspost/reedsolomon)
-9. [译 Go和WebAssembly：在浏览器中运行Go程序](https://www.qichengzx.com/2019/01/01/go-in-the-browser.html)
-10. [WebAssembly](https://zh.wikipedia.org/wiki/WebAssembly)
-13. [WebSocket 教程](http://www.ruanyifeng.com/blog/2017/05/websocket.html)
-14. [Writing WebSocket servers](https://developer.mozilla.org/en-US/docs/Web/API/WebSockets_API/Writing_WebSocket_servers)
-15. [github.com/ianopolous/ErasureCodes](https://github.com/ianopolous/ErasureCodes)
-16. [github.com/puleos/object-hash](https://github.com/puleos/object-hash)
-
-17. [使用Go开发前端应用（三）](https://juejin.im/post/5eb2191df265da7bbf21a0f4)
-18. [pkg.go.dev/syscall/js](https://pkg.go.dev/syscall/js)
-
+1. [Linux 101](https://101.ustclug.org/Ch08/)
+1. [Erasure Code - EC纠删码原理](https://blog.csdn.net/shelldon/article/details/54144730)
+1. [P2P 网络原理](https://www.cnblogs.com/ygjzs/p/12419548.html)
+1. [P2P 技术原理](https://www.oschina.net/question/54100_2285064)
+1. [github.com/peer44/java-rbac](https://github.com/peer44/java-rbac)
+1. [Backblaze Reed-Solomon](https://www.backblaze.com/open-source-reed-solomon.html)
+1. [github.com/klauspost/reedsolomon](https://github.com/klauspost/reedsolomon)
+1. [译 Go和WebAssembly：在浏览器中运行Go程序](https://www.qichengzx.com/2019/01/01/go-in-the-browser.html)
+1. [WebAssembly](https://zh.wikipedia.org/wiki/WebAssembly)
+1. [WebSocket 教程](http://www.ruanyifeng.com/blog/2017/05/websocket.html)
+1. [Writing WebSocket servers](https://developer.mozilla.org/en-US/docs/Web/API/WebSockets_API/Writing_WebSocket_servers)
+1. [github.com/ianopolous/ErasureCodes](https://github.com/ianopolous/ErasureCodes)
+1. [github.com/puleos/object-hash](https://github.com/puleos/object-hash)
+1. [使用Go开发前端应用（三）](https://juejin.im/post/5eb2191df265da7bbf21a0f4)
+1. [pkg.go.dev/syscall/js](https://pkg.go.dev/syscall/js)
