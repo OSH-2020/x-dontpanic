@@ -143,7 +143,7 @@ NAS 全称 network attached storage，是一种可以通过网络访问的专用
 
 相对于 NAS 较差的扩展性，由于本项目各节点之间的连接基于互联网，这非常有利于存储节点的接入和用户群的扩展。有更多的用户参与成为存储节点也会进一步提高系统的稳定性和可用性。
 
-![Java-Docker-Web](files/Java-Docker-Web.png)
+![Java-Docker-Web](files/conclusion-Java-Docker-Web.png)
 
 考虑到易用性，我们将目录节点运行的服务用 docker 容器进行封装，一方面解决了适配不同环境的问题提高了兼容性，另一方面也使一键部署成为可能。
 
@@ -179,7 +179,7 @@ Docker-Compose 是 Docker 官方用于定义和运行多容器的编排工具。
 
 docker-compose 的 scale 功能还支持创建多个实例进行负载均衡反向代理。这可以在我们想进行用户群的扩展时，轻松解决目录节点高并发的问题，并把处理能力分布在多台主机上。
 
-![Docker-Compose](files/Docker-Compose.png)
+![Docker-Compose](files/conclusion-Docker-Compose.png)
 
 本项目中，下面这段 docker-compose.yml 描述了 mytomcat、mymysql 和 myserver 这三个 Docker 容器的镜像、端口、依赖等信息。
 
@@ -282,7 +282,7 @@ $$
 
 在项目 demo 完成后，我们对 WebAssembly 和 JavaScript 代码的效率进行测试得到了两组对比的 benchmark，两组对文件大小的参数进行了更改。可以看到在 WebAssembly 上实现的纠删码效率远远高于 JavaScript，编码速率提升将近 4 倍，而解码提升了 7 倍左右。当有一块文件块缺失时，WebAssembly 的解码效率提升了 10 倍。
 
-![efficiency](files/efficiency.png)
+![efficiency](files/conclusion-efficiency.png)
 
 #### 浏览器端实现文件编解码
 
@@ -412,7 +412,7 @@ content := goDecoder(buffer, args[1].Int(), args[2].Int())
 
 #### Go-WebAssembly 编码性能
 
-![Go-wasm-encodetime](files/Go-wasm-encodetime.png)
+![Go-wasm-encodetime](files/conclusion-Go-wasm-encodetime.png)
 
 这张图是两组不同的纠删码参数下，编码时间随文件大小的变化。可以看到两组都呈现编码时间随文件大小线性增长。在 40 + 20 这一组中，平均每 1MB 的文件需要消耗约 76ms 来编码，16 + 8 的时候是 33ms/MB。或者换一个角度看，编码的吞吐速率分别为大约 13MB 每秒和 30MB 每秒。这样的吞吐量已经相当不错了，与千兆网带宽在一个数量级上。
 
@@ -420,13 +420,13 @@ content := goDecoder(buffer, args[1].Int(), args[2].Int())
 
 在此之上还能追加流水作业，如下图，负责编码的 worker 将编码完成的数据块交给上传的 worker 发送，他们的吞吐速率大致相同，形成流水线作业，这可以完全将编码带来的时间开销隐藏在传输时间当中。采用这样的方式，上传下载速度可以非常快，实现了高效。
 
-![pipeline](files/pipeline.png)
+![pipeline](files/conclusion-pipeline.png)
 
 这里的[表格](https://github.com/fabfish/ErasureCodeforBrowserSide/blob/master/benchmark.ods)记录了在虚拟机中测得的浏览器端运行纠删码的一些效率数据。
 
 ### WebSocket
 
-![WebSocket](files/WebSocket.png)
+![WebSocket](files/conclusion-WebSocket.png)
 
 JavaScript 没有可以直接使用的 TCP 接口。为了在浏览器和存储节点之间直接传输数据，我们选择了 WebSocket 协议来实现浏览器和客户端的直连。WebSocket 是一种网络通信协议，选择它有如下好处：
 
