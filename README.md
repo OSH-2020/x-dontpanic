@@ -13,6 +13,8 @@
 +-- docs
 |   +-- research.md
 |   +-- feasibility.md
+|   +-- conclusion.md
+|   +-- final-pre-slides.pdf
 |   +-- files
 |
 +-- demo
