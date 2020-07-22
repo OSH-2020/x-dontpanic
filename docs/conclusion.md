@@ -96,7 +96,7 @@ IPFS 全称 Interplanetary File System，意为星际文件系统，它创建了
 
 #### NAS
 
-![image-20200720182514522](conclusion.assets/image-20200720182514522.png)
+![NAS](files/conclusion-NAS.png)
 
 NAS 全称 network attached storage，是一种可以通过网络访问的专用数据存储服务器，它可以将分布、独立的数据进行整合，集中化管理，以便于对不同主机和应用服务器进行访问的技术。
 
@@ -110,26 +110,32 @@ NAS 全称 network attached storage，是一种可以通过网络访问的专用
 
 #### 小结
 
-![image-20200720182904536](conclusion.assets/image-20200720182904536.png)
+|            | IPFS                               | Our FS                                         |
+| ---------- | ---------------------------------- | ---------------------------------------------- |
+| 数据安全性 | 无身份验证，拿到哈希值就能拿到文件 | 目录节点可进行身份验证，用户只能访问自己的文件 |
+| 数据可靠性 | 无法保证足够可用源                 | 目录节点可协调冗余备份，保证备份充足           |
 
 在上述两种技术中，IPFS 本身在去中心化上做的很充分，同时，因为完全去除了中心化的元素，也有没解决的问题：
 
 - 存储数据的安全：没有验证用户身份，任何人只要拿到文件的哈希值就能拿到文件。
-- 数据可靠性：IPFS系统虽然有激励层，但是无法保证一份数据能够有**足够的备份**在系统中存储，这就可能导致数据丢失。
+- 数据可靠性：IPFS 系统虽然有激励层，但是无法保证一份数据能够有**足够的备份**在系统中存储，这就可能导致数据丢失。
 
 我们的项目不仅有 IPFS 的存储节点去中心化的优势，还能避免其两大问题。这都归功于设计中的目录节点，我们之后会详细介绍。
 
-![image-20200720182915233](conclusion.assets/image-20200720182915233.png)
+|          | NAS                            | Our FS                             |
+| -------- | ------------------------------ | ---------------------------------- |
+| 设备限制 | 专有设备                       | 普通设备运行客户端即可，跨平台兼容 |
+| 扩容限制 | 单台扩容有限，多台难以无缝合并 | 无缝扩展，无上限                   |
 
-至于 NAS 的局限性在于使用专有设备，前期安装和设备成本较高。NAS的可扩展性也有一定的限制，因为单台 NAS 的扩容是有限的，增加另一台NAS设备非常容易，但是要想将两个 NAS 设备的存储空间**无缝合并**就不容易了。 
+至于 NAS 的局限性在于使用专有设备，前期安装和设备成本较高。NAS 的可扩展性也有一定的限制，因为单台 NAS 的扩容是有限的，增加另一台 NAS 设备非常容易，但是要想将两个 NAS 设备的存储空间**无缝合并**就不容易了。 
 
-而在我们的项目中，存储节点只需要持续运行本项目的 java 跨平台程序，并且我们的可扩展性上不存在 NAS 的问题。
+而在我们的项目中，存储节点只需要持续运行本项目的 Java 跨平台程序，并且我们的可扩展性上不存在 NAS 的问题。
 
 ## 项目设计
 
 ### 项目结构
 
-![image-20200718185006861](conclusion.assets/image-20200718185006861.png)
+![structure](files/conclusion-structure.png)
 
 我们的项目从 IPFS 中吸取了 P2P 的思想，在数据的传输上实现了点对点。文件系统由一个目录节点（index）和若干存储节点（storage）组成。目录节点负责提供 web 管理界面，以及协调各存储节点的资源。这样的数据存储和传输方式能够有效节约带宽资源，避免传统 server/client 模式中中央服务器负载过重产生的瓶颈。（像我们参考的另一个大作业项目，就存在中央服务器数据传输瓶颈的问题。）同时，文件内容也不会经过目录节点，不用担心权力集中和监管的弊端。
 
@@ -137,11 +143,11 @@ NAS 全称 network attached storage，是一种可以通过网络访问的专用
 
 相对于 NAS 较差的扩展性，由于本项目各节点之间的连接基于互联网，这非常有利于存储节点的接入和用户群的扩展。有更多的用户参与成为存储节点也会进一步提高系统的稳定性和可用性。
 
-![image-20200718220623911](conclusion.assets/image-20200718220623911.png)
+![Java-Docker-Web](files/Java-Docker-Web.png)
 
 考虑到易用性，我们将目录节点运行的服务用 docker 容器进行封装，一方面解决了适配不同环境的问题提高了兼容性，另一方面也使一键部署成为可能。
 
-只要存储设备运行我们的 java 程序就可以作为存储节点接入分布式文件系统。而因为 JVM 虚拟机的跨平台兼容，凡是能运行 Java 的设备都可以成为存储节点，无论 Windows、Mac OS、Linux 都可以兼容。这意味着使用者可以将任意的闲置资源方便地贡献为存储结点，这或将大大提升未来私人部署网盘的占有率，更能避免对商业云存储的依赖。
+只要存储设备运行我们的 Java 程序就可以作为存储节点接入分布式文件系统。而因为 JVM 虚拟机的跨平台兼容，凡是能运行 Java 的设备都可以成为存储节点，无论 Windows、Mac OS、Linux 都可以兼容。这意味着使用者可以将任意的闲置资源方便地贡献为存储结点，这或将大大提升未来私人部署网盘的占有率，更能避免对商业云存储的依赖。
 
 同样是处于易用性的考虑，我们提供 web 界面进行文件管理操作，一方面可以避免安装客户端的麻烦，另一方面我们也利用了 web 的跨平台兼容性。
 
@@ -173,7 +179,7 @@ Docker-Compose 是 Docker 官方用于定义和运行多容器的编排工具。
 
 docker-compose 的 scale 功能还支持创建多个实例进行负载均衡反向代理。这可以在我们想进行用户群的扩展时，轻松解决目录节点高并发的问题，并把处理能力分布在多台主机上。
 
-![图片1](conclusion.assets/%E5%9B%BE%E7%89%871.png)
+![Docker-Compose](files/Docker-Compose.png)
 
 本项目中，下面这段 docker-compose.yml 描述了 mytomcat、mymysql 和 myserver 这三个 Docker 容器的镜像、端口、依赖等信息。
 
@@ -276,7 +282,7 @@ $$
 
 在项目 demo 完成后，我们对 WebAssembly 和 JavaScript 代码的效率进行测试得到了两组对比的 benchmark，两组对文件大小的参数进行了更改。可以看到在 WebAssembly 上实现的纠删码效率远远高于 JavaScript，编码速率提升将近 4 倍，而解码提升了 7 倍左右。当有一块文件块缺失时，WebAssembly 的解码效率提升了 10 倍。
 
-![image-20200719094351911](conclusion.assets/image-20200719094351911.png)
+![efficiency](files/efficiency.png)
 
 #### 浏览器端实现文件编解码
 
@@ -406,7 +412,7 @@ content := goDecoder(buffer, args[1].Int(), args[2].Int())
 
 #### Go-WebAssembly 编码性能
 
-![image-20200719102043457](conclusion.assets/image-20200719102043457.png)
+![Go-wasm-encodetime](files/Go-wasm-encodetime.png)
 
 这张图是两组不同的纠删码参数下，编码时间随文件大小的变化。可以看到两组都呈现编码时间随文件大小线性增长。在 40 + 20 这一组中，平均每 1MB 的文件需要消耗约 76ms 来编码，16 + 8 的时候是 33ms/MB。或者换一个角度看，编码的吞吐速率分别为大约 13MB 每秒和 30MB 每秒。这样的吞吐量已经相当不错了，与千兆网带宽在一个数量级上。
 
@@ -414,13 +420,13 @@ content := goDecoder(buffer, args[1].Int(), args[2].Int())
 
 在此之上还能追加流水作业，如下图，负责编码的 worker 将编码完成的数据块交给上传的 worker 发送，他们的吞吐速率大致相同，形成流水线作业，这可以完全将编码带来的时间开销隐藏在传输时间当中。采用这样的方式，上传下载速度可以非常快，实现了高效。
 
-![image-20200719102239251](conclusion.assets/image-20200719102239251.png)
+![pipeline](files/pipeline.png)
 
 这里的[表格](https://github.com/fabfish/ErasureCodeforBrowserSide/blob/master/benchmark.ods)记录了在虚拟机中测得的浏览器端运行纠删码的一些效率数据。
 
 ### WebSocket
 
-<img src="conclusion.assets/image-20200719102716707.png" alt="image-20200719102716707" style="zoom:50%;" />
+![WebSocket](files/WebSocket.png)
 
 JavaScript 没有可以直接使用的 TCP 接口。为了在浏览器和存储节点之间直接传输数据，我们选择了 WebSocket 协议来实现浏览器和客户端的直连。WebSocket 是一种网络通信协议，选择它有如下好处：
 
@@ -545,7 +551,7 @@ WebSocket 使用了自定义的二进制分帧格式，把每个应用消息切�
 是否把消息分帧由客户端和服务器实现决定，应用并不需要关注 WebSocket 帧和如何分帧，因为客户端和服务端将会完成该工作。RFC 6455 规定了分帧规则，要点如下：
 
 - 一个未分帧的消息包含单个帧，FIN 设置为 1，opcode 非 0。
-- 一个分帧了的消息包含：开始于：单个帧，FIN 设为 0，opcode 非 0；后接 ：0 个或多个帧，FIN 设为 0，opcode 设为 0；终结于：单个帧，FIN 设为 1，opcode 设为 0。一个分帧了消息在概念上等价于一个未分帧的大消息，它的有效载荷长度等于所有帧的有效载荷长度的累加；举例：如一个文本消息作为三个帧发送，第一帧的opcode是0x1，FIN是0，第二帧的opcode是0x0，FIN是0，第三帧的opcode是0x0，FIN是1。
+- 一个分帧了的消息包含：开始于：单个帧，FIN 设为 0，opcode 非 0；后接 ：0 个或多个帧，FIN 设为 0，opcode 设为 0；终结于：单个帧，FIN 设为 1，opcode 设为 0。一个分帧了消息在概念上等价于一个未分帧的大消息，它的有效载荷长度等于所有帧的有效载荷长度的累加；举例：如一个文本消息作为三个帧发送，第一帧的 opcode 是 0x1，FIN 是 0，第二帧的 opcode 是 0x0，FIN 是 0，第三帧的 opcode 是 0x0，FIN 是 1。
 
 我们的服务器端 API 按照上述规则实现。为保持简洁，此处不陈列相关代码。
 
@@ -624,7 +630,7 @@ private DeviceItem[] getAllocateDeviceList(Query query,int nod,int noa, String w
 
 接下来，通过数学公式和计算图表来展示分配策略的效果。
 
-我们设上传文件是在线存储节点数目为n，文件分为nod块碎片，冗余noa块碎片，在线率为p，则取得完整文件的成功率表达式如下：
+我们设上传文件是在线存储节点数目为 n，文件分为 nod（numOfDivision） 块碎片，冗余 noa（numOfAppend）块碎片，在线率为 p，则取得完整文件的成功率表达式如下：
 
 $$
 \sum_{i= \left \lceil n\times nod{\div} \left ( nod+noa \right )  \right \rceil }^{n} \binom{n}{i}\times p^{i}\times (1-p)^{n-i}
@@ -632,7 +638,7 @@ $$
 
 假设每一个拿到碎片的设备在线率都为 p = 70%，设备为 n 台，取纠删码分 nod = 4 块碎片，冗余 noa = 4 块碎片的参数，代入图中公式，随着 n 的增大得到接近 100% 的成功率。
 
-![n个设备对应成功率折线图](conclusion.assets/n个设备对应成功率折线图.png)
+![n个设备对应成功率折线图](files/n个设备对应成功率折线图.png)
 
 同时，我们还可以加入一些保证 24h 在线的可靠节点（例如商业云等稳定的云服务）作为一个单独的分类，此时分配策略可以固定向可靠节点分一定比例的碎片，那么那些碎片的在线率可以视为 100%，进一步提高下载成功概率。
 
@@ -867,3 +873,9 @@ public FileItem[] queryFileList(String whose, String path){
 12. [OpenVPN 的工作原理](http://blog.sina.com.cn/s/blog_6d51d1b70101cs5m.html)
 13. [WebSocket 教程](http://www.ruanyifeng.com/blog/2017/05/websocket.html)
 14. [Writing WebSocket servers](https://developer.mozilla.org/en-US/docs/Web/API/WebSockets_API/Writing_WebSocket_servers)
+15. [github.com/ianopolous/ErasureCodes](https://github.com/ianopolous/ErasureCodes)
+16. [github.com/puleos/object-hash](https://github.com/puleos/object-hash)
+
+17. [使用Go开发前端应用（三）](https://juejin.im/post/5eb2191df265da7bbf21a0f4)
+18. [pkg.go.dev/syscall/js](https://pkg.go.dev/syscall/js)
+
